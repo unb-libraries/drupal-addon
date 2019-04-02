@@ -1,0 +1,6 @@
+name: 'UNB Libraries Migrate'
+type: module
+description: 'Collection of migration enhancements. Mostly plugins.'
+core: 8.x
+package: 'UNB Libraries'
+dependencies: {  }
