@@ -1,0 +1,13 @@
+{
+  "name": "unb-libraries/drupal-addon",
+  "description": "Reusable patches and add-ons to be used across Drupal projects.",
+  "type": "library",
+  "require": {},
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "UNB Libraries",
+      "email": "libsupport@unb.ca"
+    }
+  ]
+}
