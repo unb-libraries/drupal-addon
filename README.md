@@ -1,4 +1,4 @@
-# Drupal Components
+# Drupal Add-Ons
 This repository is to share reusable pieces of Drupal functionality to be used across our Drupal projects.
 
 ## Module Overview
