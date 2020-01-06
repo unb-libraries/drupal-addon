@@ -1,0 +1,6 @@
+name: 'Drupal TestGen'
+type: module
+description: 'Generate test cases for Drupal components using PHP-TestGen'
+core: 8.x
+package: 'Development'
+dependencies: {  }

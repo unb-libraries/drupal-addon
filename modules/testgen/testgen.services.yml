@@ -1,0 +1,5 @@
+services:
+  testgen.generator:
+    class: 'TestGen\generate\TestGenerator'
+    arguments:
+      - '/app/tests/behat/features/example/'

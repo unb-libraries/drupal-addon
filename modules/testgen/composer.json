@@ -1,0 +1,20 @@
+{
+  "name": "drupal/testgen",
+  "description": "Generate test cases for Drupal components using PHP-TestGen",
+  "type": "drupal-module",
+  "license": "MIT",
+  "authors": [
+    {
+      "name":"UNB Libraries",
+      "email": "libsupport@unb.ca"
+    },
+    {
+      "name": "Patrick Schilf",
+      "email": "pschilf@unb.ca"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "unb-libraries/php-testgen": "dev-dev"
+  }
+}
