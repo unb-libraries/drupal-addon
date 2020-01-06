@@ -16,5 +16,12 @@
   "minimum-stability": "dev",
   "require": {
     "unb-libraries/php-testgen": "dev-dev"
+  },
+  "extra": {
+    "drush": {
+      "services": {
+        "drush.services.yml": "^9"
+      }
+    }
   }
 }

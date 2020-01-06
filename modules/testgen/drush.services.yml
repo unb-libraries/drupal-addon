@@ -1,0 +1,5 @@
+services:
+  testgen.commands:
+    class: 'Drupal\testgen\Commands\TestgenCommands'
+    tags:
+      - { name: drush.command }
