@@ -6,15 +6,36 @@ use Drush\Commands\DrushCommands;
 
 class TestgenCommands extends DrushCommands {
 
+  const GLOBAL_TEST_ROOT = '/app/tests/behat/features/example/';
+
   /**
-   * Echos back hello with the argument provided.
+   * Test generator service.
+   *
+   * @var \TestGen\generate\TestGenerator
+   */
+  protected $generator;
+
+  /**
+   * Retrieve the test generator service.
+   *
+   * @return \TestGen\generate\TestGenerator
+   *   A test generator service instance.
+   */
+  public function generator() {
+    if (!isset($this->generator)) {
+      $this->generator = \Drupal::service('testgen.generator');
+    }
+    return $this->generator;
+  }
+
+  /**
+   * Generates test files in the GLOBAL_TEST_ROOT folder.
    *
    * @command testgen:generate
    * @aliases tgen
    */
   public function generate() {
-    $generator = \Drupal::service('testgen.generator');
-    $generator->generate();
+    $this->generator()->generate(self::GLOBAL_TEST_ROOT);
   }
 
 }
