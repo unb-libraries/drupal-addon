@@ -1,6 +1,11 @@
 services:
+  testgen.config:
+    factory: ['@config.factory', 'get']
+    class: 'Drupal\Core\Config\ImmutableConfig'
+    arguments: ['testgen.settings']
   test_generator:
     class: 'Drupal\testgen\generate\DrupalTestGenerator'
+    arguments: ['@testgen.config']
     abstrat: 'TRUE'
   test_generator.module:
     class: 'Drupal\testgen\generate\ModuleTestGenerator'

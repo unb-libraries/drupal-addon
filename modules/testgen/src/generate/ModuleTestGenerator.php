@@ -2,12 +2,19 @@
 
 namespace Drupal\testgen\generate;
 
+use Drupal\Core\Config\ImmutableConfig;
+use Drupal\Core\Extension\Extension;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Extension\Exception\UnknownExtensionException;
 
+/**
+ * Generates test cases for modules.
+ *
+ * @package Drupal\testgen\generate
+ */
 class ModuleTestGenerator extends DrupalTestGenerator {
 
-  protected const TEST_ROOT = '/tests/behat/features/example';
+  protected const TEST_ROOT = 'module_root';
 
   /**
    * Module handler service.
@@ -29,11 +36,13 @@ class ModuleTestGenerator extends DrupalTestGenerator {
   /**
    * Create a ModuleTestGenerator instance.
    *
+   * @param \Drupal\Core\Config\ImmutableConfig $config
+   *   Configuration.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   Module handler service.
    */
-  public function __construct(ModuleHandlerInterface $module_handler) {
-    parent::__construct();
+  public function __construct(ImmutableConfig $config, ModuleHandlerInterface $module_handler) {
+    parent::__construct($config);
     $this->moduleHandler = $module_handler;
   }
 
@@ -45,8 +54,7 @@ class ModuleTestGenerator extends DrupalTestGenerator {
    */
   public function generateTests($module_name) {
     if ($module = $this->getModule($module_name)) {
-      $module_test_path = $module->getPath() . self::TEST_ROOT;
-      $this->generate($module_test_path);
+      $this->generate($this->getModuleTestRoot($module));
     }
   }
 
@@ -65,6 +73,19 @@ class ModuleTestGenerator extends DrupalTestGenerator {
     } catch (UnknownExtensionException $e) {
       return NULL;
     }
+  }
+
+  /**
+   * Retrieve the path to where the given module keeps its tests.
+   *
+   * @param \Drupal\Core\Extension\Extension $module
+   *   The module instance.
+   *
+   * @return string
+   *   Absolute path to the given module's test root.
+   */
+  protected function getModuleTestRoot(Extension $module) {
+    return $module->getPath() . $this->config()->get(self::TEST_ROOT);
   }
 
 }

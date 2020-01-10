@@ -4,7 +4,19 @@ namespace Drupal\testgen\generate;
 
 use TestGen\generate\TestGenerator;
 
+/**
+ * Drupal wrapper for PHP-TestGen TestGenerator.
+ *
+ * @package Drupal\testgen\generate
+ */
 abstract class DrupalTestGenerator {
+
+  /**
+   * Configuration.
+   *
+   * @var \Drupal\Core\Config\ImmutableConfig
+   */
+  private $config;
 
   /**
    * Original php-testgen generator.
@@ -12,6 +24,10 @@ abstract class DrupalTestGenerator {
    * @var \TestGen\generate\TestGenerator
    */
   private $generator;
+
+  protected function config() {
+    return $this->config;
+  }
 
   /**
    * Retrieve a php-testgen generator instance.
@@ -25,8 +41,12 @@ abstract class DrupalTestGenerator {
 
   /**
    * Create a new DrupalTestGenerator instance.
+   *
+   * @param \Drupal\Core\Config\ImmutableConfig $config
+   *   Configuration.
    */
-  public function __construct() {
+  public function __construct($config) {
+    $this->config = $config;
     $this->generator = new TestGenerator();
   }
 
