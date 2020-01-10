@@ -54,17 +54,19 @@ class TestgenCommands extends DrushCommands {
   /**
    * Generates test files in the GLOBAL_TEST_ROOT folder.
    *
-   * @param string $module_name
+   * @param array $module_names
    *   Name of the module for which to generate test cases.
    *
    * @command testgen:generate
    * @aliases tgen
    */
-  public function generate($module_name = '') {
-    if (!empty($module_name)) {
-      $module = $this->moduleHandler()->getModule($module_name);
-      $module_test_path = $module->getPath() . self::LOCAL_TEST_ROOT;
-      $this->generator()->generate($module_test_path);
+  public function generate(array $module_names) {
+    if (!empty($module_names)) {
+      foreach ($module_names as $module_name) {
+        $module = $this->moduleHandler()->getModule($module_name);
+        $module_test_path = $module->getPath() . self::LOCAL_TEST_ROOT;
+        $this->generator()->generate($module_test_path);
+      }
     }
     else {
       $this->generator()->generate(self::GLOBAL_TEST_ROOT);
