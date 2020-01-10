@@ -2,6 +2,7 @@
 
 namespace Drupal\testgen\Commands;
 
+use Drupal\testgen\generate\ModuleTestGenerator;
 use Drush\Commands\DrushCommands;
 
 class ModuleTestsCommands extends DrushCommands {
@@ -25,14 +26,17 @@ class ModuleTestsCommands extends DrushCommands {
 
   /**
    * Creates the TestgenCommands instance.
+   *
+   * @param \Drupal\testgen\generate\ModuleTestGenerator $generator
+   *   Module generator service.
    */
-  public function __construct() {
+  public function __construct(ModuleTestGenerator $generator) {
     parent::__construct();
-    $this->generator = \Drupal::service('test_generator.module');
+    $this->generator = $generator;
   }
 
   /**
-   * Generates test files in the GLOBAL_TEST_ROOT folder.
+   * Generates test files for each given module.
    *
    * @param array $module_names
    *   Name of the module for which to generate test cases.
@@ -42,7 +46,7 @@ class ModuleTestsCommands extends DrushCommands {
    */
   public function generate(array $module_names) {
     foreach ($module_names as $module_name) {
-      $this->generator()->generateModuleTests($module_name);
+      $this->generator()->generateTests($module_name);
     }
   }
 

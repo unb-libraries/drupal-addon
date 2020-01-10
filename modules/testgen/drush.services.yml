@@ -1,5 +1,11 @@
 services:
-  testgen.commands.modules:
+  testgen.commands.module:
     class: 'Drupal\testgen\Commands\ModuleTestsCommands'
+    arguments: ['@test_generator.module']
+    tags:
+      - { name: drush.command }
+  testgen.commands.site:
+    class: 'Drupal\testgen\Commands\SiteTestsCommands'
+    arguments: ['@test_generator.site']
     tags:
       - { name: drush.command }

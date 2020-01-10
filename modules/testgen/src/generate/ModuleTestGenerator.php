@@ -43,7 +43,7 @@ class ModuleTestGenerator extends DrupalTestGenerator {
    * @param $module_name
    *   Name of the module for which to generate test cases.
    */
-  public function generateModuleTests($module_name) {
+  public function generateTests($module_name) {
     if ($module = $this->getModule($module_name)) {
       $module_test_path = $module->getPath() . self::TEST_ROOT;
       $this->generate($module_test_path);
