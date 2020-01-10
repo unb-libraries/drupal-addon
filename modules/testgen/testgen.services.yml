@@ -1,3 +1,8 @@
 services:
-  testgen.generator:
-    class: 'TestGen\generate\TestGenerator'
+  test_generator:
+    class: 'Drupal\testgen\generate\DrupalTestGenerator'
+    abstrat: 'TRUE'
+  test_generator.module:
+    class: 'Drupal\testgen\generate\ModuleTestGenerator'
+    parent: 'test_generator'
+    arguments: ['@module_handler']

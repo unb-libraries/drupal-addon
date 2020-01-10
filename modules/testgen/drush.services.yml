@@ -1,5 +1,5 @@
 services:
-  testgen.commands:
-    class: 'Drupal\testgen\Commands\TestgenCommands'
+  testgen.commands.modules:
+    class: 'Drupal\testgen\Commands\ModuleTestsCommands'
     tags:
       - { name: drush.command }
