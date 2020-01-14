@@ -119,6 +119,7 @@ class JsonRouteProvider implements EntityHandlerInterface, EntityRouteProviderIn
    *   An instance of Route.
    */
   protected function getCreateRoute(EntityTypeInterface $entity_type) {
+    // TODO: Add CSRF token requirement.
     if ($entity_type->hasLinkTemplate(self::PATH_CREATE)) {
       $path = $entity_type->getLinkTemplate(self::PATH_CREATE);
     }
@@ -144,6 +145,7 @@ class JsonRouteProvider implements EntityHandlerInterface, EntityRouteProviderIn
    *   An instance of Route.
    */
   protected function getUpdateRoute(EntityTypeInterface $entity_type) {
+    // TODO: Add CSRF token requirement.
     return $this->getEntityRoute(
       $entity_type, self::ACTION_EDIT, self::METHOD_PATCH
     );
@@ -159,6 +161,7 @@ class JsonRouteProvider implements EntityHandlerInterface, EntityRouteProviderIn
    *   An instance of Route.
    */
   protected function getDeleteRoute(EntityTypeInterface $entity_type) {
+    // TODO: Add CSRF token requirement.
     return $this->getEntityRoute(
       $entity_type, self::ACTION_DELETE, self::METHOD_DELETE
     );
@@ -180,9 +183,13 @@ class JsonRouteProvider implements EntityHandlerInterface, EntityRouteProviderIn
     else {
       $path = '';
     }
-    return $this->getEntityBaseRoute(
+    $route = $this->getEntityBaseRoute(
       $entity_type, self::ACTION_LIST, self::METHOD_GET, $path
     );
+    $route->addDefaults([
+      'entity_type' => $entity_type->id(),
+    ]);
+    return $route;
   }
 
   /**
@@ -212,18 +219,13 @@ class JsonRouteProvider implements EntityHandlerInterface, EntityRouteProviderIn
     }
 
     $route = $this->getEntityBaseRoute($entity_type, $action, $method, $path);
-    $entity_type_id = $entity_type->id();
-    $route->addRequirements([
-      '_entity_access' => "{$entity_type_id}.{$action}",
-      '_format' => self::FORMAT,
+    $route->addOptions([
+      'parameters' => [
+        'entity' => [
+          'type' => 'entity:' . $entity_type->id(),
+        ],
+      ],
     ]);
-//    $route->addOptions([
-//      'parameters' => [
-//        $entity_type_id => [
-//          'type' => 'entity:' . $entity_type->id(),
-//        ],
-//      ],
-//    ]);
 
     return $route;
   }
@@ -244,13 +246,25 @@ class JsonRouteProvider implements EntityHandlerInterface, EntityRouteProviderIn
    *   An instance of Route.
    */
   protected function getEntityBaseRoute(EntityTypeInterface $entity_type, $action = self::ACTION_VIEW, $method = self::METHOD_GET, $path = '') {
+    // TODO: Add authentication requirements.
+    $entity_type_id = $entity_type->id();
     if (!$path) {
       $path = sprintf('/%s', strtolower($entity_type->getPluralLabel()));
     }
 
+    // TODO: Route parameters must be equally named as controller action parameters. This shall be removed.
+    $path = str_replace('{' . $entity_type->id() . '}', '{entity}', $path);
+
     $route = new Route($path);
     $route->addDefaults([
       '_controller' => $this->getControllerAction($action),
+    ]);
+
+    // TODO: "_permission" shall be replaced by "_entity_access". This is a result of parameter mapping. See above.
+    $route->addRequirements([
+//      '_entity_access' => "{$entity_type_id}.{$action}",
+      '_permission' => "{$action} {$entity_type_id} entities",
+      '_format' => self::FORMAT,
     ]);
     $route->setMethods([$method]);
 
