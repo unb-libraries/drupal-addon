@@ -140,6 +140,4 @@ class JsonController extends ControllerBase {
     return new JsonResponse($data, $status);
   }
 
-  }
-
 }
