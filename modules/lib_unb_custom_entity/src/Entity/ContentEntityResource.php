@@ -2,8 +2,6 @@
 
 namespace Drupal\lib_unb_custom_entity\Entity;
 
-use Drupal\Core\Entity\ContentEntityBase;
-
 /**
  * Base class for content entities that represent REST resources.
  *
