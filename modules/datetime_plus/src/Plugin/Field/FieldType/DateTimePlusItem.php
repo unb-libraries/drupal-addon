@@ -13,8 +13,8 @@ use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
  *   id = "datetime_plus",
  *   label = @Translation("Datetime Plus"),
  *   description = @Translation("Create and store date values."),
- *   default_widget = "datetime_default",
- *   default_formatter = "datetime_default",
+ *   default_widget = "datetime_plus_default",
+ *   default_formatter = "datetime_plus_default",
  *   list_class = "\Drupal\datetime\Plugin\Field\FieldType\DateTimeFieldItemList",
  *   constraints = {"DateTimeFormat" = {}}
  * )
