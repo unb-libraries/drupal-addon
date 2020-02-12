@@ -1,0 +1,6 @@
+name: 'Datetime Plus'
+type: module
+description: 'Enhancements for working with dates and time in Drupal.'
+core: 8.x
+package: 'UNB Libraries'
+dependencies: {  }

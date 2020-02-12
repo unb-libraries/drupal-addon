@@ -1,0 +1,13 @@
+{
+  "name": "unb-libraries/datetime-plus",
+  "description": "Enhancements for working with dates and time in Drupal.",
+  "type": "drupal-module",
+  "require": {},
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "UNB Libraries",
+      "email": "libsupport@unb.ca"
+    }
+  ]
+}

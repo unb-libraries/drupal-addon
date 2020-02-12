@@ -3,4 +3,5 @@ type: module
 description: 'Enhancements for working with custom entities.'
 core: 8.x
 package: 'UNB Libraries'
-dependencies: {  }
+dependencies:
+  - datetime_plus
