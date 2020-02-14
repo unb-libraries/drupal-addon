@@ -44,4 +44,58 @@ class FilterableEntityListBuilder extends EntityListBuilder {
     return \Drupal::request()->query->all();
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  public function render() {
+    return parent::render() + [
+      '#cache' => [
+        'contexts' => $this->cacheContexts(),
+        'tags' => $this->cacheTags(),
+      ],
+    ];
+  }
+
+  /**
+   * Retrieve cache contexts based on by which entity fields the list can be filtered.
+   *
+   * @return array
+   *   Array containing cache contexts of the form "url.query_args:ENTITY_FIELD_ID".
+   *
+   * @link https://www.drupal.org/docs/8/api/cache-api/cache-contexts
+   */
+  protected function cacheContexts() {
+    $contexts = [];
+    foreach ($this->filterableFieldIds() as $field_id) {
+      $contexts[] = "url.query_args:{$field_id}";
+    }
+    return $contexts;
+  }
+
+  /**
+   * Retrieve all entity fields by which this list shall be filterable.
+   *
+   * @return array
+   *   Array of entity field IDs.
+   */
+  protected function filterableFieldIds() {
+    /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $field_manager */
+    $field_manager = \Drupal::service('entity_field.manager');
+    return array_keys($field_manager
+      ->getFieldStorageDefinitions($this->getStorage()->getEntityTypeId()
+      ));
+  }
+
+  /**
+   * Retrieve cache tags.
+   *
+   * @return array
+   *   Array of cache tags.
+   *
+   * @link https://www.drupal.org/docs/8/api/cache-api/cache-tags
+   */
+  protected function cacheTags() {
+    return [];
+  }
+
 }
