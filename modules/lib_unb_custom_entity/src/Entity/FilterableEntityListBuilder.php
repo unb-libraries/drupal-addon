@@ -23,6 +23,48 @@ class FilterableEntityListBuilder extends EntityListBuilder {
   ];
 
   /**
+   * Build a filter form for this list.
+   *
+   * @return array
+   *   A render array.
+   */
+  public function buildForm() {
+    return \Drupal::formBuilder()
+      ->getForm($this->getFormClass());
+  }
+
+  /**
+   * Retrieve the form class to use for filtering this list.
+   *
+   * @return string
+   *   A class name string.
+   */
+  protected function getFormClass() {
+    $form_class = $this->getEntityType()->getFormClass('filter');
+    return $form_class;
+  }
+
+  /**
+   * Retrieve the entity type ID.
+   *
+   * @return string
+   *   A string.
+   */
+  public function getEntityTypeId() {
+    return $this->entityTypeId;
+  }
+
+  /**
+   * Retrieve the entity type.
+   *
+   * @return \Drupal\Core\Entity\EntityTypeInterface
+   *   An entity type definition.
+   */
+  public function getEntityType() {
+    return $this->entityType;
+  }
+
+  /**
    * {@inheritDoc}
    */
   protected function getEntityIds() {
@@ -111,7 +153,9 @@ class FilterableEntityListBuilder extends EntityListBuilder {
    * {@inheritDoc}
    */
   public function render() {
-    return parent::render() + [
+    return [
+      'form' => $this->buildForm(),
+    ] + parent::render() + [
       '#cache' => [
         'contexts' => $this->cacheContexts(),
         'tags' => $this->cacheTags(),
