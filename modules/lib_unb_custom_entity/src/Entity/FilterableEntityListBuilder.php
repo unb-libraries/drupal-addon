@@ -129,8 +129,11 @@ class FilterableEntityListBuilder extends EntityListBuilder {
    */
   protected function cacheContexts() {
     $contexts = [];
+    $context_base = 'url.query_args';
     foreach ($this->filterableFieldIds() as $field_id) {
-      $contexts[] = "url.query_args:{$field_id}";
+      $contexts[] = sprintf('%s:%s', $context_base, $field_id);
+      foreach (array_keys($this->queryOperands()) as $op)
+        $contexts[] = sprintf('%s:%s__%s', $context_base, $field_id, $op);
     }
     return $contexts;
   }
