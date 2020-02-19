@@ -4,7 +4,39 @@ namespace Drupal\lib_unb_custom_entity\Entity;
 
 use Drupal\Core\Entity\EntityListBuilder as DefaultEntityListBuilder;
 
+/**
+ * Enhances Drupal's default EntityListBuilder implementation.
+ */
 class EntityListBuilder extends DefaultEntityListBuilder {
+
+  /**
+   * Whether the rendered list should be paginated.
+   *
+   * @var bool
+   */
+  protected $paginate = TRUE;
+
+  /**
+   * Whether the rendered list should be paginated.
+   * @return bool
+   */
+  protected function paginate() {
+    return $this->limit() > 0 && $this->paginate;
+  }
+
+  /**
+   * Enable pagination.
+   */
+  public function enablePagination() {
+    $this->paginate = TRUE;
+  }
+
+  /**
+   * Disable pagination.
+   */
+  public function disablePagination() {
+    $this->paginate = FALSE;
+  }
 
   /**
    * Retrieve the entity type ID.
@@ -34,10 +66,21 @@ class EntityListBuilder extends DefaultEntityListBuilder {
       ->sort($this->entityType->getKey('id'));
 
     // Only add the pager if a limit is specified.
-    if ($this->limit) {
-      $query->pager($this->limit);
+    if ($this->paginate()) {
+      $query->pager($this->limit());
     }
     return $query->execute();
+  }
+
+  /**
+   * Limit the number of rows.
+   *
+   * @return false|int
+   *   An integer, or FALSE if no
+   *   limit has been defined.
+   */
+  protected function limit() {
+    return $this->limit;
   }
 
   /**
