@@ -68,6 +68,9 @@ class EntityFilterForm extends FormBase {
   }
 
   protected function init(FormStateInterface $form_state) {
+    foreach ($this->getRequest()->query->all() as $param => $value) {
+      $form_state->setValue($param, $value);
+    }
     // Flag that this form has been initialized.
     $form_state->set('entity_form_initialized', TRUE);
   }
