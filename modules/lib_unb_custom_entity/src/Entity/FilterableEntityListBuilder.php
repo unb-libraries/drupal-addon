@@ -2,6 +2,8 @@
 
 namespace Drupal\lib_unb_custom_entity\Entity;
 
+use Drupal\lib_unb_custom_entity\Form\EntityFilterForm;
+
 /**
  * Build a listing of entities that can be filtered by HTTP GET parameters.
  *
@@ -21,14 +23,32 @@ class FilterableEntityListBuilder extends EntityListBuilder {
   ];
 
   /**
+   * The form object used to control the filtering of this list.
+   *
+   * @var \Drupal\Core\Form\FormInterface
+   */
+  protected $form;
+
+  /**
+   * Retrieve the form object used to control the filtering of this list.
+   *
+   * @return \Drupal\Core\Form\FormInterface
+   */
+  protected function getForm() {
+    if (!isset($this->form) && $form_class = $this->getFormClass()) {
+      $this->form = new $form_class($this->getEntityType());
+    }
+    return $this->form;
+  }
+
+  /**
    * Build a filter form for this list.
    *
    * @return array
    *   A render array.
    */
   public function buildForm() {
-    return \Drupal::formBuilder()
-      ->getForm($this->getFormClass());
+    return \Drupal::formBuilder()->getForm($this->getForm());
   }
 
   /**
@@ -38,8 +58,12 @@ class FilterableEntityListBuilder extends EntityListBuilder {
    *   A class name string.
    */
   protected function getFormClass() {
-    $form_class = $this->getEntityType()->getFormClass('filter');
-    return $form_class;
+    if ($form_class = $this->getEntityType()->getFormClass('filter')) {
+      if (is_subclass_of($form_class, EntityFilterForm::class)) {
+        return $form_class;
+      }
+    }
+    return NULL;
   }
 
   /**
@@ -153,8 +177,7 @@ class FilterableEntityListBuilder extends EntityListBuilder {
     /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $field_manager */
     $field_manager = \Drupal::service('entity_field.manager');
     return array_keys($field_manager
-      ->getFieldStorageDefinitions($this->getStorage()->getEntityTypeId()
-      ));
+      ->getFieldStorageDefinitions($this->getStorage()->getEntityTypeId()));
   }
 
 }
