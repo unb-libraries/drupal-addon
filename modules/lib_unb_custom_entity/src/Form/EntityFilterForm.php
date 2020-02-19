@@ -67,6 +67,12 @@ class EntityFilterForm extends FormBase {
     return $form;
   }
 
+  /**
+   * Initialize the form state and the entity before the first form build.
+   *
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   */
   protected function init(FormStateInterface $form_state) {
     foreach ($this->getRequest()->query->all() as $param => $value) {
       $form_state->setValue($param, $value);
@@ -106,6 +112,13 @@ class EntityFilterForm extends FormBase {
       '#value' => $this->t('Filter'),
       '#submit' => ['::submitForm'],
     ];
+
+    $actions['reset'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Reset'),
+      '#submit' => ['::resetForm'],
+    ];
+
     return $actions;
   }
 
@@ -113,12 +126,26 @@ class EntityFilterForm extends FormBase {
    * @inheritDoc
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $redirect_route_name = Url::createFromRequest($this
-      ->getRequest())
-      ->getRouteName();
-
     $form_state->cleanValues();
-    $form_state->setRedirect($redirect_route_name, $form_state->getValues());
+    $form_state->setRedirect($this->getRedirectRoute(), $form_state->getValues());
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function resetForm(array &$form, FormStateInterface $form_state) {
+    $form_state->cleanValues();
+    $form_state->setRedirect($this->getRedirectRoute(), []);
+  }
+
+  /**
+   * Retrieve the route to redirect to.
+   *
+   * @return string
+   *   A route name.
+   */
+  protected function getRedirectRoute() {
+    return $this->getRouteMatch()->getRouteName();
   }
 
 }
