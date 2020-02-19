@@ -5,6 +5,7 @@ namespace Drupal\lib_unb_custom_entity\Form;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 
 /**
  * Form implementation to filter lists of entities.
@@ -109,5 +110,12 @@ class EntityFilterForm extends FormBase {
    * @inheritDoc
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
+    $redirect_route_name = Url::createFromRequest($this
+      ->getRequest())
+      ->getRouteName();
+
+    $form_state->cleanValues();
+    $form_state->setRedirect($redirect_route_name, $form_state->getValues());
   }
+
 }
