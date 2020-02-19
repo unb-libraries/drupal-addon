@@ -18,7 +18,7 @@ use Symfony\Component\Routing\RouteCollection;
  * 'canonical' template as well as CREATE and COLLECTION routes
  * based on the 'collection' template.
  *
- * @package Drupal\unb_locations\Entity\Routing
+ * @package Drupal\lib_unb_custom_entity\Entity\Routing
  */
 class JsonRouteProvider implements EntityHandlerInterface, EntityRouteProviderInterface {
 

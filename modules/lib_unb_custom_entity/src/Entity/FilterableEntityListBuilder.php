@@ -23,6 +23,13 @@ class FilterableEntityListBuilder extends EntityListBuilder {
   ];
 
   /**
+   * Fields on which can be filtered.
+   *
+   * @var array
+   */
+  protected $fields;
+
+  /**
    * The form object used to control the filtering of this list.
    *
    * @var \Drupal\Core\Form\FormInterface
@@ -95,12 +102,16 @@ class FilterableEntityListBuilder extends EntityListBuilder {
    */
   protected function parseParam($param) {
     if (!empty($field_id_and_op = explode('__', $param))) {
-      $field_id = $field_id_and_op[0];
+      if (!in_array($field_id = $field_id_and_op[0], $this->filterableFieldIds())) {
+        return FALSE;
+      }
+
       $op = count($field_id_and_op) > 1
         ? $this->toQueryOperand($field_id_and_op[1])
         : $this->toQueryOperand('');
       return [$field_id, $op];
     }
+
     return FALSE;
   }
 
@@ -174,10 +185,14 @@ class FilterableEntityListBuilder extends EntityListBuilder {
    *   Array of entity field IDs.
    */
   protected function filterableFieldIds() {
-    /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $field_manager */
-    $field_manager = \Drupal::service('entity_field.manager');
-    return array_keys($field_manager
-      ->getFieldStorageDefinitions($this->getStorage()->getEntityTypeId()));
+    if (!isset($this->fields)) {
+      /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $field_manager */
+      $field_manager = \Drupal::service('entity_field.manager');
+      $this->fields = array_keys($field_manager
+        ->getFieldStorageDefinitions($this->getStorage()->getEntityTypeId()));
+    }
+    return $this->fields;
+
   }
 
 }
