@@ -1,0 +1,3 @@
+services:
+  datetime_plus.timezone_resolver:
+    class: '\Drupal\datetime_plus\Datetime\DateTimeZoneResolver'
