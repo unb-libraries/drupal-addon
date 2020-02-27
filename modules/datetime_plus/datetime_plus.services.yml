@@ -4,3 +4,15 @@ services:
   datetime_plus:
     class: '\Drupal\datetime_plus\Datetime\DateTimeFactory'
     arguments: ['@datetime_plus.timezone_resolver']
+  datetime_plus.user:
+    parent: 'datetime_plus'
+    calls:
+      - ['setTimeZone', ['user']]
+  datetime_plus.system:
+    parent: 'datetime_plus'
+    calls:
+      - ['setTimeZone', ['system']]
+  datetime_plus.storage:
+    parent: 'datetime_plus'
+    calls:
+      - ['setTimeZone', ['storage']]
