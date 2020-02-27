@@ -1,3 +1,6 @@
 services:
   datetime_plus.timezone_resolver:
     class: '\Drupal\datetime_plus\Datetime\DateTimeZoneResolver'
+  datetime_plus:
+    class: '\Drupal\datetime_plus\Datetime\DateTimeFactory'
+    arguments: ['@datetime_plus.timezone_resolver']
