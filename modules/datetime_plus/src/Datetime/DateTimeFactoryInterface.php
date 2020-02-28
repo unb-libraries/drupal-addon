@@ -21,6 +21,19 @@ interface DateTimeFactoryInterface {
   public function setTimeZone($timezone);
 
   /**
+   * Create a datetime object.
+   *
+   * @param string $time
+   *   A date/input_time_adjusted string. Defaults to 'now'.
+   * @param array $settings
+   *   @see \Drupal\datetime_plus\Datetime\DrupalDateTimePlus::__construct()
+   *
+   * @return \Drupal\datetime_plus\Datetime\DrupalDateTimePlus
+   *   A datetime object.
+   */
+  public function create($time = 'now', $settings = []);
+
+  /**
    * Creates a date object from timestamp input.
    *
    * The created datetime object will be converted

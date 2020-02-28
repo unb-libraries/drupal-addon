@@ -62,6 +62,13 @@ class DateTimeFactory implements DateTimeFactoryInterface {
   }
 
   /**
+   * {@inheritDoc}
+   */
+  public function create($time = 'now', $settings = []) {
+    return new DrupalDateTimePlus($time, $this->getTimeZone(), $settings);
+  }
+
+  /**
    * Create a timezone object from the given timezone name.
    *
    * @param string $timezone_name
