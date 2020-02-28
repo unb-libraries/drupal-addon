@@ -107,4 +107,18 @@ class DateTimeFactory implements DateTimeFactoryInterface {
       $format, $time, $this->getTimeZone(), $settings);
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  public function now() {
+    return new DrupalDateTimePlus('now', $this->getTimeZone());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function today($format = 'Y-m-d') {
+    return $this->now()->format($format);
+  }
+
 }

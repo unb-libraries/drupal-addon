@@ -91,4 +91,24 @@ interface DateTimeFactoryInterface {
    */
   public function createFromFormat($format, $time, $settings = []);
 
+  /**
+   * Retrieve the current time.
+   *
+   * @return \Drupal\datetime_plus\Datetime\DrupalDateTimePlus
+   *   A datetime object.
+   */
+  public function now();
+
+  /**
+   * Retrieve today's date, formatted as desired.
+   *
+   * @param string $format
+   *   PHP datetime formatting string.
+   *   Defaults to Y-m-d
+   *
+   * @return string
+   *   A date formatted string.
+   */
+  public function today($format = 'Y-m-d');
+
 }
