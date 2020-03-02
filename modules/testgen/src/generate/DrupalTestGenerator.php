@@ -2,7 +2,7 @@
 
 namespace Drupal\testgen\generate;
 
-use TestGen\generate\TestGenerator;
+use TestGen\TestGen;
 
 /**
  * Drupal wrapper for PHP-TestGen TestGenerator.
@@ -40,6 +40,16 @@ abstract class DrupalTestGenerator {
   }
 
   /**
+   * Inject the actual generator.
+   *
+   * @param \TestGen\TestGen $testgen
+   *   A TestGen service instance.
+   */
+  public function setGenerator(TestGen $testgen) {
+    $this->generator = $testgen->generator();
+  }
+
+  /**
    * Create a new DrupalTestGenerator instance.
    *
    * @param \Drupal\Core\Config\ImmutableConfig $config
@@ -47,19 +57,20 @@ abstract class DrupalTestGenerator {
    */
   public function __construct($config) {
     $this->config = $config;
-    $this->generator = new TestGenerator();
   }
 
   /**
    * Call the original generator to generate test cases.
    *
+   * @param string $model_root
+   *   Path to the folder which to scan for model files.
    * @param string $output_root
    *   Path to the output folder in which to put generated files.
-   * @param string $template_root
-   *   Path to the folder which to scan for template files.
    */
-  protected function generate($output_root = TestGenerator::OUTPUT_ROOT, $template_root = TestGenerator::TEMPLATE_ROOT) {
-    $this->generator()->generate($output_root, $template_root);
+  protected function generate($model_root, $output_root) {
+    $this->generator()->setModelRoot($model_root);
+    $this->generator()->setOutputRoot($output_root);
+    $this->generator()->generate();
   }
 
 }

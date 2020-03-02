@@ -54,7 +54,9 @@ class ModuleTestGenerator extends DrupalTestGenerator {
    */
   public function generateTests($module_name) {
     if ($module = $this->getModule($module_name)) {
-      $this->generate($this->getModuleTestRoot($module));
+      $this->generate(
+        $this->getModuleModelRoot($module),
+        $this->getModuleTestRoot($module));
     }
   }
 
@@ -85,7 +87,11 @@ class ModuleTestGenerator extends DrupalTestGenerator {
    *   Absolute path to the given module's test root.
    */
   protected function getModuleTestRoot(Extension $module) {
-    return $module->getPath() . $this->config()->get(self::TEST_ROOT);
+    return $module->getPath() . '/tests';
+  }
+
+  protected function getModuleModelRoot(Extension $module) {
+    return $this->getModuleTestRoot($module) . '/models';
   }
 
 }
