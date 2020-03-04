@@ -22,6 +22,19 @@ class DrupalDateTimePlus extends DrupalDateTime {
   const WEEKDAY_NUMERIC = 'j';
 
   /**
+   * The date part.
+   *
+   * @param string $format
+   *   The format. Defaults to YYYY-MM-DD.
+   *
+   * @return string
+   *   A date formatted string.
+   */
+  public function date($format = 'Y-m-d') {
+    return $this->format($format);
+  }
+
+  /**
    * The year part as a two-digit string or four-digit integer.
    *
    * @param string $format
@@ -106,6 +119,19 @@ class DrupalDateTimePlus extends DrupalDateTime {
       default:
         return $this->format(self::WEEKDAY_NATURAL);
     }
+  }
+
+  /**
+   * The time part.
+   *
+   * @param string $format
+   *   The format. Defaults to 12-hour (H:MM AM/PM) format.
+   *
+   * @return string
+   *   A time formatted string.
+   */
+  public function time($format = 'h:i A') {
+    return $this->format($format);
   }
 
 }
