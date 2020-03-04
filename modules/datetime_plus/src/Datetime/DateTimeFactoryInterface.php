@@ -105,6 +105,18 @@ interface DateTimeFactoryInterface {
   public function createFromFormat($format, $time, $settings = []);
 
   /**
+   * Create a datetime span based on the given parameters.
+   *
+   * @param \Drupal\datetime_plus\Datetime\DrupalDateTimePlus|string $start
+   *   A datetime object.
+   * @param \Drupal\datetime_plus\Datetime\DrupalDateTimePlus|string $end
+   *   A datetime object.
+   *
+   * @return \Drupal\datetime_plus\Datetime\DateTimeSpan
+   */
+  public function createTimespan($start, $end);
+
+  /**
    * Retrieve the current time.
    *
    * @return \Drupal\datetime_plus\Datetime\DrupalDateTimePlus

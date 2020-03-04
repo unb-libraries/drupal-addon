@@ -117,6 +117,24 @@ class DateTimeFactory implements DateTimeFactoryInterface {
   /**
    * {@inheritDoc}
    */
+  public function createTimespan($start, $end) {
+    if (is_string($start)) {
+      $start = $this->create($start);
+    }
+
+    if (is_string($end)) {
+      $end = $this->create($end);
+    }
+
+    $span = new DateTimeSpan($start, $end);
+    $span->setTimeZone($this->getTimeZone());
+
+    return $span;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public function now() {
     return new DrupalDateTimePlus('now', $this->getTimeZone());
   }
