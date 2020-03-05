@@ -20,6 +20,14 @@ class DrupalDateTimePlus extends DrupalDateTime {
   const WEEKDAY_NATURAL = 'l';
   const WEEKDAY_ABBR = 'D';
   const WEEKDAY_NUMERIC = 'j';
+  const HOUR_24 = 'H';
+  const HOUR_24_ZERO = 'G';
+  const HOUR_12 = 'h';
+  const HOUR_12_ZERO = 'g';
+  const MINUTE_NATURAL = '_i';
+  const MINUTE_ZERO = 'i';
+  const SECOND_NATURAL = '_s';
+  const SECOND_ZERO = 's';
 
   /**
    * The date part.
@@ -132,6 +140,74 @@ class DrupalDateTimePlus extends DrupalDateTime {
    */
   public function time($format = 'h:i A') {
     return $this->format($format);
+  }
+
+  /**
+   * The hour.
+   *
+   * @param string $format
+   *   The format, whether to return 12 or 24 hour format,
+   *   include or exclude leading zeros.
+   *
+   * @return int|string
+   *   An integer, if excluding leading zeros.
+   *   A string otherwise.
+   */
+  public function hour($format = self::HOUR_24) {
+    switch ($format) {
+      case self::HOUR_12_ZERO:
+      case self::HOUR_24_ZERO:
+        return $this->format($format);
+
+      case self::HOUR_12:
+      case self::HOUR_24:
+      default:
+        return intval($this->format($format));
+    }
+  }
+
+  /**
+   * The minute.
+   *
+   * @param string $format
+   *   The format, whether to include or exclude
+   *   leading zeros.
+   *
+   * @return int|string
+   *   An integer if excluding leading zeros.
+   *   A string otherwise.
+   */
+  public function minute($format = self::MINUTE_NATURAL) {
+    switch ($format) {
+      case self::MINUTE_ZERO:
+        return $this->format($format);
+
+      case self::MINUTE_NATURAL:
+      default:
+        return intval($this->format($format));
+    }
+  }
+
+  /**
+   * The second.
+   *
+   * @param string $format
+   *   The format, whether to include or exclude
+   *   leading zeros.
+   *
+   * @return int|string
+   *   An integer if excluding leading zeros.
+   *   A string otherwise.
+   */
+  public function second($format = self::SECOND_NATURAL) {
+    switch ($format) {
+      case self::SECOND_ZERO:
+        return $this->format($format);
+
+      case self::SECOND_NATURAL:
+      default:
+        return intval($this->format($format));
+    }
   }
 
 }
