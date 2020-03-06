@@ -71,19 +71,53 @@ class DrupalDateTimePlus extends DrupalDateTime {
    * @return int|string
    *   An integer or string.
    */
-  public function month($format = self::MONTH_NATURAL) {
+  public function month($format = self::MONTH_NUMERIC) {
     switch ($format) {
-      case self::MONTH_NUMERIC:
-      case self::MONTH_NUMERIC_ZERO:
-        return intval($this->format($format));
-
-      case self::MONTH_ABBR:
-        return $this->format(self::MONTH_ABBR);
-
       case self::MONTH_NATURAL:
+      case self::MONTH_ABBR:
+      case self::MONTH_NUMERIC_ZERO:
+        return $this->format($format);
+
+      case self::MONTH_NUMERIC:
       default:
-        return $this->format(self::MONTH_NATURAL);
+        return intval($this->format($format));
     }
+  }
+
+  /**
+   * The number of days of the month the datetime object lies within.
+   *
+   * @return int
+   *   An integer between 28 and 31.
+   */
+  public function daysInMonth() {
+    $month = $this->month();
+    return $month === 2
+      ? 28 + intval($this->isLeapYear())
+      : $month > 7
+        ? 31 - $month % 2
+        : 30 + $month % 2;
+  }
+
+  /**
+   * The number of days in the year the datetime object lies within.
+   *
+   * @return int
+   *   Either 365 or 366.
+   */
+  public function daysInYear() {
+    return 365 + intval($this->isLeapYear());
+  }
+
+  /**
+   * Whether the datetime object lies within a leap year.
+   *
+   * @return bool
+   *   TRUE if the year is a leap year. FALSE otherwise.
+   */
+  public function isLeapYear() {
+    $year = $this->year();
+    return $year % 4 === 0 && ($year % 100 !== 0 || $year % 400 === 0);
   }
 
   /**
@@ -178,13 +212,14 @@ class DrupalDateTimePlus extends DrupalDateTime {
    *   A string otherwise.
    */
   public function minute($format = self::MINUTE_NATURAL) {
+    $minute = $this->format('i');
     switch ($format) {
       case self::MINUTE_ZERO:
-        return $this->format($format);
+        return $minute;
 
       case self::MINUTE_NATURAL:
       default:
-        return intval($this->format($format));
+        return intval($minute);
     }
   }
 
@@ -200,13 +235,14 @@ class DrupalDateTimePlus extends DrupalDateTime {
    *   A string otherwise.
    */
   public function second($format = self::SECOND_NATURAL) {
+    $second = $this->format('s');
     switch ($format) {
       case self::SECOND_ZERO:
-        return $this->format($format);
+        return $second;
 
       case self::SECOND_NATURAL:
       default:
-        return intval($this->format($format));
+        return intval($second);
     }
   }
 
