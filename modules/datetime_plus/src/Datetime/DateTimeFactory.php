@@ -140,7 +140,7 @@ class DateTimeFactory implements DateTimeFactoryInterface {
    * {@inheritDoc}
    */
   public function today($format = 'Y-m-d') {
-    return $this->now()->format($format);
+    return $this->now()->date($format);
   }
 
 }

@@ -257,4 +257,30 @@ class DrupalDateTimePlus extends DrupalDateTime {
     return $interval->duration();
   }
 
+  /**
+   * Like add(), but instead accepts timespan object as parameter.
+   *
+   * @param \Drupal\datetime_plus\Datetime\Timespan $timespan
+   *   A timespan object.
+   *
+   * @return \Drupal\datetime_plus\Datetime\DrupalDateTimePlus
+   *   A datetime object.
+   */
+  public function plus(Timespan $timespan) {
+    return $this->add($timespan->toPhpDateInterval());
+  }
+
+  /**
+   * Like sub, but instead accepts timespan objects as parameter.
+   *
+   * @param \Drupal\datetime_plus\Datetime\Timespan $timespan
+   *   A timespan object.
+   *
+   * @return \Drupal\datetime_plus\Datetime\DrupalDateTimePlus
+   *   A datetime object.
+   */
+  public function minus(Timespan $timespan) {
+    return $this->sub($timespan->toPhpDateInterval());
+  }
+
 }

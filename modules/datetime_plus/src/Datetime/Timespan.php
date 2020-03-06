@@ -298,6 +298,21 @@ class Timespan {
   }
 
   /**
+   * Converts to a PHP DateInterval for compatibility purpose.
+   *
+   * @return \DateInterval
+   *   A PHP date interval object.
+   */
+  public function toPhpDateInterval() {
+    $map = $this->toArray();
+    $str = implode(', ', array_map(function ($key, $value) {
+      return "{$value} {$key}";
+    }, array_keys($map), array_values($map)));
+
+    return \DateInterval::createFromDateString($str);
+  }
+
+  /**
    * Convert the timespan into an array.
    *
    * @return array
