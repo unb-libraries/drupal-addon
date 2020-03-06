@@ -12,33 +12,24 @@ namespace Drupal\datetime_plus\Datetime;
  */
 class DateIntervalPlus {
 
-  const UNIT_MAP = [
-    'seconds' => 60,
-    'minutes' => 60,
-    'hours' => 24,
-    'days' => 0,
-    'months' => 12,
-    'years' => 0,
-  ];
-
   /**
-   * The start of the timespan.
+   * The start of the interval.
    *
    * @var \Drupal\datetime_plus\Datetime\DrupalDateTimePlus
    */
   protected $start;
 
   /**
-   * The end of the timespan.
+   * The end of the interval.
    *
    * @var \Drupal\datetime_plus\Datetime\DrupalDateTimePlus
    */
   protected $end;
 
   /**
-   * The duration between start and end.
+   * The duration between start and end of the interval.
    *
-   * @var \DateInterval
+   * @var \Drupal\datetime_plus\Datetime\Timespan
    */
   protected $duration;
 
@@ -86,43 +77,16 @@ class DateIntervalPlus {
   }
 
   /**
-   * Retrieve the duration of the timespan.
+   * Retrieve the duration of the interval.
    *
-   * @return \DateInterval
-   *   A datetime interval object.
+   * @return \Drupal\datetime_plus\Datetime\Timespan
+   *   A timespan object.
    */
   public function duration() {
     if (!isset($this->duration)) {
-      $this->calculateDuration();
+      $this->duration = Timespan::createFromInterval($this);
     }
     return $this->duration;
-  }
-
-  /**
-   * Calculate the years, months, etc. between the start and end of the timespan.
-   */
-  private function calculateDuration() {
-    $start = clone $this->start();
-    $unit_map = self::UNIT_MAP;
-
-    $unit_values = [];
-    foreach (array_keys($unit_map) as $unit) {
-      $unit_method = substr($unit, 0, strlen($unit) - 1);
-      if (($s = $start->$unit_method()) <= ($e = $this->end()->$unit_method())) {
-        $unit_values[$unit] = $e - $s;
-      }
-      else {
-        $unit_values[$unit] = $e + $unit_map[$unit] - $s;
-      }
-      $start->add(\DateInterval::createFromDateString("{$unit_values[$unit]} {$unit}"));
-      $unit_map['days'] = $start->daysInMonth();
-    }
-
-    $duration_description = implode(', ', array_map(function ($unit, $value) {
-      return "{$value} {$unit}";
-    }, array_keys($unit_values), array_values($unit_values)));
-
-    $this->duration = \DateInterval::createFromDateString($duration_description);
   }
 
   /**
