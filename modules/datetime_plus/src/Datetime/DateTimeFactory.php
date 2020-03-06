@@ -117,7 +117,7 @@ class DateTimeFactory implements DateTimeFactoryInterface {
   /**
    * {@inheritDoc}
    */
-  public function createTimespan($start, $end) {
+  public function createDateInterval($start, $end) {
     if (is_string($start)) {
       $start = $this->create($start);
     }
@@ -126,10 +126,7 @@ class DateTimeFactory implements DateTimeFactoryInterface {
       $end = $this->create($end);
     }
 
-    $span = new DateTimeSpan($start, $end);
-    $span->setTimeZone($this->getTimeZone());
-
-    return $span;
+    return new DateIntervalPlus($start, $end);
   }
 
   /**

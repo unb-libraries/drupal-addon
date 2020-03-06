@@ -112,9 +112,9 @@ interface DateTimeFactoryInterface {
    * @param \Drupal\datetime_plus\Datetime\DrupalDateTimePlus|string $end
    *   A datetime object.
    *
-   * @return \Drupal\datetime_plus\Datetime\DateTimeSpan
+   * @return \Drupal\datetime_plus\Datetime\DateIntervalPlus
    */
-  public function createTimespan($start, $end);
+  public function createDateInterval($start, $end);
 
   /**
    * Retrieve the current time.

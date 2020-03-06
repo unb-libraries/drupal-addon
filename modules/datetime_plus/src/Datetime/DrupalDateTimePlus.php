@@ -246,4 +246,15 @@ class DrupalDateTimePlus extends DrupalDateTime {
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  public function diff($datetime2, $absolute = FALSE) {
+    if (!$datetime2 instanceof DrupalDateTimePlus) {
+      $datetime2 = DrupalDateTimePlus::createFromDateTime($datetime2);
+    }
+    $interval = new DateIntervalPlus($this, $datetime2);
+    return $interval->duration();
+  }
+
 }
