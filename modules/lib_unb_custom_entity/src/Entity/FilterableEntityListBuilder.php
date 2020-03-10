@@ -91,7 +91,7 @@ class FilterableEntityListBuilder extends EntityListBuilder {
   }
 
   /**
-   * Parse a string of the form PARAM__OP into separate variables.
+   * Parse a string of the form PARAM::OP into separate variables.
    *
    * @param $param
    *   A string containing both a param and an operand.
@@ -101,7 +101,7 @@ class FilterableEntityListBuilder extends EntityListBuilder {
    *   FALSE if the string could not be parsed.
    */
   protected function parseParam($param) {
-    if (!empty($field_id_and_op = explode('__', $param))) {
+    if (!empty($field_id_and_op = explode('::', $param))) {
       if (!in_array($field_id = $field_id_and_op[0], $this->filterableFieldIds())) {
         return FALSE;
       }
@@ -173,7 +173,7 @@ class FilterableEntityListBuilder extends EntityListBuilder {
     foreach ($this->filterableFieldIds() as $field_id) {
       $contexts[] = sprintf('%s:%s', $context_base, $field_id);
       foreach (array_keys($this->queryOperands()) as $op)
-        $contexts[] = sprintf('%s:%s__%s', $context_base, $field_id, $op);
+        $contexts[] = sprintf('%s:%s::%s', $context_base, $field_id, $op);
     }
     return $contexts;
   }
@@ -188,11 +188,20 @@ class FilterableEntityListBuilder extends EntityListBuilder {
     if (!isset($this->fields)) {
       /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $field_manager */
       $field_manager = \Drupal::service('entity_field.manager');
-      $this->fields = array_keys($field_manager
-        ->getFieldStorageDefinitions($this->getStorage()->getEntityTypeId()));
+      $this->fields = [];
+      foreach ($field_manager->getFieldStorageDefinitions($this->getStorage()->getEntityTypeId()) as $field_id => $field_definition) {
+        $columns = $field_definition->getSchema()['columns'];
+        if (count($columns) > 1) {
+          foreach (array_keys($columns) as $column_id) {
+            $this->fields[] = sprintf('%s__%s', $field_id, $column_id);
+          }
+        }
+        else {
+          $this->fields[] = $field_id;
+        }
+      }
     }
     return $this->fields;
-
   }
 
 }
