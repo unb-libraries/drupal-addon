@@ -20,6 +20,8 @@ class FilterableEntityListBuilder extends EntityListBuilder {
     'not' => '<>',
     'starts_with' => 'STARTS_WITH',
     'ends_with' => 'ENDS_WITH',
+    'in' => 'IN',
+    'not_in' => 'NOT IN',
   ];
 
   /**
@@ -82,7 +84,7 @@ class FilterableEntityListBuilder extends EntityListBuilder {
   protected function getEntityQuery() {
     $query = parent::getEntityQuery();
     foreach ($this->getRequestParams() as $param => $value) {
-      if ($value && list($field_id, $op) = $this->parseParam($param)) {
+      if ((list($field_id, $op) = $this->parseParam($param)) && ($value = $this->parseValue($value))) {
         // TODO: Enable parsing multiple (i.e. array) values.
         $query->condition($field_id, $value, $op);
       }
@@ -116,6 +118,23 @@ class FilterableEntityListBuilder extends EntityListBuilder {
   }
 
   /**
+   * Parse the value, i.e. leave as is or convert into array.
+   *
+   * @param $value
+   *   A string.
+   *
+   * @return array|string
+   *   A single or an array of literal values.
+   */
+  protected function parseValue($value) {
+    if (!$value) {
+      return '';
+    }
+    $values = explode(';', $value);
+    return count($values) > 1 ? $values : $values[0];
+  }
+
+  /**
    * Maps an HTTP GET operand to an operand that can be used in an entity query condition.
    *
    * @param $op
@@ -140,7 +159,6 @@ class FilterableEntityListBuilder extends EntityListBuilder {
    *   HTTP_QUERY_OPERAND => ENTITY_QUERY_OPERAND.
    */
   protected function queryOperands() {
-    // TODO: Enable operands for multiple value fields, e.g. 'IN', 'NOT IN'
     return self::PARAM_OPERANDS_MAP;
   }
 
