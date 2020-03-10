@@ -82,7 +82,7 @@ class FilterableEntityListBuilder extends EntityListBuilder {
   protected function getEntityQuery() {
     $query = parent::getEntityQuery();
     foreach ($this->getRequestParams() as $param => $value) {
-      if (list($field_id, $op) = $this->parseParam($param)) {
+      if ($value && list($field_id, $op) = $this->parseParam($param)) {
         // TODO: Enable parsing multiple (i.e. array) values.
         $query->condition($field_id, $value, $op);
       }
