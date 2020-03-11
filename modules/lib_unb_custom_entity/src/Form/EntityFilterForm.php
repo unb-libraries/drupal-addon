@@ -74,11 +74,21 @@ class EntityFilterForm extends FormBase {
    *   The form state.
    */
   protected function init(FormStateInterface $form_state) {
+    $this->initFormState($form_state);
+    // Flag that this form has been initialized.
+    $form_state->set('entity_form_initialized', TRUE);
+  }
+
+  /**
+   * Initialize the form state. Populate the form state by inheriting values from the query string.
+   *
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   */
+  protected function initFormState(FormStateInterface &$form_state) {
     foreach ($this->getRequest()->query->all() as $param => $value) {
       $form_state->setValue($param, $value);
     }
-    // Flag that this form has been initialized.
-    $form_state->set('entity_form_initialized', TRUE);
   }
 
   /**
