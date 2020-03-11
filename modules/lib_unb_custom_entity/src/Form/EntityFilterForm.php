@@ -60,10 +60,18 @@ class EntityFilterForm extends FormBase {
 
     // Retrieve and add the form actions array.
     if (!empty($actions = $this->actionsElement($form, $form_state))) {
-      $form['actions'] = $actions + [
+      $form['actions'] = [
+        '#type' => 'container',
+      ] + $actions + [
         '#weight' => 99,
       ];
     }
+    
+    // Retrieve and add form attributes, such as CSS classes.
+    if (!empty($attributes = $this->attributes($form, $form_state))) {
+      $form['#attributes'] = array_merge_recursive($form['#attributes'], $attributes);
+    }
+
     return $form;
   }
 
@@ -130,6 +138,21 @@ class EntityFilterForm extends FormBase {
     ];
 
     return $actions;
+  }
+
+  /**
+   * Assign additional attributes to the form, e.g. CSS classes.
+   *
+   * @param array $form
+   *   The form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   *
+   * @return array
+   *   Array containing attributes.
+   */
+  protected function attributes(array &$form, FormStateInterface $form_state) {
+    return [];
   }
 
   /**

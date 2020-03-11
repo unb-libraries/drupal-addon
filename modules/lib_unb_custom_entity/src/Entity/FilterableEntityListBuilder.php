@@ -34,14 +34,14 @@ class FilterableEntityListBuilder extends EntityListBuilder {
   /**
    * The form object used to control the filtering of this list.
    *
-   * @var \Drupal\Core\Form\FormInterface
+   * @var \Drupal\lib_unb_custom_entity\Form\EntityFilterForm
    */
   protected $form;
 
   /**
    * Retrieve the form object used to control the filtering of this list.
    *
-   * @return \Drupal\Core\Form\FormInterface
+   * @return \Drupal\lib_unb_custom_entity\Form\EntityFilterForm
    */
   protected function getForm() {
     if (!isset($this->form) && $form_class = $this->getFormClass()) {
@@ -57,7 +57,12 @@ class FilterableEntityListBuilder extends EntityListBuilder {
    *   A render array.
    */
   public function buildForm() {
-    return \Drupal::formBuilder()->getForm($this->getForm());
+    if ($form = $this->getForm()) {
+      return [
+        '#type' => 'form',
+      ] + \Drupal::formBuilder()->getForm($form);
+    }
+    return [];
   }
 
   /**
