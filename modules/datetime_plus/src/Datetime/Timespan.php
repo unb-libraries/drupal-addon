@@ -112,10 +112,6 @@ class Timespan {
       $unit_map['days'] = $start->daysInMonth();
     }
 
-//    $duration_description = implode(', ', array_map(function ($unit, $value) {
-//      return "{$value} {$unit}";
-//    }, array_keys($unit_values), array_values($unit_values)));
-
     return Timespan::createFromArray($unit_values);
   }
 
@@ -327,6 +323,13 @@ class Timespan {
       'minutes' => $this->minutes,
       'seconds' => $this->seconds,
     ];
+  }
+  
+  public function __toString() {
+    $values = $this->toArray();
+    return implode(', ', array_map(function ($unit, $value) {
+      return "{$value} {$unit}";
+    }, array_keys($values), array_values($values)));
   }
 
 
