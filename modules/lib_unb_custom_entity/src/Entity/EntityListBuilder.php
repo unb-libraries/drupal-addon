@@ -3,6 +3,7 @@
 namespace Drupal\lib_unb_custom_entity\Entity;
 
 use Drupal\Core\Entity\EntityListBuilder as DefaultEntityListBuilder;
+use Drupal\Core\Entity\Query\QueryInterface;
 
 /**
  * Enhances Drupal's default EntityListBuilder implementation.
@@ -62,14 +63,47 @@ class EntityListBuilder extends DefaultEntityListBuilder {
    * {@inheritDoc}
    */
   protected function getEntityIds() {
-    $query = $this->getEntityQuery()
-      ->sort($this->entityType->getKey('id'));
+    $query = $this->getEntityQuery();
 
-    // Only add the pager if a limit is specified.
+    $this->sort($query);
     if ($this->paginate()) {
       $query->pager($this->limit());
     }
+
     return $query->execute();
+  }
+
+  /**
+   * Sort the loaded entities.
+   *
+   * @param \Drupal\Core\Entity\Query\QueryInterface $query
+   *   The entity query.
+   */
+  private function sort(QueryInterface &$query) {
+    foreach ($this->sortKeys() as $key => $value) {
+      if (is_int($key)) {
+        $field_id = $value;
+        $direction = 'ASC';
+      }
+      else {
+        $field_id = $key;
+        $direction = $value;
+      }
+      $query->sort($field_id, $direction);
+    }
+  }
+
+  /**
+   * Retrieve the sort keys.
+   *
+   * @return array
+   *   Array of string. Each entry must correspond
+   *   to a field of the entity type.
+   */
+  protected function sortKeys() {
+    return [
+      $this->getEntityType()->getKey('id'),
+    ];
   }
 
   /**
