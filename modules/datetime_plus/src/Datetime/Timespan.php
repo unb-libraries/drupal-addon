@@ -96,9 +96,14 @@ class Timespan {
    */
   public static function createFromInterval(DateIntervalPlus $interval) {
     $start = clone $interval->start();
-    $end = $interval->end();
-    $unit_map = self::UNIT_MAP;
+    $end = clone $interval->end();
 
+    // Create the timespan based on a timezone that is unaffected by DST.
+    $utc = new \DateTimeZone('UTC');
+    $start->setTimezone($utc);
+    $end->setTimezone($utc);
+
+    $unit_map = self::UNIT_MAP;
     $unit_values = [];
     foreach (array_keys($unit_map) as $unit) {
       $unit_method = substr($unit, 0, strlen($unit) - 1);
