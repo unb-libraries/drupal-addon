@@ -1,3 +1,4 @@
 services:
   aws.sns:
     class: 'Drupal\aws_sns\aws\Sns'
+    abstract: TRUE

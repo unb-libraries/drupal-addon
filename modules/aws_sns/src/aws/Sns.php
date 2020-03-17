@@ -19,6 +19,24 @@ class Sns {
   protected $client;
 
   /**
+   * Key entity containing the credentials.
+   *
+   * @var \Drupal\key\Entity\Key
+   */
+  protected $credentials;
+
+  /**
+   * Create a new AWS/SNS service instance.
+   *
+   * @param string $credentials_key
+   *   A string identifying the key entity that
+   *   contains the credentials for AWS/SNS.
+   */
+  public function __construct($credentials_key) {
+    $this->setCredentials($credentials_key);
+  }
+
+  /**
    * Retrieve the AWS/SNS client.
    *
    * @return \Aws\Sns\SnsClient
@@ -26,16 +44,52 @@ class Sns {
    */
   protected function getClient() {
     if (!isset($this->client)) {
+      $credentials = $this->getCredentials();
       $this->client = new SnsClient([
         'version' => 'latest',
         'credentials' => [
-          'key' => '',
-          'secret' => '',
+          'key' => $credentials['username'],
+          'secret' => $credentials['password'],
         ],
         'region' => 'us-east-1',
       ]);
     }
     return $this->client;
+  }
+
+  /**
+   * Retrieve the credentials array.
+   *
+   * @return array
+   *   An array containing "username" and "password".
+   */
+  protected function getCredentials() {
+    if (isset($this->credentials)) {
+      return $this->credentials
+        ->getKeyValues();
+    } else {
+      return [
+        'username' => '',
+        'password' => '',
+      ];
+    }
+  }
+
+  /**
+   * Set the credentials array.
+   *
+   * @param string $key
+   *   A string identifying a key entity.
+   */
+  protected function setCredentials($key) {
+    try {
+      /** @var \Drupal\key\Entity\Key $credentials */
+      $this->credentials = \Drupal::entityTypeManager()
+        ->getStorage('key')
+        ->load($key);
+    }
+    catch (\Exception $e) {
+    }
   }
 
   /**
