@@ -38,4 +38,22 @@ class Sns {
     return $this->client;
   }
 
+  /**
+   * Retrieve all available topics.
+   *
+   * @return array
+   *   An array of topic ARNs keyed by an ID,
+   *   e.g. 'topic1' => 'arn:aws:sns:1234567890:topic1'.
+   */
+  public function getTopics() {
+    $topics = [];
+    foreach ($this->getClient()->listTopics([])['Topics'] as $topic) {
+      $arn = $topic['TopicArn'];
+      $exploded_arn = explode(':', $arn);
+      $id = $exploded_arn[count($exploded_arn) - 1];
+      $topics[$id] = $arn;
+    }
+    return $topics;
+  }
+
 }
