@@ -1,0 +1,11 @@
+{
+  "name": "drupal/aws_sns",
+  "type": "drupal-module",
+  "description": "Amazon SNS integration for Drupal",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "minimum-stability": "dev",
+  "require": {
+    "aws/aws-sdk-php": "3.47.0"
+  }
+}
