@@ -94,9 +94,9 @@ class DrupalDateTimePlus extends DrupalDateTime {
     $month = $this->month();
     return $month === 2
       ? 28 + intval($this->isLeapYear())
-      : $month > 7
+      : ($month > 7
         ? 31 - $month % 2
-        : 30 + $month % 2;
+        : 30 + $month % 2);
   }
 
   /**
