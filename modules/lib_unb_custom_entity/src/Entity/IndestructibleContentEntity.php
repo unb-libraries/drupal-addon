@@ -60,6 +60,39 @@ class IndestructibleContentEntity extends ContentEntityBase {
   }
 
   /**
+   * Whether the given datetime object lies within the entity's lifetime.
+   *
+   * @param \Drupal\datetime_plus\Datetime\DrupalDateTimePlus $datetime
+   *   The datetime object.
+   *
+   * @return bool
+   *   TRUE if the given datetime object points at a time past the
+   *   entity's creation and before the entity's deletion (or the
+   *   current time, if the entity has not been deleted).
+   *   FALSE if the given datetime object points at a time before
+   *   the entity's creation.
+   *
+   * @throws \LogicException
+   *   If the given datetime points at a time in the future.
+   *
+   */
+  public function existedOn(DrupalDateTimePlus $datetime) {
+    $now = $this->userTime()->now();
+    if ($datetime > $now) {
+      throw new \LogicException("Can't predict the future.");
+    }
+
+    $created = $this->getCreated();
+    $deleted = $this->doesExist()
+      ? $now
+      : $this->getDeleted();
+    $lifetime = $this->userTime()
+      ->createDateInterval($created, $deleted);
+
+    return $datetime->isWithin($lifetime);
+  }
+
+  /**
    * Retrieve the entity's deletion date and time.
    *
    * The timezone is set to the currently logged-in user's.
