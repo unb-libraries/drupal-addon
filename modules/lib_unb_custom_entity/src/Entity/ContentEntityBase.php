@@ -20,6 +20,36 @@ abstract class ContentEntityBase extends DefaultContentEntityBase {
   const FIELD_CHANGED = 'changed';
 
   /**
+   * {@inheritDoc}
+   */
+  public function toUrl($rel = 'canonical', array $options = []) {
+    /** @var \Drupal\Core\Url $url */
+    $url = parent::toUrl($rel, $options);
+    if (array_key_exists('format', $options) && $this->respondsTo($format = $options['format'])) {
+      $url->setOption('query', [
+        '_format' => $format,
+      ]);
+    }
+    return $url;
+  }
+
+  /**
+   * Whether the entity responds to requests specifying the given format.
+   *
+   * @param string $format
+   *   The format, e.g. 'html' or 'json'.
+   *
+   * @return bool
+   *   TRUE if a route provider exists for the given format
+   *   and the entity. FALSE otherwise.
+   */
+  protected function respondsTo($format) {
+    $route_providers = $this->getEntityType()
+      ->getHandlerClasses()['route_provider'];
+    return array_key_exists($format, $route_providers);
+  }
+
+  /**
    * Loads one or more entities and returns their labels.
    *
    * @param array $ids
