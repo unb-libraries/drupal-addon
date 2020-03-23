@@ -283,4 +283,20 @@ class DrupalDateTimePlus extends DrupalDateTime {
     return $this->sub($timespan->toPhpDateInterval());
   }
 
+  /**
+   * Whether the datetime object lies within the given interval.
+   *
+   * @param \Drupal\datetime_plus\Datetime\DateIntervalPlus $interval
+   *   The datetime interval.
+   *
+   * @return bool
+   *   TRUE if the datetime points at a time later than the interval's
+   *   start and before the interval's end.
+   *   FALSE if it lies either before the interval's start, or after
+   *   the interval's end.
+   */
+  public function isWithin(DateIntervalPlus $interval) {
+    return $this >= $interval->start() && $this <= $interval->end();
+  }
+
 }
