@@ -314,6 +314,38 @@ class Timespan {
   }
 
   /**
+   * String representation of the interval.
+   *
+   * @return string
+   *   A string of the form 'x years, y months, ..., z seconds'.
+   */
+  public function format() {
+    $units = [
+      'years' => $this->years(),
+      'months' => $this->months(),
+      'days' => $this->days(),
+      'hours' => $this->hours(),
+      'minutes' => $this->minutes(),
+      'seconds' => $this->seconds(),
+    ];
+
+    $units = array_filter($units, function ($unit_value) {
+      return $unit_value > 0;
+    });
+
+    return implode(', ', array_map(function ($unit_name, $unit_value) {
+      if ($unit_value != 1) {
+        return "{$unit_value} {$unit_name}";
+      }
+      else {
+        $singular_unit_name = substr($unit_name, 0, strlen($unit_name) - 1);
+        return "{$unit_value} {$singular_unit_name}";
+      }
+
+    }, array_keys($units), array_values($units)));
+  }
+
+  /**
    * Convert the timespan into an array.
    *
    * @return array
@@ -321,20 +353,23 @@ class Timespan {
    */
   public function toArray() {
     return [
-      'years' => $this->years,
-      'months' => $this->months,
-      'days' => $this->days,
-      'hours' => $this->hours,
-      'minutes' => $this->minutes,
-      'seconds' => $this->seconds,
+      'years' => $this->years(),
+      'months' => $this->months(),
+      'days' => $this->days(),
+      'hours' => $this->hours(),
+      'minutes' => $this->minutes(),
+      'seconds' => $this->seconds(),
     ];
   }
-  
+
+  /**
+   * String representation of the interval.
+   *
+   * @return string
+   *   A string.
+   */
   public function __toString() {
-    $values = $this->toArray();
-    return implode(', ', array_map(function ($unit, $value) {
-      return "{$value} {$unit}";
-    }, array_keys($values), array_values($values)));
+    return $this->format();
   }
 
 
