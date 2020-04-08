@@ -9,6 +9,20 @@ use Symfony\Component\Routing\Route;
 class HtmlRouteProvider extends DefaultHtmlRouteProvider {
 
   /**
+   * {@inheritDoc}
+   */
+  public function getRoutes(EntityTypeInterface $entity_type) {
+    $routes = parent::getRoutes($entity_type);
+    $entity_type_id = $entity_type->id();
+
+    if ($delete_all_route = $this->getDeleteAllFormRoute($entity_type)) {
+      $routes->add("entity.{$entity_type_id}.delete_all", $delete_all_route);
+    }
+
+    return $routes;
+  }
+
+  /**
    * Gets the collection route.
    *
    * Overrides DefaultHtmlRouteProvider::getCollectionRoute.
@@ -40,6 +54,30 @@ class HtmlRouteProvider extends DefaultHtmlRouteProvider {
       return $route;
     }
     return NULL;
+  }
+
+  /**
+   * Gets the "delete-all" route.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   The entity type.
+   *
+   * @return \Symfony\Component\Routing\Route|null
+   *   The generated route, if available.
+   */
+  protected function getDeleteAllFormRoute(EntityTypeInterface $entity_type) {
+    if ($entity_type->hasLinkTemplate('delete-all-form')) {
+      $entity_type_id = $entity_type->id();
+      $route = new Route($entity_type->getLinkTemplate('delete-all-form'));
+      $route->addDefaults([
+        '_form' => $entity_type->getFormClass('delete-all'),
+        '_title' => t('Delete all ' . $entity_type->getPluralLabel()),
+        'entity_type_id' => $entity_type_id,
+      ])
+        ->setRequirement('_permission', "delete all {$entity_type_id} entities");
+
+      return $route;
+    }
   }
 
 }
