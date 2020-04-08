@@ -119,6 +119,18 @@ class EntityListBuilder extends DefaultEntityListBuilder {
   }
 
   /**
+   * Retrieve the total number of entities.
+   *
+   * @return int
+   *   An integer >= 0.
+   */
+  public function getCount() {
+    return $this->getEntityQuery()
+      ->count()
+      ->execute();
+  }
+
+  /**
    * Build the query to populate this entity list.
    *
    * @return \Drupal\Core\Entity\Query\QueryInterface
@@ -155,6 +167,9 @@ class EntityListBuilder extends DefaultEntityListBuilder {
     if ($create_action = $this->buildCreateAction()) {
       $actions['add'] = $create_action;
     }
+    if ($delete_all_action = $this->buildDeleteAllAction()) {
+      $actions['delete'] = $delete_all_action;
+    }
     return $actions;
   }
 
@@ -171,6 +186,27 @@ class EntityListBuilder extends DefaultEntityListBuilder {
           '#type' => 'link',
           '#title' => $this->t('Add ' . $this->getEntityType()->getSingularLabel()),
           '#url' => Url::fromRoute(array_keys($routes)[0]),
+        ];
+      }
+    }
+    return [];
+  }
+
+  /**
+   * Build a "delete-all" action.
+   *
+   * @return array
+   *   A render array (type: "link").
+   */
+  protected function buildDeleteAllAction() {
+    if ($delete_all_template = $this->getEntityType()->getLinkTemplate('delete-all-form')) {
+      $routes = $routes = $this->routeProvider()->getRoutesByPattern($delete_all_template)->all();
+      if (!empty($routes) && $this->getCount() > 0) {
+        return [
+          '#type' => 'link',
+          '#title' => $this->t('Delete all ' . strtolower($this->getEntityType()->getPluralLabel())),
+          '#url' => Url::fromRoute(array_keys($routes)[0]),
+          '#button_type' => 'danger',
         ];
       }
     }
