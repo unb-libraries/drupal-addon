@@ -4,6 +4,7 @@ namespace Drupal\lib_unb_custom_entity\Entity;
 
 use Drupal\Core\Entity\EntityListBuilder as DefaultEntityListBuilder;
 use Drupal\Core\Entity\Query\QueryInterface;
+use Drupal\Core\Url;
 
 /**
  * Enhances Drupal's default EntityListBuilder implementation.
@@ -132,11 +133,48 @@ class EntityListBuilder extends DefaultEntityListBuilder {
    */
   public function render() {
     return parent::render() + [
+      'actions' => $this->actions(),
       '#cache' => [
         'contexts' => $this->cacheContexts(),
         'tags' => $this->cacheTags(),
       ],
     ];
+  }
+
+  /**
+   * Build the action buttons to appear on top of the page.
+   *
+   * @return array
+   *   A render array (type: "container").
+   */
+  protected function actions() {
+    $actions = [
+      '#type' => 'container',
+      '#weight' => -99,
+    ];
+    if ($create_action = $this->buildCreateAction()) {
+      $actions['add'] = $create_action;
+    }
+    return $actions;
+  }
+
+  /**
+   * Build a "create" action.
+   *
+   * @return array
+   *   A render array (type: "link").
+   */
+  protected function buildCreateAction() {
+    if ($add_template = $this->getEntityType()->getLinkTemplate('add-form')) {
+      if (!empty($routes = $this->routeProvider()->getRoutesByPattern($add_template)->all())) {
+        return [
+          '#type' => 'link',
+          '#title' => $this->t('Add ' . $this->getEntityType()->getSingularLabel()),
+          '#url' => Url::fromRoute(array_keys($routes)[0]),
+        ];
+      }
+    }
+    return [];
   }
 
   /**
@@ -161,6 +199,18 @@ class EntityListBuilder extends DefaultEntityListBuilder {
    */
   protected function cacheTags() {
     return $this->entityType->getListCacheTags();
+  }
+
+  /**
+   * The route provider interface.
+   *
+   * @return \Drupal\Core\Routing\RouteProviderInterface
+   *   A route provider object.
+   */
+  protected function routeProvider() {
+    /** @var \Drupal\Core\Routing\RouteProviderInterface $route_provider */
+    $route_provider = \Drupal::service('router.route_provider');
+    return $route_provider;
   }
 
 }
