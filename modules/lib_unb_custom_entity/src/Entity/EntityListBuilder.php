@@ -2,6 +2,7 @@
 
 namespace Drupal\lib_unb_custom_entity\Entity;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder as DefaultEntityListBuilder;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Routing\RouteMatch;
@@ -145,13 +146,52 @@ class EntityListBuilder extends DefaultEntityListBuilder {
    * {@inheritDoc}
    */
   public function render() {
-    return parent::render() + [
+    $build = parent::render();
+
+    if (!$this->hasOperations($build['table']['#rows'])) {
+      unset($build['table']['#header']['operations']);
+      foreach ($build['table']['#rows'] as $index => $row) {
+        unset($build['table']['#rows'][$index]['operations']);
+      }
+    }
+
+    return $build + [
       'actions' => $this->actions(),
       '#cache' => [
         'contexts' => $this->cacheContexts(),
         'tags' => $this->cacheTags(),
       ],
     ];
+  }
+
+  /**
+   * Whether any of the given rows contains a non-empty 'operations' column.
+   *
+   * @param array $rows
+   *   An array of render arrays (table rows).
+   *
+   * @return bool
+   *   TRUE if at least one row contains a non-empty 'operations' column.
+   *   FALSE otherwise.
+   */
+  private function hasOperations(array $rows) {
+    foreach ($rows as $row) {
+      if (!empty($row['operations']['data'])) {
+        return TRUE;
+      }
+    }
+    return FALSE;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function buildOperations(EntityInterface $entity) {
+    $operations = parent::buildOperations($entity);
+    if (!empty($operations['#links'])) {
+      return $operations;
+    }
+    return [];
   }
 
   /**
