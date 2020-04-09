@@ -208,12 +208,17 @@ class EntityListBuilder extends DefaultEntityListBuilder {
     if ($delete_all_template = $this->getEntityType()->getLinkTemplate('delete-all-form')) {
       $routes = $routes = $this->routeProvider()->getRoutesByPattern($delete_all_template)->all();
       if (!empty($routes) && $this->getCount() > 0) {
-        return [
-          '#type' => 'link',
-          '#title' => $this->t('Delete all ' . strtolower($this->getEntityType()->getPluralLabel())),
-          '#url' => Url::fromRoute(array_keys($routes)[0]),
-          '#button_type' => 'danger',
-        ];
+        $delete_all_route_name = array_keys($routes)[0];
+        $delete_all_route = $routes[$delete_all_route_name];
+        $required_permission = $delete_all_route->getRequirement('_permission');
+        if ($this->currentUser()->hasPermission($required_permission)) {
+          return [
+            '#type' => 'link',
+            '#title' => $this->t('Delete all ' . strtolower($this->getEntityType()->getPluralLabel())),
+            '#url' => Url::fromRoute($delete_all_route_name),
+            '#button_type' => 'danger',
+          ];
+        }
       }
     }
     return [];
