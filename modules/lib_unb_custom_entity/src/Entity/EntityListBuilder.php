@@ -4,6 +4,7 @@ namespace Drupal\lib_unb_custom_entity\Entity;
 
 use Drupal\Core\Entity\EntityListBuilder as DefaultEntityListBuilder;
 use Drupal\Core\Entity\Query\QueryInterface;
+use Drupal\Core\Routing\RouteMatch;
 use Drupal\Core\Url;
 
 /**
@@ -182,11 +183,16 @@ class EntityListBuilder extends DefaultEntityListBuilder {
   protected function buildCreateAction() {
     if ($add_template = $this->getEntityType()->getLinkTemplate('add-form')) {
       if (!empty($routes = $this->routeProvider()->getRoutesByPattern($add_template)->all())) {
-        return [
-          '#type' => 'link',
-          '#title' => $this->t('Add ' . $this->getEntityType()->getSingularLabel()),
-          '#url' => Url::fromRoute(array_keys($routes)[0]),
-        ];
+        $add_route_name = array_keys($routes)[0];
+        $add_route = $routes[$add_route_name];
+        $route_match = new RouteMatch($add_route_name, $add_route);
+        if ($this->createAccessCheck()->access($add_route, $route_match, $this->currentUser())->isAllowed()) {
+          return [
+            '#type' => 'link',
+            '#title' => $this->t('Add ' . $this->getEntityType()->getSingularLabel()),
+            '#url' => Url::fromRoute(array_keys($routes)[0]),
+          ];
+        }
       }
     }
     return [];
@@ -247,6 +253,28 @@ class EntityListBuilder extends DefaultEntityListBuilder {
     /** @var \Drupal\Core\Routing\RouteProviderInterface $route_provider */
     $route_provider = \Drupal::service('router.route_provider');
     return $route_provider;
+  }
+
+  /**
+   * The currently logged-in user.
+   *
+   * @return \Drupal\Core\Session\AccountProxyInterface
+   *   An account proxy object.
+   */
+  protected function currentUser() {
+    return \Drupal::currentUser();
+  }
+
+  /**
+   * Retrieve the "create" access check service.
+   *
+   * @return \Drupal\Core\Entity\EntityCreateAccessCheck
+   *   An access check object.
+   */
+  protected function createAccessCheck() {
+    /** @var \Drupal\Core\Entity\EntityCreateAccessCheck $access_check */
+    $access_check = \Drupal::service('access_check.entity_create');
+    return $access_check;
   }
 
 }
