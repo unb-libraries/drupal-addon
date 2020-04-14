@@ -11,7 +11,7 @@ use Drupal\lib_unb_custom_entity\Form\EntityFilterForm;
  */
 class FilterableEntityListBuilder extends EntityListBuilder {
 
-  protected const PARAM_OPERANDS_MAP = [
+  const PARAM_OPERANDS_MAP = [
     'gt' => '>',
     'gte' => '>=',
     'lt' => '<',
@@ -23,6 +23,20 @@ class FilterableEntityListBuilder extends EntityListBuilder {
     'in' => 'IN',
     'not_in' => 'NOT IN',
   ];
+
+  /**
+   * All values considered "any", i.e. "do no filter".
+   *
+   * @var array
+   */
+  protected $anyValues = ['', 'any', 'all'];
+
+  /**
+   * All values considered "none", i.e. "explicitly filter by non-existing values".
+   *
+   * @var array
+   */
+  protected $nullValues = ['null', 'none'];
 
   /**
    * Fields on which can be filtered.
@@ -89,9 +103,17 @@ class FilterableEntityListBuilder extends EntityListBuilder {
   protected function getEntityQuery() {
     $query = parent::getEntityQuery();
     foreach ($this->getRequestParams() as $param => $value) {
-      if ((list($field_id, $op) = $this->parseParam($param)) && ($value = $this->parseValue($value))) {
-        // TODO: Enable parsing multiple (i.e. array) values.
-        $query->condition($field_id, $value, $op);
+      list($field_id, $op) = $this->parseParam($param);
+      $value = $this->parseValue($value);
+
+      // TODO: Enable parsing multiple (i.e. array) values.
+      if ($field_id && $op) {
+        if ($this->isNullValue($value)) {
+          $query->notExists($field_id);
+        }
+        elseif (!$this->isAnyValue($value)) {
+          $query->condition($field_id, $value, $op);
+        }
       }
     }
     return $query;
@@ -137,6 +159,54 @@ class FilterableEntityListBuilder extends EntityListBuilder {
     }
     $values = explode(';', $value);
     return count($values) > 1 ? $values : $values[0];
+  }
+
+  /**
+   * Whether the given value means "any".
+   *
+   * @param string $value
+   *   The value.
+   *
+   * @return bool
+   *   TRUE if the given value is either empty, "any", or "all".
+   *   FALSE otherwise.
+   */
+  protected function isAnyValue($value) {
+    return in_array(strtolower($value), $this->getAnyValues());
+  }
+
+  /**
+   * Retrieve all values that mean "any".
+   *
+   * @return array
+   *   An array of strings.
+   */
+  protected function getAnyValues() {
+    return $this->anyValues;
+  }
+
+  /**
+   * Whether the given value means "none".
+   *
+   * @param string $value
+   *   The value.
+   *
+   * @return bool
+   *   TRUE if the given value is either "none" or "null".
+   *   FALSE otherwise.
+   */
+  protected function isNullValue($value) {
+    return in_array(strtolower($value), $this->getNullValues());
+  }
+
+  /**
+   * Retrieve all values that mean "none".
+   *
+   * @return array
+   *   An array of strings.
+   */
+  protected function getNullValues() {
+    return $this->nullValues;
   }
 
   /**

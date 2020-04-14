@@ -14,6 +14,9 @@ use Drupal\Core\Url;
  */
 class EntityFilterForm extends FormBase {
 
+  const ANY = 'any';
+  const NONE = 'none';
+
   /**
    * The entity type.
    *
