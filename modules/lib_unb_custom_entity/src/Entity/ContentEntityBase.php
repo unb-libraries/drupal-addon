@@ -4,6 +4,7 @@ namespace Drupal\lib_unb_custom_entity\Entity;
 
 use \Drupal\Core\Entity\ContentEntityBase as DefaultContentEntityBase;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Entity\RevisionLogEntityTrait;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\datetime_plus\DependencyInjection\UserTimeTrait;
 
@@ -14,6 +15,7 @@ use Drupal\datetime_plus\DependencyInjection\UserTimeTrait;
  */
 abstract class ContentEntityBase extends DefaultContentEntityBase {
 
+  use RevisionLogEntityTrait;
   use UserTimeTrait;
 
   const FIELD_CREATED = 'created';
@@ -95,6 +97,10 @@ abstract class ContentEntityBase extends DefaultContentEntityBase {
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
+
+    if ($entity_type->hasKey('revision')) {
+      $fields += static::revisionLogBaseFieldDefinitions($entity_type);
+    }
 
     $fields[self::FIELD_CREATED] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
