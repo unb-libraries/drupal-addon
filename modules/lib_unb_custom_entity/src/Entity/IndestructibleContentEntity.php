@@ -116,7 +116,8 @@ class IndestructibleContentEntity extends ContentEntityBase {
     $fields[self::FIELD_DELETED] = BaseFieldDefinition::create('timestamp')
       ->setLabel(t('Deleted'))
       ->setDescription(t("Timestamp indicating the location's creation."))
-      ->setRequired(FALSE);
+      ->setRequired(FALSE)
+      ->setRevisionable(TRUE);
 
     return $fields;
   }
