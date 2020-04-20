@@ -2,6 +2,7 @@
 
 namespace Drupal\lib_unb_custom_entity\Entity;
 
+use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\lib_unb_custom_entity\Form\EntityFilterForm;
 
 /**
@@ -104,19 +105,48 @@ class FilterableEntityListBuilder extends EntityListBuilder {
     $query = parent::getEntityQuery();
     foreach ($this->getRequestParams() as $param => $value) {
       list($field_id, $op) = $this->parseParam($param);
-      $value = $this->parseValue($value);
-
-      // TODO: Enable parsing multiple (i.e. array) values.
       if ($field_id && $op) {
-        if ($this->isNullValue($value)) {
-          $query->notExists($field_id);
+        $value = $this->parseValue($value);
+        $this->addCondition($query, $field_id, $value, $op);
+      }
+    }
+    return $query;
+  }
+
+  /**
+   * Add a query condition to the given query.
+   *
+   * @param \Drupal\Core\Entity\Query\QueryInterface $query
+   *   The query.
+   * @param string $field_id
+   *   The field.
+   * @param array|string $value
+   *   The value or values.
+   * @param string $op
+   *   The condition operand.
+   */
+  protected function addCondition(QueryInterface &$query, $field_id, $value, $op) {
+    if (!is_array($value)) {
+      if ($this->isNullValue($value)) {
+        $query->notExists($field_id);
+      }
+      elseif (!$this->isAnyValue($value)) {
+        $query->condition($field_id, $value, $op);
+      }
+    }
+    else {
+      if (!empty($value)) {
+        if ($this->containsNullValue($value)) {
+          $condition_group = $query->orConditionGroup();
+          $condition_group->condition($field_id, $value, $op);
+          $condition_group->notExists($field_id);
+          $query->condition($condition_group);
         }
-        elseif (!$this->isAnyValue($value)) {
+        else {
           $query->condition($field_id, $value, $op);
         }
       }
     }
-    return $query;
   }
 
   /**
@@ -147,7 +177,7 @@ class FilterableEntityListBuilder extends EntityListBuilder {
   /**
    * Parse the value, i.e. leave as is or convert into array.
    *
-   * @param $value
+   * @param string $value
    *   A string.
    *
    * @return array|string
@@ -183,6 +213,25 @@ class FilterableEntityListBuilder extends EntityListBuilder {
    */
   protected function getAnyValues() {
     return $this->anyValues;
+  }
+
+  /**
+   * Whether the given array of value contains at least one "null" value.
+   *
+   * @param array $values
+   *   The value.
+   *
+   * @return bool
+   *   TRUE if the given array of value contains at least
+   *   one "null" value. FALSE otherwise.
+   */
+  protected function containsNullValue(array $values) {
+    foreach ($values as $value) {
+      if ($this->isNullValue($value)) {
+        return TRUE;
+      }
+    }
+    return FALSE;
   }
 
   /**
