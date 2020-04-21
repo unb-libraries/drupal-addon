@@ -99,7 +99,12 @@ class EntityFilterForm extends FormBase {
    */
   protected function initFormState(FormStateInterface &$form_state) {
     foreach ($this->getRequest()->query->all() as $param => $value) {
-      $form_state->setValue($param, $value);
+      if (!empty($value) && count($values = explode(';', $value)) > 1) {
+        $form_state->setValue($param, $values);
+      }
+      else {
+        $form_state->setValue($param, $value);
+      }
     }
   }
 
