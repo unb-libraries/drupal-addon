@@ -19,6 +19,10 @@ class HtmlRouteProvider extends DefaultHtmlRouteProvider {
       $routes->add("entity.{$entity_type_id}.delete_all", $delete_all_route);
     }
 
+    foreach ($routes->all() as $route) {
+      $route->setRequirement('_module_dependencies', $entity_type->getProvider());
+    }
+
     return $routes;
   }
 
