@@ -63,22 +63,48 @@ class EntitySelect extends Select {
    * Populates the element options with entities of the configured type.
    *
    * {@inheritDoc}
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public static function preRenderSelect($element) {
-    if ($entity_type_id = $element['#entity_type']) {
-      $entity_type = static::entityTypeManager()->getDefinition($entity_type_id);
+    $element['#options'] = static::buildOptions($element);
+    return parent::preRenderSelect($element);
+  }
+
+  /**
+   * Overrides @see \Drupal\Core\Render\Element\Select::processSelect().
+   *
+   * Populates the element options with entities of the configured type.
+   *
+   * {@inheritDoc}
+   */
+  public static function processSelect(&$element, FormStateInterface $form_state, &$complete_form) {
+    $element['#options'] = static::buildOptions($element);
+    return parent::processSelect($element, $form_state, $complete_form);
+  }
+
+  /**
+   * Create the options for the select element.
+   *
+   * @param $element
+   *   The element.
+   *
+   * @return array
+   *   An array of the form VALUE => LABEL.
+   */
+  protected static function buildOptions($element) {
+    try {
+      $entity_type = static::entityTypeManager()->getDefinition($element['#entity_type']);
       if (($bundle = $element['#bundle']) && $entity_type->hasKey('bundle')) {
         $entities = static::loadBundleEntities($entity_type, $bundle);
       }
       else {
         $entities = self::loadEntities($entity_type);
       }
-      $element['#options'] = FormHelper::entityLabels($entities);
+      return FormHelper::entityLabels($entities);
     }
-    return parent::preRenderSelect($element);
+    catch (\Exception $e) {
+      // TODO: This should not go silent.
+      return [];
+    }
   }
 
   /**
@@ -120,6 +146,20 @@ class EntitySelect extends Select {
       ->loadByProperties([
         $bundle_field => $bundle,
       ]);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public static function valueCallback(&$element, $input, FormStateInterface $form_state) {
+    if ($input = parent::valueCallback($element, $input, $form_state)) {
+      $entity = static::entityTypeManager()
+        ->getStorage($element['#entity_type'])
+        ->load($input);
+      $form_state->setValueForElement($element, $entity);
+      return $input;
+    }
+    return parent::valueCallback($element, $input, $form_state);
   }
 
 }
