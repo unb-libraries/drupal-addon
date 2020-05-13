@@ -2,6 +2,23 @@
   "name": "unb-libraries/bootstrap_elements",
   "description": "Bootstrap form and render elements.",
   "type": "drupal-module",
+  "repositories": [
+    {
+      "type": "package",
+      "package": {
+        "name": "davidstutz/bootstrap-multiselect",
+        "version": "0.9.15",
+        "type": "drupal-library",
+        "dist": {
+          "type": "zip",
+          "url": "https://github.com/davidstutz/bootstrap-multiselect/archive/v0.9.15.zip"
+        },
+        "extra": {
+          "installer-name": "bootstrap_multiselect"
+        }
+      }
+    }
+  ],
   "require": {
     "davidstutz/bootstrap-multiselect": "~0.9.15"
   },

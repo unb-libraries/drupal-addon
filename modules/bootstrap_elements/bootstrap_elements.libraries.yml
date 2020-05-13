@@ -1,0 +1,18 @@
+bootstrap-multiselect:
+  remote: https://github.com/davidstutz/bootstrap-multiselect/
+  version: 0.9.15
+  license:
+    name: Apache-2.0
+    url: https://github.com/davidstutz/bootstrap-multiselect/blob/v0.9.15/LICENSE.md
+    gpl-compatible: true
+  css:
+    component:
+      /libraries/bootstrap_multiselect/dist/css/bootstrap-multiselect.css: {}
+      css/multiselect.css: {}
+  js:
+    /libraries/bootstrap_multiselect/dist/js/bootstrap-multiselect.js: { type: external, minified: false }
+    js/multiselect.drupal.behavior.js: {}
+  dependencies:
+    - core/drupal
+    - core/drupalSettings
+    - core/jquery
