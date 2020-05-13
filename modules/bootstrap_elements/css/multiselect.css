@@ -1,0 +1,17 @@
+.multiselect-native-select {
+    display: block;
+}
+
+button.multiselect {
+    background: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+}
+
+ul.multiselect-container {
+    min-width: max-content;
+}
+
+.multiselect-container > li > a > label.checkbox, .multiselect-container > li > a > label.radio {
+    padding: 5px 20px;
+}
