@@ -1,0 +1,15 @@
+{
+  "name": "unb-libraries/bootstrap_elements",
+  "description": "Bootstrap form and render elements.",
+  "type": "drupal-module",
+  "require": {
+    "davidstutz/bootstrap-multiselect": "~0.9.15"
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "UNB Libraries",
+      "email": "libsupport@unb.ca"
+    }
+  ]
+}

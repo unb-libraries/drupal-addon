@@ -1,0 +1,6 @@
+name: 'Bootstrap Elements'
+type: module
+description: 'Bootstrap form and render elements.'
+core: 8.x
+package: 'Bootstrap'
+dependencies: { }
