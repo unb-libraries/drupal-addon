@@ -27,9 +27,18 @@ use Drupal\Core\Render\Annotation\FormElement;
 class BootstrapMultiSelect extends Select {
 
   public function getInfo() {
-    $info = parent::getInfo();
+    $info = parent::getInfo() + [
+      '#settings' => [],
+    ];
     $info['#attached']['library'][] = 'bootstrap_elements/bootstrap-multiselect';
+
     return $info;
+  }
+
+  public static function preRenderSelect($element) {
+    // TODO: Allow each multi-select element on the page to have unique settings.
+    $element['#attached']['drupalSettings']['bootstrapMultiselect'] = $element['#settings'];
+    return parent::preRenderSelect($element);
   }
 
 }

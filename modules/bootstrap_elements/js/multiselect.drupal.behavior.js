@@ -16,6 +16,9 @@
         selectElement: undefined,
 
         attach: function attach(context, settings) {
+            for (let property in settings.bootstrapMultiselect) {
+                ms.config[property] = settings.bootstrapMultiselect[property];
+            }
             $('select.multiselect').each(function(index, element) {
                 ms.initialize($(element));
             });
