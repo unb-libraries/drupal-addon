@@ -40,4 +40,55 @@ class BootstrapMultiSelectWidget extends OptionsSelectWidget {
     ]);
     return $element;
   }
+
+  public static function defaultSettings() {
+    // Commented out settings are currently not supported.
+    return parent::defaultSettings() + [
+        // "enableHTML" => FALSE,
+        "enableClickableOptGroups" => TRUE,
+        "enableCollapsibleOptGroups" => TRUE,
+        "collapseOptGroupsByDefault" => FALSE,
+        "disableIfEmpty" => TRUE,
+        // "disabledText" => "",
+        // "dropRight" => FALSE,
+        // "dropUp" => FALSE,
+        // "maxHeight" => "",
+        // "onChange" => "",
+        // "onInitialized" => "",
+        // "onDropdownShow" => "",
+        // "onDropdownHide" => "",
+        // "onDropdownShown" => "",
+        // "onDropdownHidden" => "",
+        "buttonClass" => "",
+        // "inheritClass" => TRUE,
+        // "buttonContainer" => "",
+        // "buttonWidth" => "100%",
+        // "buttonText" => "",
+        // "buttonTitle" => "",
+        "nonSelectedText" => t("None"),
+        // "nSelectedText" => "",
+        "allSelectedText" => t("All"),
+        "numberDisplayed" => 1,
+        // "delimiterText" => ",",
+        // "optionLabel" => "",
+        // "optionClass" => "",
+        "selectedClass" => "",
+        "includeSelectAllOption" => TRUE,
+        // "selectAllJustVisible" => "",
+        "selectAllText" => t("All"),
+        // "selectAllValue" => "",
+        // "selectAllName" => "",
+        "selectAllNumber" => FALSE,
+        // "onSelectAll" => "",
+        // "onDeselectAll" => "",
+        "enableFiltering" => FALSE,
+        "enableCaseInsensitiveFiltering" => TRUE,
+        "enableFullValueFiltering" => FALSE,
+        "filterBehavior" => "text",
+        "filterPlaceholder" => t("Search"),
+        "includeResetOption" => FALSE,
+        // "includeResetDivider" => "",
+        "resetText" => t("Reset"),
+    ];
+  }
 }
