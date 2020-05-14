@@ -3,14 +3,27 @@
     Drupal.behaviors.multiselect = {
 
         config: {
-            buttonWidth: '100%',
-            includeSelectAllOption: true,
+            enableClickableOptGroups: true,
+            enableCollapsibleOptGroups: true,
+            collapseOptGroupsByDefault: false,
+            disableIfEmpty: true,
+            buttonWidth: "100%",
+            buttonClass: "",
+            nonSelectedText: "None",
+            allSelectedText: "All",
             numberDisplayed: 1,
-            selectAllValue: 'any',
-            selectAllText: 'All',
+            selectedClass: "",
+            includeSelectAllOption: true,
+            selectAllText: "All",
+            selectAllValue: "All",
             selectAllNumber: false,
-            allSelectedText: 'All',
-            nonSelectedText: 'None',
+            enableFiltering: false,
+            enableCaseInsensitiveFiltering: true,
+            enableFullValueFiltering: false,
+            filterBehavior: "text",
+            filterPlaceholder: "Search",
+            includeResetOption: false,
+            resetText: "Reset",
         },
 
         selectElement: undefined,
@@ -19,6 +32,7 @@
             for (let property in settings.bootstrapMultiselect) {
                 ms.config[property] = settings.bootstrapMultiselect[property];
             }
+
             $('select.multiselect').each(function(index, element) {
                 ms.initialize($(element));
             });
