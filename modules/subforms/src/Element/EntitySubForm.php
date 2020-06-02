@@ -5,6 +5,8 @@ namespace Drupal\subforms\Element;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Element\FormElement;
+use Drupal\Core\Render\Element\Container;
+use Drupal\Core\Render\Element\Fieldset;
 
 /**
  * Renders a form "select" element containing entities of a given type as its options.
@@ -74,10 +76,40 @@ class EntitySubForm extends FormElement {
     return [
       '#entity_type' => '',
       '#operation' => 'default',
+      '#pre_render' => [
+        [get_class($this), 'preRenderGroup'],
+      ],
       '#process' => [
+        [$this, 'processContainerOrFieldset'],
         [$this, 'processBuildForm'],
       ],
     ];
+  }
+
+  /**
+   * Form element processing handler.
+   *
+   * @param array $element
+   *   An associative array containing the properties of the element.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   * @param array $complete_form
+   *   The complete form structure.
+   *
+   * @return array
+   *   The processed element.
+   */
+  public function processContainerOrFieldset(&$element, FormStateInterface $form_state, array &$complete_form) {
+    if (array_key_exists('#title', $element)) {
+      $element['#process'][] = [get_class($this), 'processAjaxForm'];
+      $element['#theme_wrappers'][] = 'fieldset';
+    }
+    else {
+      $element['#pre_render'][] = [Container::class, 'preRenderContainer'];
+      $element['#theme_wrappers'][] = 'container';
+      Container::processContainer($element, $form_state, $complete_form);
+    }
+    return $element;
   }
 
   /**
@@ -96,7 +128,7 @@ class EntitySubForm extends FormElement {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function processBuildForm($element, FormStateInterface $form_state, array &$complete_form) {
+  public function processBuildForm(&$element, FormStateInterface $form_state, array &$complete_form) {
     $entity = $element['#default_value'] ?: $this
       ->entityTypeManager()
       ->getStorage($element['#entity_type'])
