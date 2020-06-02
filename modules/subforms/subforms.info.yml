@@ -1,0 +1,6 @@
+name: 'Subforms'
+type: module
+description: 'Embed forms into other forms.'
+core: 8.x
+package: 'Development'
+dependencies: { }

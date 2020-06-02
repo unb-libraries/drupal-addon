@@ -1,0 +1,16 @@
+{
+  "name": "unb-libraries/subforms",
+  "description": "Embed forms into other forms.",
+  "type": "drupal-module",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Patrick Schilf",
+      "email": "pschilf@unb.ca"
+    },
+    {
+      "name": "UNB Libraries",
+      "email": "libsupport@unb.ca"
+    }
+  ]
+}
