@@ -2,11 +2,12 @@
 
 namespace Drupal\subforms\Element;
 
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
-use Drupal\Core\Render\Element\FormElement;
 use Drupal\Core\Render\Element\Container;
-use Drupal\Core\Render\Element\Fieldset;
+use Drupal\Core\Render\Element\FormElement;
+use Drupal\Component\Utility\Html as HtmlUtility;
 
 /**
  * Renders a form "select" element containing entities of a given type as its options.
@@ -34,14 +35,14 @@ class EntitySubForm extends FormElement {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected static $entityTypeManager;
 
   /**
    * The entity form builder service.
    *
    * @var \Drupal\Core\Entity\EntityFormBuilderInterface
    */
-  protected $entityFormBuilder;
+  protected static $entityFormBuilder;
 
   /**
    * Retrieve an entity type manager service instance.
@@ -49,11 +50,11 @@ class EntitySubForm extends FormElement {
    * @return \Drupal\Core\Entity\EntityTypeManagerInterface
    *   An entity type manager.
    */
-  protected function entityTypeManager() {
-    if (!isset($this->entityTypeManager)) {
-      $this->entityTypeManager = \Drupal::entityTypeManager();
+  protected static function entityTypeManager() {
+    if (!isset(static::$entityTypeManager)) {
+      static::$entityTypeManager = \Drupal::entityTypeManager();
     }
-    return $this->entityTypeManager;
+    return static::$entityTypeManager;
   }
 
   /**
@@ -62,11 +63,11 @@ class EntitySubForm extends FormElement {
    * @return \Drupal\Core\Entity\EntityFormBuilderInterface
    *   A form builder.
    */
-  protected function entityFormBuilder() {
-    if (!isset($this->entityFormBuilder)) {
-      $this->entityFormBuilder = \Drupal::service('entity.form_builder');
+  protected static function entityFormBuilder() {
+    if (!isset(static::$entityFormBuilder)) {
+      static::$entityFormBuilder = \Drupal::service('entity.form_builder');
     }
-    return $this->entityFormBuilder;
+    return static::$entityFormBuilder;
   }
 
   /**
@@ -75,13 +76,19 @@ class EntitySubForm extends FormElement {
   public function getInfo() {
     return [
       '#entity_type' => '',
+      '#form' => '',
+      '#input' => TRUE,
       '#operation' => 'default',
       '#pre_render' => [
-        [get_class($this), 'preRenderGroup'],
+        [static::class, 'preRenderGroup'],
       ],
       '#process' => [
-        [$this, 'processContainerOrFieldset'],
-        [$this, 'processBuildForm'],
+        [static::class, 'processContainerOrFieldset'],
+        [static::class, 'processBuildForm'],
+        [static::class, 'processGroup'],
+      ],
+      '#element_validate' => [
+        [static::class, 'validateForm'],
       ],
     ];
   }
@@ -99,9 +106,9 @@ class EntitySubForm extends FormElement {
    * @return array
    *   The processed element.
    */
-  public function processContainerOrFieldset(&$element, FormStateInterface $form_state, array &$complete_form) {
+  public static function processContainerOrFieldset(&$element, FormStateInterface $form_state, array &$complete_form) {
     if (array_key_exists('#title', $element)) {
-      $element['#process'][] = [get_class($this), 'processAjaxForm'];
+      $element['#process'][] = [static::class, 'processAjaxForm'];
       $element['#theme_wrappers'][] = 'fieldset';
     }
     else {
@@ -110,6 +117,17 @@ class EntitySubForm extends FormElement {
       Container::processContainer($element, $form_state, $complete_form);
     }
     return $element;
+  }
+
+  /**
+  * {@inheritdoc}
+  */
+  public static function valueCallback(&$element, $input, FormStateInterface $form_state) {
+    $entity = $element['#default_value'] ?: static::entityTypeManager()
+      ->getStorage($element['#entity_type'])
+      ->create();
+
+    return $entity;
   }
 
   /**
@@ -124,26 +142,75 @@ class EntitySubForm extends FormElement {
    *
    * @return array
    *   The processed element.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function processBuildForm(&$element, FormStateInterface $form_state, array &$complete_form) {
-    $entity = $element['#default_value'] ?: $this
-      ->entityTypeManager()
-      ->getStorage($element['#entity_type'])
-      ->create();
+  public static function processBuildForm(&$element, FormStateInterface $form_state, array &$complete_form) {
+    $form = static::entityFormBuilder()
+        ->getForm($element['#value']);
 
-    $sub_form = \Drupal::service('entity.form_builder')
-      ->getForm($entity);
+    $element['form'] = [
+      '#type' => 'container',
+      '#parents' => $element['#parents'],
+      '#tree' => TRUE,
+    ];
+    $element['form'] += static::buildSubFormElement($element['form'], $form);
 
-    foreach (Element::getVisibleChildren($sub_form) as $child) {
-      if ($child !== 'actions') {
-        $element[$child] = $sub_form[$child];
+    return $element;
+  }
+
+  /**
+   * Develop the given element with properties/content from the given (partial) form.
+   *
+   * @param array $element
+   *   A form element.
+   * @param array $sub_form
+   *   A (partial) form array.
+   *
+   * @return array
+   *   A form element.
+   */
+  protected static function buildSubFormElement(&$element, $sub_form) {
+    $weight = 0;
+    foreach (Element::getVisibleChildren($sub_form) as $field_id) {
+      if (isset($sub_form[$field_id]['#type']) && $sub_form[$field_id]['#type'] !== 'actions') {
+        $weight += 0.001;
+        $parents_for_id = array_merge($element['#parents'], [$field_id]);
+        $element[$field_id] = [
+          '#parents' => isset($sub_form[$field_id]['#input']) && $sub_form[$field_id]['#input']
+            ? array_merge($element['#parents'], $sub_form[$field_id]['#parents'])
+            : $element['#parents'],
+          '#id' => HtmlUtility::getUniqueId('edit-' . implode('-', $parents_for_id)),
+          '#weight' => $weight,
+        ];
+
+        $properties = array_flip(Element::properties($sub_form[$field_id]));
+        $element[$field_id] += array_intersect_key($sub_form[$field_id], $properties);
+        $element[$field_id] += static::buildSubFormElement($element[$field_id], $sub_form[$field_id]);
       }
     }
 
     return $element;
+  }
+
+  /**
+   * Form element validation handler.
+   *
+   * @param array $element
+   *   The element validate.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   * @param array $complete_form
+   *   The complete form.
+   */
+  public static function validateForm(&$element, FormStateInterface $form_state, &$complete_form) {
+    /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
+    $entity = $element['#value'];
+
+    // TODO: Sanitize the user input or find out how to populate the form state with validated data.
+    $values = array_intersect_key($form_state->getUserInput(), NestedArray::getValue($form_state->getValues(), $element['#parents']));
+    foreach ($values as $key => $value) {
+      $entity->set($key, $value);
+    }
+    $form_state->setValueForElement($element, $entity);
   }
 
 }
