@@ -11,6 +11,8 @@ use Drupal\Core\Entity\EntityInterface;
  */
 interface PersistentInterface extends EntityInterface {
 
+  const FIELD_DELETED = 'deleted';
+
   /**
    * Terminate the entity, e.g. mark as "deleted".
    */
