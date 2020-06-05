@@ -11,6 +11,8 @@ use Drupal\Core\Entity\EntityInterface;
  */
 interface TaggableInterface extends EntityInterface {
 
+  const FIELD_TAGS = 'tags';
+
   /**
    * Retrieve all assigned tags.
    *

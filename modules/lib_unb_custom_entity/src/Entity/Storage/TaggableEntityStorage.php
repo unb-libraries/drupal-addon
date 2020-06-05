@@ -8,28 +8,28 @@ use Drupal\Core\Entity\Sql\SqlContentEntityStorage;
 class TaggableEntityStorage extends SqlContentEntityStorage implements TaggableContentEntityStorageInterface {
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   public function loadByVocabularies(array $vids) {
     // TODO: Implement loadByVocabularies() method.
   }
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   public function loadByTags(array $tags) {
     // TODO: Implement loadByTags() method.
   }
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   public function loadByTagNames(array $names) {
     // TODO: Implement loadByTagNames() method.
   }
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   public function loadRetired() {
     // TODO: Implement loadRetired() method.
