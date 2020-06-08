@@ -2,6 +2,8 @@
 
 namespace Drupal\lib_nb_custom_entity\Entity;
 
+use Drupal\lib_unb_custom_entity\Entity\PersistentInterface;
+
 /**
  * Trait to enable storage handlers to handle retrieving persistent entities.
  *
@@ -13,28 +15,20 @@ trait PersistentEntityStorageTrait {
    * {@inheritDoc}
    */
   public function loadTerminated() {
-    // TODO: Implement "loadTerminated" method.
+    $query = $this
+      ->getQuery()
+      ->exists(PersistentInterface::FIELD_DELETED);
+    return $this->loadMultiple($query->execute());
   }
 
   /**
    * {@inheritDoc}
    */
   public function loadCurrent() {
-    // TODO: Implement "loadCurrent" method.
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public function terminate(array $entities) {
-    // TODO: Implement "terminate" entities.
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public function destroy(array $entities) {
-    // TODO: Implement "destroy" method.
+    $query = $this
+      ->getQuery()
+      ->notExists(PersistentInterface::FIELD_DELETED);
+    return $this->loadMultiple($query->execute());
   }
 
 }
