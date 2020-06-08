@@ -22,6 +22,17 @@ abstract class ContentEntityBase extends DefaultContentEntityBase {
   const FIELD_CHANGED = 'changed';
 
   /**
+   * Retrieve the storage handler.
+   *
+   * @return \Drupal\Core\Entity\EntityStorageInterface
+   *   An entity storage handler object.
+   */
+  protected function getStorage() {
+    return $this->entityTypeManager()
+      ->getStorage($this->getEntityTypeId());
+  }
+
+  /**
    * {@inheritDoc}
    */
   public function toUrl($rel = 'canonical', array $options = []) {
