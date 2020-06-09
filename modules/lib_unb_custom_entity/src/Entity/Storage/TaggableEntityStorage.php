@@ -78,15 +78,10 @@ class TaggableEntityStorage extends SqlContentEntityStorage implements TaggableC
   }
 
   /**
-   * Retrieve the field that references taxonomy term entities of the given vocabulary ID.
    *
-   * @param string $vid
-   *   The vocabulary ID.
-   *
-   * @return \Drupal\Core\Field\FieldDefinitionInterface
-   *   A field definition.
+   * {@inheritDoc}
    */
-  private function getTagField($vid) {
+  public function getTagField($vid) {
     foreach ($this->getTagFields() as $field_id => $field_definition) {
       $settings = $field_definition->getSettings();
       if (array_key_exists('handler_settings', $settings) && array_key_exists('target_bundles', $settings['handler_settings']) && array_key_exists($vid, $settings['handler_settings']['target_bundles'])) {
@@ -102,7 +97,7 @@ class TaggableEntityStorage extends SqlContentEntityStorage implements TaggableC
    * @return \Drupal\Core\Field\FieldDefinitionInterface[]
    *   An array of field definitions.
    */
-  private function getTagFields() {
+  protected function getTagFields() {
     $tag_field_definitions = [];
     $field_definitions = $this->getEntityFieldManager()
       ->getFieldDefinitions($this->getEntityTypeId(), $this->getEntityTypeId());

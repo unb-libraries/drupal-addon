@@ -12,6 +12,17 @@ use Drupal\Core\Entity\ContentEntityStorageInterface;
 interface TaggableContentEntityStorageInterface extends ContentEntityStorageInterface {
 
   /**
+   * Retrieve the field that references taxonomy term entities of the given vocabulary ID.
+   *
+   * @param string $vid
+   *   The vocabulary ID.
+   *
+   * @return \Drupal\Core\Field\FieldDefinitionInterface
+   *   A field definition.
+   */
+  public function getTagField($vid);
+
+  /**
    * Retrieve entities which are tagged with a taxonomy term with one of the given names.
    *
    * @param \Drupal\taxonomy\TermInterface[] $tags
