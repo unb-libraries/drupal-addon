@@ -12,17 +12,6 @@ use Drupal\Core\Entity\ContentEntityStorageInterface;
 interface TaggableContentEntityStorageInterface extends ContentEntityStorageInterface {
 
   /**
-   * Retrieve entities which are tagged with a taxonomy term of one of the given vocabularies.
-   *
-   * @param array $vids
-   *   An array of vocabulary IDs.
-   *
-   * @return \Drupal\Core\Entity\EntityInterface[]
-   *   An array of entity objects.
-   */
-  public function loadByVocabularies(array $vids);
-
-  /**
    * Retrieve entities which are tagged with a taxonomy term with one of the given names.
    *
    * @param \Drupal\taxonomy\TermInterface[] $tags
