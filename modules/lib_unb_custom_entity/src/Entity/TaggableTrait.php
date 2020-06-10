@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\lib_nb_custom_entity\Entity;
+namespace Drupal\lib_unb_custom_entity\Entity;
 
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
@@ -14,7 +14,7 @@ use Drupal\taxonomy\Entity\Vocabulary;
  * @package Drupal\lib_nb_custom_entity\Entity
  */
 trait TaggableTrait {
-  
+
   /**
    * {@inheritDoc}
    *

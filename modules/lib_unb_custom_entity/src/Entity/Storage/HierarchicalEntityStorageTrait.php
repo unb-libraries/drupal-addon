@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\lib_nb_custom_entity\Entity;
+namespace Drupal\lib_unb_custom_entity\Entity\Storage;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\lib_unb_custom_entity\Entity\HierarchicalInterface;
