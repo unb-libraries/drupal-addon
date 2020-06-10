@@ -165,11 +165,15 @@ class EntityFilterForm extends FormBase {
   }
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $form_state->cleanValues();
     foreach ($form as $field_id => $field) {
+      if (substr($field_id, 0, 1) == '#') {
+        continue;
+      }
+
       if (array_key_exists('#multiple', $field) && $field['#multiple']) {
         if (!is_array($form_state->getValue($field_id))) {
           throw new InvalidFormatException("Expected array value for {$field_id}.");
