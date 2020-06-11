@@ -15,37 +15,6 @@ interface TaggableInterface extends EntityInterface {
   const FIELD_TAGS = 'tags';
 
   /**
-   * Retrieve the vocabularies which instances of this entity can be associated with.
-   *
-   * @return \Drupal\taxonomy\Entity\Vocabulary
-   */
-  public static function getVocabularies();
-
-  /**
-   * Set the vocabularies which instances of this entity can be associated with.
-   *
-   * @param array $vids
-   *   An array of vocabulary IDs.
-   *
-   * @return \Drupal\taxonomy\Entity\Vocabulary[]
-   *   An array of vocabulary entities.
-   */
-  public static function setVocabularies(array $vids);
-
-  /**
-   * Retrieve the field ID according to the given vocabulary ID.
-   *
-   * @param string $vid
-   *   The vocabulary ID.
-   *
-   * @return string
-   *   A string.
-   *
-   * @throws \Exception
-   */
-  public static function tagFieldId($vid = '');
-
-  /**
    * Retrieve all assigned tags.
    *
    * @param string $vid

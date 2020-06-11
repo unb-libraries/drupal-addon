@@ -2,11 +2,8 @@
 
 namespace Drupal\lib_unb_custom_entity\Entity;
 
-use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
-use Drupal\lib_unb_custom_entity\Entity\TaggableInterface;
 use Drupal\taxonomy\Entity\Term;
-use Drupal\taxonomy\Entity\Vocabulary;
 
 /**
  * Trait to make content entities taggable.
@@ -70,8 +67,8 @@ trait TaggableTrait {
   /**
    * Create the field definition for a tag within the given vocabulary.
    *
-   * @param \Drupal\taxonomy\Entity\Vocabulary $vocabulary
-   *   The vocabulary.
+   * @param string $vid
+   *   The vocabulary ID.
    * @param array $options
    *   (optional) Array of options accepting the following keys:
    *   - field_id: (string) ID of the field to create.
@@ -79,18 +76,21 @@ trait TaggableTrait {
    *   - label: (string) Label of the field to create.
    *   Defaults to "VOCABULARY_LABEL tags".
    *
-   * @return \Drupal\Core\Field\FieldDefinitionInterface
+   * @return \Drupal\Core\Field\FieldDefinitionInterface[]
    *   A field definition.
    */
-  private static function tagFieldDefinition(Vocabulary $vocabulary, $options = []) {
-    $options = [
-      'field_id' => sprintf('%s_%s', TaggableInterface::FIELD_TAGS, $vocabulary->id()),
-      'label' => t("@vocabulary_label tags", [
-        '@vocabulary_label' => $vocabulary->label(),
-      ]),
-    ] + $options;
+  private static function tagFieldDefinition($vid, $options = []) {
+    $fields = [];
+    $vocabulary = \Drupal::entityTypeManager()
+      ->getStorage('taxonomy_vocabulary')
+      ->load($vid);
 
-    return BaseFieldDefinition::create('entity_reference')
+    $options += [
+      'field_id' => sprintf('%s_%s', TaggableInterface::FIELD_TAGS, $vid),
+      'label' => sprintf("%s tags", $vocabulary ? $vocabulary->label() : ucfirst($vid)),
+    ];
+
+    $fields[$options['field_id']] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t($options['label']))
       ->setRequired(FALSE)
       ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED)
@@ -98,10 +98,12 @@ trait TaggableTrait {
         'target_type' => 'taxonomy_term',
         'handler_settings' => [
           'target_bundles' => [
-            $vocabulary->id() => $vocabulary->id(),
+            $vid => $vid,
           ],
         ],
       ]);
+
+    return $fields;
   }
 
 }
