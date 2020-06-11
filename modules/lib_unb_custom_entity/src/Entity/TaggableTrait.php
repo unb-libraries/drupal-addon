@@ -14,14 +14,18 @@ trait TaggableTrait {
 
   /**
    * {@inheritDoc}
-   *
-   * @throws \Exception
    */
   public function getTags($vid = '') {
     /** @var \Drupal\lib_unb_custom_entity\Entity\Storage\TaggableContentEntityStorageInterface $storage */
     $storage = $this->getStorage();
-    return $this->get($storage->getTagField($vid)->getName())
+
+    $tags = $this->get($storage->getTagField($vid)->getName())
       ->referencedEntities();
+    $tag_ids = array_map(function (Term $tag) {
+      return $tag->id();
+    }, $tags);
+
+    return array_combine(array_values($tag_ids), array_values($tags));
   }
 
   /**
@@ -81,6 +85,7 @@ trait TaggableTrait {
    */
   private static function tagFieldDefinition($vid, $options = []) {
     $fields = [];
+    /** @noinspection PhpUnhandledExceptionInspection */
     $vocabulary = \Drupal::entityTypeManager()
       ->getStorage('taxonomy_vocabulary')
       ->load($vid);

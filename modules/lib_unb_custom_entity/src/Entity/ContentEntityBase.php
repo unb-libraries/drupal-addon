@@ -28,6 +28,7 @@ abstract class ContentEntityBase extends DefaultContentEntityBase {
    *   An entity storage handler object.
    */
   protected function getStorage() {
+    /** @noinspection PhpUnhandledExceptionInspection */
     return $this->entityTypeManager()
       ->getStorage($this->getEntityTypeId());
   }
