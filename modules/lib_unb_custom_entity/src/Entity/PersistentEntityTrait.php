@@ -42,7 +42,9 @@ trait PersistentEntityTrait {
   public static function terminatedBaseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields[PersistentInterface::FIELD_DELETED] = BaseFieldDefinition::create('timestamp')
       ->setLabel(t('Deleted'))
-      ->setDescription(t('When the entity was marked as deleted.'));
+      ->setDescription(t('When the entity was marked as deleted.'))
+      ->setRequired(FALSE)
+      ->setRevisionable($entity_type->isRevisionable());
 
     return $fields;
   }

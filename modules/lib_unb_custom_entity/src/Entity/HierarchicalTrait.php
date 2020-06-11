@@ -71,14 +71,11 @@ trait HierarchicalTrait {
    */
   public static function hierarchyBaseFieldDefinitions(EntityTypeInterface $entity_type) {
     $label = $entity_type->getLabel();
-    $field_type = $entity_type->isRevisionable()
-      ? 'entity_reference_revisions'
-      : 'entity_reference';
-
-    $fields[HierarchicalInterface::FIELD_PARENT] = BaseFieldDefinition::create($field_type)
+    $fields[HierarchicalInterface::FIELD_PARENT] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t("Superior {$label}"))
       ->setRequired(FALSE)
       ->setDefaultValue(0)
+      ->setRevisionable($entity_type->isRevisionable())
       ->setSetting('target_type', $entity_type->id());
 
     return $fields;
