@@ -2,9 +2,7 @@
 
 namespace Drupal\lib_unb_custom_entity\Entity\Storage;
 
-use Drupal\lib_unb_custom_entity\Entity\Storage\TaggableContentEntityStorageInterface;
 use Drupal\Core\Entity\Sql\SqlContentEntityStorage;
-use Drupal\lib_unb_custom_entity\Entity\TaggableInterface;
 
 /**
  * Storage handler for entities that reference taxonomy term entities.
@@ -84,7 +82,7 @@ class TaggableEntityStorage extends SqlContentEntityStorage implements TaggableC
   public function getTagField($vid) {
     foreach ($this->getTagFields() as $field_id => $field_definition) {
       $settings = $field_definition->getSettings();
-      if (array_key_exists('handler_settings', $settings) && array_key_exists('target_bundles', $settings['handler_settings']) && array_key_exists($vid, $settings['handler_settings']['target_bundles'])) {
+      if (!$vid || array_key_exists($vid, $settings['handler_settings']['target_bundles'])) {
         return $field_definition;
       }
     }
