@@ -2,6 +2,7 @@
 
 namespace Drupal\lib_unb_custom_entity\Entity;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 
@@ -18,6 +19,15 @@ trait HierarchicalTrait {
   public function getSuperior() {
     return $this->get(HierarchicalInterface::FIELD_PARENT)
       ->entity;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function setSuperior(EntityInterface $entity) {
+    if ($entity) {
+      $this->set(HierarchicalInterface::FIELD_PARENT, $entity->id());
+    }
   }
 
   /**

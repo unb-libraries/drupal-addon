@@ -22,6 +22,14 @@ interface HierarchicalInterface extends EntityInterface {
   public function getSuperior();
 
   /**
+   * Set a higher-ranking entity as this entity's superior.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface|null $entity
+   *   The entity to assign.
+   */
+  public function setSuperior(EntityInterface $entity);
+
+  /**
    * Retrieve the higher-ranking entities of the same type.
    *
    * @param int $max_asc
