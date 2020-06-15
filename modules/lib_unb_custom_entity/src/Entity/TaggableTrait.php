@@ -4,6 +4,7 @@ namespace Drupal\lib_unb_custom_entity\Entity;
 
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\taxonomy\Entity\Term;
+use Drupal\taxonomy\TermInterface;
 
 /**
  * Trait to make content entities taggable.
@@ -26,6 +27,15 @@ trait TaggableTrait {
     }, $tags);
 
     return array_combine(array_values($tag_ids), array_values($tags));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getTagNames($vid = '') {
+    return array_map(function (TermInterface $tag) {
+      return $tag->getName();
+    }, $this->getTags($vid));
   }
 
   /**

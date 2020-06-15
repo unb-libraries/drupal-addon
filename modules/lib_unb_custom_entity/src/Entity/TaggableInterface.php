@@ -26,6 +26,17 @@ interface TaggableInterface extends EntityInterface {
   public function getTags($vid = '');
 
   /**
+   * Retrieve all named of assigned tags.
+   *
+   * @param string $vid
+   *   The vocabulary ID.
+   *
+   * @return array
+   *   An array of strings.
+   */
+  public function getTagNames($vid = '');
+
+  /**
    * Assign a collection of tags.
    *
    * @param string $vid
