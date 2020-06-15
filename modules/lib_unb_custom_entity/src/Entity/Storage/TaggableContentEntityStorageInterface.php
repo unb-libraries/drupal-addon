@@ -20,18 +20,23 @@ interface TaggableContentEntityStorageInterface extends ContentEntityStorageInte
    * @return \Drupal\Core\Field\FieldDefinitionInterface
    *   A field definition.
    */
-  public function getTagField($vid);
+  public function getTagField($vid = '');
 
   /**
    * Retrieve entities which are tagged with a taxonomy term with one of the given names.
    *
    * @param \Drupal\taxonomy\TermInterface[] $tags
    *   An array of taxonomy term entities.
+   * @param array $options
+   *   (optional) Array of options with the following keys:
+   *   - include_legacy: (bool) Whether to include locations which
+   *   used to be but no longer are tagged with the given tag.
+   *   Defaults to FALSE.
    *
    * @return \Drupal\Core\Entity\EntityInterface[]
    *   An array of entity objects.
    */
-  public function loadByTags(array $tags);
+  public function loadByTags(array $tags, array $options = []);
 
   /**
    * Retrieve entities which are tagged with a taxonomy term with one of the given names.
@@ -45,11 +50,14 @@ interface TaggableContentEntityStorageInterface extends ContentEntityStorageInte
   public function loadByTagNames(array $names);
 
   /**
-   * Retrieve all entities that used to be assigned one of the available tags.
+   * Retrieve all entities that used to be assigned one of the given tags.
+   *
+   * @param \Drupal\taxonomy\TermInterface[] $tags
+   *   An array of taxonomy term entities.
    *
    * @return \Drupal\lib_unb_custom_entity\Entity\TaggableInterface[]
    *   An array of taggable entity objects.
    */
-  public function loadRetired();
+  public function loadRetired(array $tags);
 
 }
