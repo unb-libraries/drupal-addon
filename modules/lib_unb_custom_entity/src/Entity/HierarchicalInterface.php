@@ -12,6 +12,8 @@ use Drupal\Core\Entity\EntityInterface;
 interface HierarchicalInterface extends EntityInterface {
 
   const FIELD_PARENT = 'parent';
+  const UNLIMITED = -1;
+  const IMMEDIATE = 1;
 
   /**
    * Retrieve the higher-ranking entity of the same type.

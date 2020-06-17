@@ -10,20 +10,15 @@ trait HierarchicalEntityStorageTrait {
   /**
    * {@inheritDoc}
    */
-  public function loadInferiors(EntityInterface $entity, $max_desc = 1) {
-    if ($max_desc < 1) {
-      return [];
-    }
-
-    $query = $this
-      ->getQuery()
+  public function loadInferiors(EntityInterface $entity, $max_desc = HierarchicalInterface::UNLIMITED) {
+    $query = $this->getQuery()
       ->condition(HierarchicalInterface::FIELD_PARENT, $entity->id());
-
     $inferiors = $this->loadMultiple($query->execute());
-    foreach ($inferiors as $inferior) {
-      $inferiors += $this->loadInferiors($inferior, $max_desc - 1);
+    if ($max_desc > HierarchicalInterface::IMMEDIATE || $max_desc <= HierarchicalInterface::UNLIMITED) {
+      foreach ($inferiors as $inferior) {
+        $inferiors += $this->loadInferiors($inferior, $max_desc - 1);
+      }
     }
-
     return $inferiors;
   }
 
