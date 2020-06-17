@@ -2,11 +2,14 @@
 
 namespace Drupal\lib_unb_custom_entity\Entity;
 
+use Drupal\changed_fields\EntitySubject;
 use \Drupal\Core\Entity\ContentEntityBase as DefaultContentEntityBase;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\RevisionLogEntityTrait;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\datetime_plus\DependencyInjection\UserTimeTrait;
+use Drupal\lib_unb_custom_entity\FieldObserver\RevisionableEntityFieldObserver;
 
 /**
  * Enhances Drupal's original ContentEntityBase class.
@@ -102,6 +105,18 @@ abstract class ContentEntityBase extends DefaultContentEntityBase {
   public function getChanged() {
     return $this->userTime()
       ->createFromTimestamp($this->get(self::FIELD_CHANGED)->value);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function preSave(EntityStorageInterface $storage) {
+    if ($this->getEntityType()->isRevisionable()) {
+      $entity_subject = new EntitySubject($this);
+      $entity_subject->attach(new RevisionableEntityFieldObserver($this->getEntityType()));
+      $entity_subject->notify();
+    }
+    parent::preSave($storage);
   }
 
   /**
