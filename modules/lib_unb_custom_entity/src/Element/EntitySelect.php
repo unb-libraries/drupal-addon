@@ -147,11 +147,16 @@ class EntitySelect extends Select {
     try {
       $entities = [];
       foreach (static::loadEntities($element) as $entity) {
-        $key = $entity->get(static::getEntityType($element)->getKey($element['#entity_key']))->value;
+        $key = static::getEntityType($element)->getKey($element['#entity_key']);
+        $key_value = $entity->get($key);
+        // Enable extracting both content and config entity field values.
+        if (!is_scalar($key_value)) {
+          $key_value = $key_value->value;
+        }
         $label = is_callable($element['#label_callback'])
           ? call_user_func($element['#label_callback'], $entity)
           : call_user_func(static::class . '::entityLabel', $entity);
-        $entities[$key] = $label;
+        $entities[$key_value] = $label;
       }
       return $entities;
     }
