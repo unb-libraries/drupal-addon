@@ -15,6 +15,9 @@ use Drupal\Core\Render\Element\Select;
  * Properties:
  *   - #entity_type: (string) ID of the entity type which the select options will be populated with.
  *   - #bundle: (string) limit the select options to the given bundle value.
+ *   - #tags: (array) limit the select options to those tagged with the given vocabulary and tag names.
+ *   - #entity_key: (string) use the given entity key to generate select option identifiers.
+ *   - #label_callback: (callable) provide a callable to customize option labels.
  *
  * Usage example:
  * @code
@@ -23,6 +26,12 @@ use Drupal\Core\Render\Element\Select;
  *   '#title' => $this->t('Entity'),
  *   '#entity_type' => 'node',
  *   '#bundle' => 'post'
+ *   '#tags' => [
+ *     'tags' => [
+ *       'News',
+ *     ],
+ *   ],
+ *   '#key' => 'uuid',
  * ];
  * @endcode
  *
@@ -93,7 +102,8 @@ class EntitySelect extends Select {
       '#entity_type' => 'node',
       '#bundle' => '',
       '#tags' => [],
-      '#key' => 'id',
+      '#entity_key' => 'id',
+      '#label_callback' => static::class . '::entityLabel',
     ];
   }
 
@@ -134,8 +144,11 @@ class EntitySelect extends Select {
     try {
       $entities = [];
       foreach (static::loadEntities($element) as $entity) {
-        $key = static::getEntityType($element)->getKey($element['#key']);
-        $entities[$entity->get($key)->value] = $entity->label();
+        $key = $entity->get(static::getEntityType($element)->getKey($element['#entity_key']))->value;
+        $label = is_callable($element['#label_callback'])
+          ? call_user_func($element['#label_callback'], $entity)
+          : call_user_func(static::class . '::entityLabel', $entity);
+        $entities[$key] = $label;
       }
       return $entities;
     }
@@ -276,6 +289,19 @@ class EntitySelect extends Select {
     /** @noinspection PhpUnhandledExceptionInspection */
     return static::entityTypeManager()
       ->getDefinition($entity_type_id);
+  }
+
+  /**
+   * Default label callback. Returns the given entity's label.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity.
+   *
+   * @return string
+   *   A string.
+   */
+  protected static function entityLabel(EntityInterface $entity) {
+    return $entity->label();
   }
 
 }
