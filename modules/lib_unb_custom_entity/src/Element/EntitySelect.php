@@ -115,8 +115,9 @@ class EntitySelect extends Select {
    * {@inheritDoc}
    */
   public static function preRenderSelect($element) {
-    $element['#options'] = static::buildOptions($element);
-    return parent::preRenderSelect($element);
+    $element = parent::preRenderSelect($element);
+    $element['#options'] += static::buildOptions($element);
+    return $element;
   }
 
   /**
@@ -127,8 +128,10 @@ class EntitySelect extends Select {
    * {@inheritDoc}
    */
   public static function processSelect(&$element, FormStateInterface $form_state, &$complete_form) {
-    $element['#options'] = static::buildOptions($element);
-    return parent::processSelect($element, $form_state, $complete_form);
+    $element = parent::processSelect($element, $form_state, $complete_form);
+    $element['#options'] += static::buildOptions($element);
+    return $element;
+
   }
 
   /**
