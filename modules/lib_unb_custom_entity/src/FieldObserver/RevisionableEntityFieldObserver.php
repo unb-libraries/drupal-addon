@@ -101,7 +101,9 @@ class RevisionableEntityFieldObserver implements ObserverInterface {
    *   FALSE otherwise.
    */
   protected function isRevisionableField(FieldDefinitionInterface $field_definition) {
-    return $field_definition->getFieldStorageDefinition()->isRevisionable();
+    $revision_metadata_keys = $this->getEntityType()->getRevisionMetadataKeys();
+    return $field_definition->getFieldStorageDefinition()->isRevisionable()
+      && !in_array($field_definition->getName(), $revision_metadata_keys);
   }
 
   /**
