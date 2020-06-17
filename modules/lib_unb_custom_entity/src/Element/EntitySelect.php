@@ -93,6 +93,7 @@ class EntitySelect extends Select {
       '#entity_type' => 'node',
       '#bundle' => '',
       '#tags' => [],
+      '#key' => 'id',
     ];
   }
 
@@ -131,9 +132,12 @@ class EntitySelect extends Select {
    */
   protected static function buildOptions($element) {
     try {
-      return array_map(function (EntityInterface $entity) {
-        return $entity->label();
-      }, static::loadEntities($element));
+      $entities = [];
+      foreach (static::loadEntities($element) as $entity) {
+        $key = static::getEntityType($element)->getKey($element['#key']);
+        $entities[$entity->get($key)->value] = $entity->label();
+      }
+      return $entities;
     }
     catch (\Exception $e) {
       // TODO: This should not go silent.
