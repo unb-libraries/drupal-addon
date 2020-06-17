@@ -24,7 +24,7 @@ trait HierarchicalTrait {
   /**
    * {@inheritDoc}
    */
-  public function setSuperior(EntityInterface $entity) {
+  public function setSuperior($entity) {
     if ($entity) {
       $this->set(HierarchicalInterface::FIELD_PARENT, $entity->id());
     }
