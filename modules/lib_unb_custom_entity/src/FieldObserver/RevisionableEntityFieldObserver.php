@@ -82,7 +82,7 @@ class RevisionableEntityFieldObserver implements ObserverInterface {
     }
     else {
       $fields = $this->fieldManager()->getFieldDefinitions($this->getEntityType()->id(), $this->getEntityType()->id());
-      $revisionable_fields = array_keys(array_filter($fields, $revisionable_field_filter));
+      $revisionable_fields[$this->getEntityType()->id()] = array_keys(array_filter($fields, $revisionable_field_filter));
     }
 
     return [
