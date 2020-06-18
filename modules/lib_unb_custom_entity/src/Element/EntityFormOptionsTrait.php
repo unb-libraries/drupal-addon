@@ -87,6 +87,7 @@ trait EntityFormOptionsTrait {
       '#entity_type' => 'node',
       '#bundle' => '',
       '#tags' => [],
+      '#options' => [],
       '#entity_key' => 'id',
       '#label_callback' => static::class . '::entityLabel',
     ];
