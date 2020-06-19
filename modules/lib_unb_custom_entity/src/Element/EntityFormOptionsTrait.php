@@ -3,6 +3,7 @@
 namespace Drupal\lib_unb_custom_entity\Element;
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\FieldDefinitionInterface;
 
 /**
