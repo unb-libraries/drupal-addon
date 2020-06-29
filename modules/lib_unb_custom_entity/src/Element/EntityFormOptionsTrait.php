@@ -90,6 +90,7 @@ trait EntityFormOptionsTrait {
       '#tags' => [],
       '#options' => [],
       '#entity_key' => 'id',
+      '#filter' => [],
       '#label_callback' => static::class . '::entityLabel',
     ];
   }
@@ -157,6 +158,11 @@ trait EntityFormOptionsTrait {
   protected static function entityQuery(array $element) {
     $entity_type = static::getEntityType($element);
     $query = \Drupal::entityQuery($entity_type->id());
+
+    foreach ($element['#filter'] as $property => $value) {
+      $query->condition($property, $value);
+    }
+
     if (($bundle = $element['#bundle']) && $entity_type->hasKey('bundle')) {
       $query->condition($entity_type->getKey('bundle'), $bundle);
     }
