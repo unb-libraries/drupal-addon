@@ -10,21 +10,25 @@ use Drupal\Core\Field\BaseFieldDefinition;
  *
  * @package Drupal\lib_unb_custom_entity\Entity
  */
-trait PersistentEntityTrait {
+trait TerminableTrait {
 
   /**
    * {@inheritDoc}
    */
   public function terminate() {
-    return $this->set(PersistentInterface::FIELD_DELETED, time());
+    return $this->set(TerminableInterface::FIELD_DELETED, time())
+      ->save();
   }
 
   /**
    * {@inheritDoc}
    */
   public function isTerminated($timestamp = NULL) {
-    if ($deleted = $this->get(PersistentInterface::FIELD_DELETED)) {
-      return $timestamp && $timestamp >= $deleted;
+    if (!$timestamp) {
+      $timestamp = time();
+    }
+    if ($deleted = $this->get(TerminableInterface::FIELD_DELETED)->value) {
+      return $timestamp >= $deleted;
     }
     return FALSE;
   }
@@ -40,7 +44,7 @@ trait PersistentEntityTrait {
    *   name.
    */
   public static function terminatedBaseFieldDefinitions(EntityTypeInterface $entity_type) {
-    $fields[PersistentInterface::FIELD_DELETED] = BaseFieldDefinition::create('timestamp')
+    $fields[TerminableInterface::FIELD_DELETED] = BaseFieldDefinition::create('timestamp')
       ->setLabel(t('Deleted'))
       ->setDescription(t('When the entity was marked as deleted.'))
       ->setRequired(FALSE)

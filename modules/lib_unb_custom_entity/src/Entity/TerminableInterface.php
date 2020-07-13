@@ -9,7 +9,7 @@ use Drupal\Core\Entity\EntityInterface;
  *
  * @package Drupal\lib_unb_custom_entity\Entity
  */
-interface PersistentInterface extends EntityInterface {
+interface TerminableInterface extends EntityInterface {
 
   const FIELD_DELETED = 'deleted';
 
@@ -30,13 +30,5 @@ interface PersistentInterface extends EntityInterface {
    *   TRUE if the entity has been "deleted". FALSE otherwise.
    */
   public function isTerminated($timestamp = NULL);
-
-  /**
-   * Truly removes an entity permanently.
-   *
-   * @throws \Drupal\Core\Entity\EntityStorageException
-   *   In case of failures an exception is thrown.
-   */
-  public function destroy();
 
 }

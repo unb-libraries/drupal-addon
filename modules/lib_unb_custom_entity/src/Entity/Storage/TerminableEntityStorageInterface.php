@@ -9,7 +9,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
  *
  * @package Drupal\lib_unb_custom_entity\Entity
  */
-interface PersistentEntityStorageInterface extends EntityStorageInterface {
+interface TerminableEntityStorageInterface extends EntityStorageInterface {
 
   /**
    * Load terminated entities.
