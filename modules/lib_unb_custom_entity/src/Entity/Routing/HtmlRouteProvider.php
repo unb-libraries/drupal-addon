@@ -15,6 +15,10 @@ class HtmlRouteProvider extends DefaultHtmlRouteProvider {
     $routes = parent::getRoutes($entity_type);
     $entity_type_id = $entity_type->id();
 
+    foreach ($this->getCustomFormRoutes($entity_type) as $route_name => $route) {
+      $routes->add($route_name, $route);
+    }
+
     if ($delete_all_route = $this->getDeleteAllFormRoute($entity_type)) {
       $routes->add("entity.{$entity_type_id}.delete_all", $delete_all_route);
     }
@@ -58,6 +62,70 @@ class HtmlRouteProvider extends DefaultHtmlRouteProvider {
       return $route;
     }
     return NULL;
+  }
+
+  /**
+   * Create routes from all non-
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   * @return array
+   */
+  protected function getCustomFormRoutes(EntityTypeInterface $entity_type) {
+    $routes = [];
+    $entity_type_id = $entity_type->id();
+    foreach ($entity_type->getLinkTemplates() as $route_type => $link_template) {
+      if ($this->isCustomFormLink($entity_type, $route_type) && $this->isSingleEntityPath($entity_type, $link_template)) {
+        $operation = substr($route_type, 0, -5);
+        $route = new Route($link_template);
+        $route->addDefaults([
+          '_entity_form' => "{$entity_type_id}.{$operation}",
+          '_title' => sprintf('%s %s', t(ucfirst($operation)), $entity_type->getSingularLabel()),
+        ]);
+        $route->setRequirement('_entity_access', "{$entity_type_id}.{$operation}");
+        $route->setOption('parameters', [
+          $entity_type_id => ['type' => 'entity:' . $entity_type_id],
+        ]);
+
+        $routes["entity.{$entity_type_id}.{$operation}_form"] = $route;
+      }
+    }
+    return $routes;
+  }
+
+  /**
+   * Whether the given link template leads to a form route.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   The entity type that defines the link template.
+   * @param string $link_template
+   *   The link template.
+   *
+   * @return bool
+   *   TRUE if the given link template leads to a form route.
+   *   FALSE otherwise.
+   */
+  protected function isCustomFormLink(EntityTypeInterface $entity_type, $link_template) {
+    if (preg_match('/(\w)(-\w)*-form/', $link_template) && !in_array($link_template, ['add-form', 'edit-form', 'delete-form', 'delete-all-form'])) {
+      $operation = substr($link_template, 0, -5);
+      return !is_null($entity_type->getFormClass($operation));
+    }
+    return FALSE;
+  }
+
+  /**
+   * Whether the given route path involves a single entity instance.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   The entity type that defines the route path.
+   * @param string $path
+   *   The route path.
+   *
+   * @return bool
+   *   TRUE if the given route path contains a route parameter
+   *   that matches the given entity type. FALSE otherwise.
+   */
+  protected function isSingleEntityPath(EntityTypeInterface $entity_type, $path) {
+    $entity_type_id = $entity_type->id();
+    return boolval(preg_match("/.*\/\{$entity_type_id\}\/.*/", $path));
   }
 
   /**
