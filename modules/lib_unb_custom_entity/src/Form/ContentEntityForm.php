@@ -14,6 +14,16 @@ use Drupal\Core\Form\FormStateInterface;
 class ContentEntityForm extends DefaultContentEntityForm {
 
   /**
+   * Retrieve the entity type manager service.
+   *
+   * @return \Drupal\Core\Entity\EntityTypeManagerInterface
+   *   An entity type manager instance.
+   */
+  protected function getEntityTypeManager() {
+    return $this->entityTypeManager;
+  }
+
+  /**
    * Retrieve the module providing this form.
    *
    * @return string
