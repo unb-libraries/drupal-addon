@@ -21,7 +21,9 @@ class EntitySelect extends Select {
    * {@inheritDoc}
    */
   public function getInfo() {
-    return parent::getInfo() + $this->entityInfo();
+    return parent::getInfo() + $this->entityInfo() + [
+      '#return_type' => 'object',
+    ];
   }
 
   /**
@@ -55,10 +57,15 @@ class EntitySelect extends Select {
    */
   public static function valueCallback(&$element, $input, FormStateInterface $form_state) {
     if ($input = parent::valueCallback($element, $input, $form_state)) {
-      $entity = static::entityTypeManager()
-        ->getStorage($element['#entity_type'])
-        ->load($input);
-      $form_state->setValueForElement($element, $entity);
+      if ($element['#return_type'] === 'id') {
+        $form_state->setValueForElement($element, $input);
+      }
+      else {
+        $entity = static::entityTypeManager()
+          ->getStorage($element['#entity_type'])
+          ->load($input);
+        $form_state->setValueForElement($element, $entity);
+      }
       return $input;
     }
     return parent::valueCallback($element, $input, $form_state);
