@@ -21,6 +21,7 @@ class FilterableEntityListBuilder extends EntityListBuilder {
     'not' => '<>',
     'starts_with' => 'STARTS_WITH',
     'ends_with' => 'ENDS_WITH',
+    'contains' => 'CONTAINS',
     'in' => 'IN',
     'not_in' => 'NOT IN',
   ];
