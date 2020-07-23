@@ -125,25 +125,25 @@ class EntitySubForm extends FormElement {
   * {@inheritdoc}
   */
   public static function valueCallback(&$element, $input, FormStateInterface $form_state) {
-    if (isset($element['#default_value'])) {
-      $entity = $element['#default_value'];
+    if (!$input || !isset($element['#default_value'])) {
+      if (!$input) {
+        $input = [];
+      }
+
+      $entity_type = static::entityTypeManager()->getDefinition($element['#entity_type']);
+      if (isset($element['#bundle']) && $entity_type->getBundleEntityType()) {
+        $input[$entity_type->getKey('bundle')] = $element['#bundle'];
+      }
+
+      $element['#value'] = static::entityTypeManager()
+        ->getStorage($element['#entity_type'])
+        ->create($input);
     }
     else {
-      $entity_type = static::entityTypeManager()
-        ->getDefinition($element['#entity_type']);
-      if (isset($element['#bundle']) && $entity_type->getBundleEntityType()) {
-        $values[$entity_type->getKey('bundle')] = $element['#bundle'];
-      }
-      else {
-        $values = [];
-      }
-
-      $entity = static::entityTypeManager()
-        ->getStorage($element['#entity_type'])
-        ->create($values);
+      $element['#value'] = $element['#default_value'];
     }
 
-    return $entity;
+    return $element['#value'];
   }
 
   /**
