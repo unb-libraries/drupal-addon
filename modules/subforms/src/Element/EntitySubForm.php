@@ -89,7 +89,7 @@ class EntitySubForm extends FormElement {
         [static::class, 'processGroup'],
       ],
       '#element_validate' => [
-        [static::class, 'validateForm'],
+        [static::class, 'validateSubForm'],
       ],
     ];
   }
@@ -163,6 +163,7 @@ class EntitySubForm extends FormElement {
     $element['#form_object'] = static::entityTypeManager()
       ->getFormObject($element['#entity_type'], $element['#operation'])
       ->setEntity($element['#value']);
+
     $sub_form = $element['#form_object']->buildForm([], new FormState());
     foreach (Element::getVisibleChildren($sub_form) as $child_id) {
       if ($sub_form[$child_id]['#type'] === 'actions') {
@@ -198,6 +199,7 @@ class EntitySubForm extends FormElement {
         // TODO: Children of elements which set #tree = TRUE must add themselves as parents.
         $element[$child_id]['#parents'] = $element['#parents'];
       }
+      // TODO: Form #states break when element names change due to re-assigning #parents.
       $element[$child_id] = static::processParents($element[$child_id], $form_state, $complete_form);
     }
 
@@ -214,16 +216,12 @@ class EntitySubForm extends FormElement {
    * @param array $complete_form
    *   The complete form.
    */
-  public static function validateForm(&$element, FormStateInterface $form_state, &$complete_form) {
-    /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
-    $entity = $element['#value'];
-
-    // TODO: Sanitize the user input or find out how to populate the form state with validated data.
-    $values = array_intersect_key($form_state->getUserInput(), NestedArray::getValue($form_state->getValues(), $element['#parents']));
-    foreach ($values as $key => $value) {
-      $entity->set($key, $value);
+  public static function validateSubForm(&$element, FormStateInterface $form_state, &$complete_form) {
+    $sub_form_state = clone $form_state;
+    $sub_form_state->setValues(NestedArray::getValue($form_state->getValues(), $element['#parents']));
+    if ($entity = $element['#form_object']->validateForm($element, $sub_form_state)) {
+      $form_state->setValueForElement($element, $entity);
     }
-    $form_state->setValueForElement($element, $entity);
   }
 
 }
