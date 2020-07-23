@@ -3,6 +3,7 @@
 namespace Drupal\subforms\Element;
 
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Form\FormState;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Element\Container;
@@ -76,7 +77,6 @@ class EntitySubForm extends FormElement {
   public function getInfo() {
     return [
       '#entity_type' => '',
-      '#form' => '',
       '#input' => TRUE,
       '#operation' => 'default',
       '#pre_render' => [
@@ -85,6 +85,7 @@ class EntitySubForm extends FormElement {
       '#process' => [
         [static::class, 'processContainerOrFieldset'],
         [static::class, 'processBuildForm'],
+        [static::class, 'processParents'],
         [static::class, 'processGroup'],
       ],
       '#element_validate' => [
@@ -107,6 +108,7 @@ class EntitySubForm extends FormElement {
    *   The processed element.
    */
   public static function processContainerOrFieldset(&$element, FormStateInterface $form_state, array &$complete_form) {
+    $element['#tree'] = TRUE;
     if (array_key_exists('#title', $element)) {
       $element['#process'][] = [static::class, 'processAjaxForm'];
       $element['#theme_wrappers'][] = 'fieldset';
@@ -158,48 +160,45 @@ class EntitySubForm extends FormElement {
    *   The processed element.
    */
   public static function processBuildForm(&$element, FormStateInterface $form_state, array &$complete_form) {
-    $form = static::entityFormBuilder()
-        ->getForm($element['#value']);
-
-    $element['form'] = [
-      '#type' => 'container',
-      '#parents' => $element['#parents'],
-      '#tree' => TRUE,
-    ];
-    $element['form'] += static::buildSubFormElement($element['form'], $form);
-
-    return $element;
+    $element['#form_object'] = static::entityTypeManager()
+      ->getFormObject($element['#entity_type'], $element['#operation'])
+      ->setEntity($element['#value']);
+    $sub_form = $element['#form_object']->buildForm([], new FormState());
+    foreach (Element::getVisibleChildren($sub_form) as $child_id) {
+      if ($sub_form[$child_id]['#type'] === 'actions') {
+        unset($sub_form[$child_id]);
+      }
+    }
+    return $element + $sub_form;
   }
 
   /**
-   * Develop the given element with properties/content from the given (partial) form.
+   * Form element processing handler. Assign "parents" to sub-form children elements.
    *
    * @param array $element
-   *   A form element.
-   * @param array $sub_form
-   *   A (partial) form array.
+   *   An associative array containing the properties of the element.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   * @param array $complete_form
+   *   The complete form structure.
    *
    * @return array
-   *   A form element.
+   *   The processed element.
    */
-  protected static function buildSubFormElement(&$element, $sub_form) {
-    $weight = 0;
-    foreach (Element::getVisibleChildren($sub_form) as $field_id) {
-      if (isset($sub_form[$field_id]['#type']) && $sub_form[$field_id]['#type'] !== 'actions') {
-        $weight += 0.001;
-        $parents_for_id = array_merge($element['#parents'], [$field_id]);
-        $element[$field_id] = [
-          '#parents' => isset($sub_form[$field_id]['#input']) && $sub_form[$field_id]['#input']
-            ? array_merge($element['#parents'], $sub_form[$field_id]['#parents'])
-            : $element['#parents'],
-          '#id' => HtmlUtility::getUniqueId('edit-' . implode('-', $parents_for_id)),
-          '#weight' => $weight,
-        ];
-
-        $properties = array_flip(Element::properties($sub_form[$field_id]));
-        $element[$field_id] += array_intersect_key($sub_form[$field_id], $properties);
-        $element[$field_id] += static::buildSubFormElement($element[$field_id], $sub_form[$field_id]);
+  public static function processParents(&$element, FormStateInterface $form_state, array &$complete_form) {
+    $sub_elements = array_intersect_key($element, array_flip(Element::getVisibleChildren($element)));
+    foreach ($sub_elements as $child_id => $child) {
+      if (!array_key_exists('#type', $child)) {
+        continue;
       }
+      if (empty(Element::children($child)) || (isset($child['#tree']) && $child['#tree'])) {
+        $element[$child_id]['#parents'] = array_merge($element['#parents'], [$child_id]);
+      }
+      else {
+        // TODO: Children of elements which set #tree = TRUE must add themselves as parents.
+        $element[$child_id]['#parents'] = $element['#parents'];
+      }
+      $element[$child_id] = static::processParents($element[$child_id], $form_state, $complete_form);
     }
 
     return $element;
