@@ -84,8 +84,9 @@ class HtmlRouteProvider extends DefaultHtmlRouteProvider {
         $route->setOption('parameters', [
           $entity_type_id => ['type' => 'entity:' . $entity_type_id],
         ]);
-
-        $routes["entity.{$entity_type_id}.{$operation}_form"] = $route;
+        $route_name = str_replace('-', '_',
+          "entity.{$entity_type_id}.{$operation}_form");
+        $routes[$route_name] = $route;
       }
     }
     return $routes;
