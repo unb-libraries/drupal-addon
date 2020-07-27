@@ -86,6 +86,7 @@ class EntitySubForm extends FormElement {
         [static::class, 'processContainerOrFieldset'],
         [static::class, 'processBuildForm'],
         [static::class, 'processParents'],
+        [static::class, 'processConditionallyRequiredStates'],
         [static::class, 'processGroup'],
       ],
       '#element_validate' => [
@@ -171,6 +172,76 @@ class EntitySubForm extends FormElement {
       }
     }
     return $element + $sub_form;
+  }
+
+  /**
+   * Form element processing handler. Forward 'required' states of the form element to sub-form elements.
+   *
+   * @param array $element
+   *   An associative array containing the properties of the element.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   * @param array $complete_form
+   *   The complete form structure.
+   *
+   * @return array
+   *   The processed element.
+   */
+  public static function processConditionallyRequiredStates(array &$element, FormStateInterface $form_state, array &$complete_form) {
+    if (ElementPlus::isConditionallyRequired($element)) {
+      $condition = $element['#states']['required'];
+      foreach (ElementPlus::children($element) as $child_id) {
+        $required = ElementPlus::isRequiredElement($element[$child_id]);
+        $states = isset($element[$child_id]['#states'])
+          ? $element[$child_id]['#states']
+          : [];
+
+        $element[$child_id] = static::addState($element[$child_id], 'required', $condition);
+        if ($required) {
+          if (isset($element[$child_id]['#required'])) {
+            unset($element[$child_id]['#required']);
+          }
+        }
+        else {
+          $element[$child_id] = static::processConditionallyRequiredStates(
+            $element[$child_id], $form_state, $complete_form);
+          if (!empty($states)) {
+            $element[$child_id]['#states'] = $states;
+          }
+          else {
+            unset($element['#states']);
+          }
+        }
+      }
+    }
+
+    return $element;
+  }
+
+  /**
+   * Add a state to the given element.
+   *
+   * @param array $element
+   *   The element.
+   * @param string $state
+   *   The state key.
+   * @param array $condition
+   *   The state condition.
+   *
+   * @return array
+   *   The modified element.
+   */
+  protected static function addState(array $element, $state, array $condition) {
+    if (!array_key_exists('#states', $element)) {
+      $element['#states'] = [];
+    }
+    if (!array_key_exists($state, $element['#states'])) {
+      $element['#states'][$state] = $condition;
+    }
+    else {
+      $element['#states'][$state][] = [$condition];
+    }
+    return $element;
   }
 
   /**
