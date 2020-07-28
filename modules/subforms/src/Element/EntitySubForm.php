@@ -5,7 +5,6 @@ namespace Drupal\subforms\Element;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Element\CompositeFormElementTrait;
 use Drupal\Core\Render\Element\Container;
 use Drupal\Core\Render\Element\FormElement;
@@ -100,38 +99,6 @@ class EntitySubForm extends FormElement {
   }
 
   /**
-   * Form element processing handler.
-   *
-   * @param array $element
-   *   An associative array containing the properties of the element.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current state of the form.
-   * @param array $complete_form
-   *   The complete form structure.
-   *
-   * @return array
-   *   The processed element.
-   */
-  public static function processContainerOrFieldset(&$element, FormStateInterface $form_state, array &$complete_form) {
-    $element['#tree'] = TRUE;
-    // Let sub-form determine which elements are required or optional.
-    if (isset($element['#required'])) {
-      unset($element['#required']);
-    }
-
-    if (array_key_exists('#title', $element)) {
-      $element['#process'][] = [static::class, 'processAjaxForm'];
-      $element['#theme_wrappers'][] = 'fieldset';
-    }
-    else {
-      $element['#pre_render'][] = [Container::class, 'preRenderContainer'];
-      $element['#theme_wrappers'][] = 'container';
-      Container::processContainer($element, $form_state, $complete_form);
-    }
-    return $element;
-  }
-
-  /**
   * {@inheritdoc}
   */
   public static function valueCallback(&$element, $input, FormStateInterface $form_state) {
@@ -169,16 +136,51 @@ class EntitySubForm extends FormElement {
    * @return array
    *   The processed element.
    */
+  public static function processContainerOrFieldset(&$element, FormStateInterface $form_state, array &$complete_form) {
+    $element['#tree'] = TRUE;
+    // Let sub-form determine which elements are required or optional.
+    if (isset($element['#required'])) {
+      unset($element['#required']);
+    }
+
+    if (array_key_exists('#title', $element)) {
+      $element['#process'][] = [static::class, 'processAjaxForm'];
+      $element['#theme_wrappers'][] = 'fieldset';
+    }
+    else {
+      $element['#pre_render'][] = [Container::class, 'preRenderContainer'];
+      $element['#theme_wrappers'][] = 'container';
+      Container::processContainer($element, $form_state, $complete_form);
+    }
+
+    return $element;
+  }
+
+  /**
+   * Form element processing handler.
+   *
+   * @param array $element
+   *   An associative array containing the properties of the element.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   * @param array $complete_form
+   *   The complete form structure.
+   *
+   * @return array
+   *   The processed element.
+   */
   public static function processBuildForm(&$element, FormStateInterface $form_state, array &$complete_form) {
     $element['#form_object'] = static::entityTypeManager()
       ->getFormObject($element['#entity_type'], $element['#operation'])
       ->setEntity($element['#value']);
 
     $sub_form = $element['#form_object']->buildForm([], new FormState());
-    foreach (Element::getVisibleChildren($sub_form) as $child_id) {
+    foreach (ElementPlus::getVisibleChildren($sub_form) as $child_id) {
       if ($sub_form[$child_id]['#type'] === 'actions') {
         unset($sub_form[$child_id]);
       }
+
+
     }
     return $element + $sub_form;
   }
@@ -242,12 +244,12 @@ class EntitySubForm extends FormElement {
    *   The processed element.
    */
   public static function processParents(&$element, FormStateInterface $form_state, array &$complete_form) {
-    $sub_elements = array_intersect_key($element, array_flip(Element::getVisibleChildren($element)));
+    $sub_elements = array_intersect_key($element, array_flip(ElementPlus::getVisibleChildren($element)));
     foreach ($sub_elements as $child_id => $child) {
       if (!array_key_exists('#type', $child)) {
         continue;
       }
-      if (empty(Element::children($child)) || (isset($child['#tree']) && $child['#tree'])) {
+      if (empty(ElementPlus::children($child)) || (isset($child['#tree']) && $child['#tree'])) {
         $element[$child_id]['#parents'] = array_merge($element['#parents'], [$child_id]);
       }
       else {
