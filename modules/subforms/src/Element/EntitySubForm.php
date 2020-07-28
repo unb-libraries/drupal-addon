@@ -6,6 +6,7 @@ use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Render\Element\CompositeFormElementTrait;
 use Drupal\Core\Render\Element\Container;
 use Drupal\Core\Render\Element\FormElement;
 use Drupal\Component\Utility\Html as HtmlUtility;
@@ -30,6 +31,8 @@ use Drupal\Component\Utility\Html as HtmlUtility;
  * @FormElement("entity_subform")
  */
 class EntitySubForm extends FormElement {
+
+  use CompositeFormElementTrait;
 
   /**
    * The entity type manager service.
@@ -80,6 +83,7 @@ class EntitySubForm extends FormElement {
       '#input' => TRUE,
       '#operation' => 'default',
       '#pre_render' => [
+        [static::class, 'preRenderCompositeFormElement'],
         [static::class, 'preRenderGroup'],
       ],
       '#process' => [
