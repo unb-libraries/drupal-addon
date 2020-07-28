@@ -9,6 +9,9 @@ namespace Drupal\subforms\Element;
  */
 class ElementState {
 
+  const CONJUNCT_AND = 'and';
+  const CONJUNCT_OR = 'or';
+
   /**
    * Merge two arrays of state definitions.
    *
@@ -24,7 +27,15 @@ class ElementState {
    *   The first states array with all rules of
    *   of the other states array merged into it.
    */
-  public static function mergeStates(array $states1, array $states2, $conjunction = 'and') {
+  public static function mergeStates(array $states1, array $states2, $conjunction = self::CONJUNCT_AND) {
+    foreach ($states2 as $state => $rules) {
+      if (!array_key_exists($state, $states1)) {
+        $states1[$state] = $rules;
+      }
+      else {
+        $states1[$state] = static::mergeRules($states1[$state], $rules);
+      }
+    }
     return $states1;
   }
 
@@ -43,8 +54,39 @@ class ElementState {
    *   The first rules array with all rules of
    *   the other rules array merged into it.
    */
-  public static function mergeRules(array $rules1, array $rules2, $conjunction = 'and') {
-    return $rules1;
+  public static function mergeRules(array $rules1, array $rules2, $conjunction = self::CONJUNCT_AND) {
+    if (static::isComplex($rules1) && static::isComplex($rules2)) {
+      return static::mergeComplexRules($rules1, $rules2, $conjunction);
+    }
+    elseif (static::isComplex($rules1)) {
+      return static::mergeSimpleAndComplexRules($rules1, $rules2, $conjunction);
+    }
+    elseif (static::isComplex($rules2)) {
+      return static::mergeSimpleAndComplexRules($rules2, $rules1, $conjunction);
+    }
+    else {
+      return static::mergeSimpleRules($rules1, $rules2, $conjunction);
+    }
+  }
+
+  /**
+   * Whether the given array defines a set of complex or simple rules.
+   *
+   * @param array $rules
+   *   An array of rules.
+   *
+   * @return bool
+   *   TRUE if the given array is a definition of complex rules.
+   *   FALSE if the given array is a definition of simple rules.
+   */
+  public static function isComplex(array $rules) {
+    if (!empty($rules)) {
+      $complex = is_int(array_keys($rules)[0]);
+    }
+    else {
+      $complex = FALSE;
+    }
+    return $complex;
   }
 
   /**
@@ -76,8 +118,19 @@ class ElementState {
    *   from $simple1 and those rules from $simple2,
    *   that do not already exist in $simple1.
    */
-  public static function mergeSimpleRules(array $simple1, array $simple2, $conjunction = 'and') {
-
+  public static function mergeSimpleRules(array &$simple1, array $simple2, $conjunction = self::CONJUNCT_AND) {
+    if ($conjunction === self::CONJUNCT_AND) {
+      foreach ($simple2 as $selector => $condition) {
+        if (!array_key_exists($selector, $simple1)) {
+          $simple1[$selector] = $condition;
+        }
+      }
+    }
+    else {
+      $complex1 = static::simpleToComplex($simple1);
+      $complex2 = static::simpleToComplex($simple2);
+      $simple1 = static::mergeComplexRules($complex1, $complex2, self::CONJUNCT_OR);
+    }
     return $simple1;
   }
 
@@ -92,7 +145,15 @@ class ElementState {
    *   rules conjunct with 'and'.
    */
   public static function simpleToComplex(array $simple) {
-    return $simple;
+    $complex = [];
+    foreach ($simple as $selector => $condition) {
+      $complex[] = [$selector => $condition];
+      $last_selector = array_keys($simple)[count($simple) - 1];
+      if ($selector !== $last_selector) {
+        $complex[] = self::CONJUNCT_AND;
+      }
+    }
+    return $complex;
   }
 
   /**
@@ -128,8 +189,12 @@ class ElementState {
    *   from $complex1 and those rules from $complex2,
    *   that do not already exist in $complex1.
    */
-  public static function mergeComplexRules(array $complex1, array $complex2, $conjunction = 'and') {
-    return $complex1;
+  public static function mergeComplexRules(array $complex1, array $complex2, $conjunction = self::CONJUNCT_AND) {
+    return [
+      [$complex1],
+      $conjunction,
+      [$complex2],
+    ];
   }
 
   /**
@@ -148,8 +213,9 @@ class ElementState {
    *   int one and $simple's rules grouped into another group
    *   of rules.
    */
-  public static function mergeSimpleAndComplexRules(array $complex, array $simple, $conjunction = 'and') {
-    return $complex;
+  public static function mergeSimpleAndComplexRules(array $complex, array $simple, $conjunction = self::CONJUNCT_AND) {
+    $complex2 = static::simpleToComplex($simple);
+    return static::mergeComplexRules($complex, $complex2);
   }
 
 }
