@@ -60,4 +60,32 @@ class ElementPlus extends Element {
       && array_key_exists('required', $element['#states']);
   }
 
+  /**
+   * Merge the state arrays of the given elements.
+   *
+   * @param array $element1
+   *   The render into which to merge.
+   * @param array $element2
+   *   The render array to merge.
+   * @param string $conjunction
+   *   (optional) Whether to merge multiple rules for
+   *   one state using 'and' (default) or 'or' conjunction.
+   *
+   * @return array
+   *   The first element which '#states' array contains all its previous
+   *   rules in addition to those of $element2's rules that it did not
+   *   already define itself.
+   */
+  public static function mergeElementStates(array &$element1, array $element2, $conjunction = 'and') {
+    $states1 = array_key_exists('#states', $element1)
+      ? $element1['#states']
+      : [];
+    $states2 = array_key_exists('#states', $element2)
+      ? $element2['#states']
+      : [];
+
+    $element1['#states'] = ElementState::mergeStates($states1, $states2, $conjunction);
+    return $element1;
+  }
+
 }
