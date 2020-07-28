@@ -13,6 +13,48 @@ class ElementState {
   const CONJUNCT_OR = 'or';
 
   /**
+   * Add a state to the given array of states.
+   *
+   * @param array $states
+   *   The array of state definitions to which to add a state.
+   * @param string $state
+   *   The state key.
+   * @param array $rules
+   *   An array of rules.
+   * @param string $conjunction
+   *   The conjunction to use when adding the state,
+   *   either 'and' (default) or 'or'.
+   *
+   * @return array
+   *   The modified element.
+   */
+  public static function addState(array &$states, $state, array $rules, $conjunction = self::CONJUNCT_AND) {
+    $states = static::mergeStates($states, [
+      $state => $rules,
+    ], $conjunction);
+    return $states;
+  }
+
+  /**
+   * Remove the state with the given key from the given states array.
+   *
+   * @param array $states
+   *   The states array.
+   * @param string $state
+   *   The state key.
+   *
+   * @return array
+   *   The states array after the state with the
+   *   given key has been removed.
+   */
+  public static function removeState(array &$states, $state) {
+    if (array_key_exists($state, $states)) {
+      unset($states[$state]);
+    }
+    return $states;
+  }
+
+  /**
    * Merge two arrays of state definitions.
    *
    * @param array $states1
@@ -27,7 +69,7 @@ class ElementState {
    *   The first states array with all rules of
    *   of the other states array merged into it.
    */
-  public static function mergeStates(array $states1, array $states2, $conjunction = self::CONJUNCT_AND) {
+  public static function mergeStates(array &$states1, array $states2, $conjunction = self::CONJUNCT_AND) {
     foreach ($states2 as $state => $rules) {
       if (!array_key_exists($state, $states1)) {
         $states1[$state] = $rules;
@@ -54,19 +96,20 @@ class ElementState {
    *   The first rules array with all rules of
    *   the other rules array merged into it.
    */
-  public static function mergeRules(array $rules1, array $rules2, $conjunction = self::CONJUNCT_AND) {
+  public static function mergeRules(array &$rules1, array $rules2, $conjunction = self::CONJUNCT_AND) {
     if (static::isComplex($rules1) && static::isComplex($rules2)) {
-      return static::mergeComplexRules($rules1, $rules2, $conjunction);
+      $rules1 = static::mergeComplexRules($rules1, $rules2, $conjunction);
     }
     elseif (static::isComplex($rules1)) {
-      return static::mergeSimpleAndComplexRules($rules1, $rules2, $conjunction);
+      $rules1 = static::mergeSimpleAndComplexRules($rules1, $rules2, $conjunction);
     }
     elseif (static::isComplex($rules2)) {
-      return static::mergeSimpleAndComplexRules($rules2, $rules1, $conjunction);
+      $rules1 = static::mergeSimpleAndComplexRules($rules2, $rules1, $conjunction);
     }
     else {
-      return static::mergeSimpleRules($rules1, $rules2, $conjunction);
+      $rules1 = static::mergeSimpleRules($rules1, $rules2, $conjunction);
     }
+    return $rules1;
   }
 
   /**
@@ -189,12 +232,13 @@ class ElementState {
    *   from $complex1 and those rules from $complex2,
    *   that do not already exist in $complex1.
    */
-  public static function mergeComplexRules(array $complex1, array $complex2, $conjunction = self::CONJUNCT_AND) {
-    return [
+  public static function mergeComplexRules(array &$complex1, array $complex2, $conjunction = self::CONJUNCT_AND) {
+    $complex1 = [
       [$complex1],
       $conjunction,
       [$complex2],
     ];
+    return $complex1;
   }
 
   /**
@@ -213,9 +257,10 @@ class ElementState {
    *   int one and $simple's rules grouped into another group
    *   of rules.
    */
-  public static function mergeSimpleAndComplexRules(array $complex, array $simple, $conjunction = self::CONJUNCT_AND) {
+  public static function mergeSimpleAndComplexRules(array &$complex, array $simple, $conjunction = self::CONJUNCT_AND) {
     $complex2 = static::simpleToComplex($simple);
-    return static::mergeComplexRules($complex, $complex2);
+    $complex = static::mergeComplexRules($complex, $complex2);
+    return $complex;
   }
 
 }

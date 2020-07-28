@@ -110,6 +110,11 @@ class EntitySubForm extends FormElement {
    */
   public static function processContainerOrFieldset(&$element, FormStateInterface $form_state, array &$complete_form) {
     $element['#tree'] = TRUE;
+    // Let sub-form determine which elements are required or optional.
+    if (isset($element['#required'])) {
+      unset($element['#required']);
+    }
+
     if (array_key_exists('#title', $element)) {
       $element['#process'][] = [static::class, 'processAjaxForm'];
       $element['#theme_wrappers'][] = 'fieldset';
@@ -188,59 +193,34 @@ class EntitySubForm extends FormElement {
    *   The processed element.
    */
   public static function processConditionallyRequiredStates(array &$element, FormStateInterface $form_state, array &$complete_form) {
-    if (ElementPlus::isConditionallyRequired($element)) {
-      $condition = $element['#states']['required'];
-      foreach (ElementPlus::children($element) as $child_id) {
-        $required = ElementPlus::isRequiredElement($element[$child_id]);
-        $states = isset($element[$child_id]['#states'])
-          ? $element[$child_id]['#states']
-          : [];
+    foreach (ElementPlus::children($element) as $child_id) {
+      if (!isset($element[$child_id]['#type'])) {
+        continue;
+      }
 
-        $element[$child_id] = static::addState($element[$child_id], 'required', $condition);
-        if ($required) {
-          if (isset($element[$child_id]['#required'])) {
-            unset($element[$child_id]['#required']);
-          }
+      $child = $element[$child_id];
+      $states = isset($element['#states']) ? $element['#states'] : [];
+      $child_states = isset($child['#states']) ? $child['#states'] : [];
+
+      ElementState::mergeStates($child_states, $states);
+      if (ElementPlus::isConditionallyRequired($element)) {
+        ElementState::addState($child_states, 'required', $states['required']);
+
+        $child['#states'] = $child_states;
+        $child = static::processConditionallyRequiredStates(
+          $child, $form_state, $complete_form);
+
+        if (ElementPlus::isRequiredElement($child)) {
+          unset($child['#required']);
         }
         else {
-          $element[$child_id] = static::processConditionallyRequiredStates(
-            $element[$child_id], $form_state, $complete_form);
-          if (!empty($states)) {
-            $element[$child_id]['#states'] = $states;
-          }
-          else {
-            unset($element['#states']);
-          }
+          ElementState::removeState($child['#states'], 'required');
         }
       }
+
+      $element[$child_id] = $child;
     }
 
-    return $element;
-  }
-
-  /**
-   * Add a state to the given element.
-   *
-   * @param array $element
-   *   The element.
-   * @param string $state
-   *   The state key.
-   * @param array $condition
-   *   The state condition.
-   *
-   * @return array
-   *   The modified element.
-   */
-  protected static function addState(array $element, $state, array $condition) {
-    if (!array_key_exists('#states', $element)) {
-      $element['#states'] = [];
-    }
-    if (!array_key_exists($state, $element['#states'])) {
-      $element['#states'][$state] = $condition;
-    }
-    else {
-      $element['#states'][$state][] = [$condition];
-    }
     return $element;
   }
 
