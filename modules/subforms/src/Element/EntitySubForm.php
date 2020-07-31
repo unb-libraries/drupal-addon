@@ -154,11 +154,6 @@ class EntitySubForm extends FormElement {
    *   The processed element.
    */
   public static function processContainerOrFieldset(&$element, FormStateInterface $form_state, array &$complete_form) {
-    // Let sub-form determine which elements are required or optional.
-    if (isset($element['#required'])) {
-      unset($element['#required']);
-    }
-
     if (array_key_exists('#title', $element)) {
       $element['#process'][] = [static::class, 'processAjaxForm'];
       $element['#theme_wrappers'][] = 'fieldset';
@@ -252,11 +247,7 @@ class EntitySubForm extends FormElement {
    *   The complete form.
    */
   public static function validateSubForm(&$element, FormStateInterface $form_state, &$complete_form) {
-    $sub_form_state = clone $form_state;
-    $sub_form_state->setValues(NestedArray::getValue($form_state->getValues(), $element['#parents']));
-    if ($entity = $element['#form_object']->validateForm($element, $sub_form_state)) {
-      $form_state->setValueForElement($element, $entity);
-    }
+    $form_state->setValueForElement($element, $element['#value']);
   }
 
 }
