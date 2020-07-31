@@ -88,7 +88,6 @@ class EntitySubForm extends FormElement {
       '#process' => [
         [static::class, 'processContainerOrFieldset'],
         [static::class, 'processBuildForm'],
-        [static::class, 'processParents'],
         [static::class, 'processConditionallyRequiredStates'],
         [static::class, 'processGroup'],
       ],
@@ -115,6 +114,7 @@ class EntitySubForm extends FormElement {
       $element['#value'] = static::entityTypeManager()
         ->getStorage($element['#entity_type'])
         ->create($input);
+      $element['#tree'] = TRUE;
     }
     else {
       $element['#value'] = $element['#default_value'];
@@ -137,7 +137,6 @@ class EntitySubForm extends FormElement {
    *   The processed element.
    */
   public static function processContainerOrFieldset(&$element, FormStateInterface $form_state, array &$complete_form) {
-    $element['#tree'] = TRUE;
     // Let sub-form determine which elements are required or optional.
     if (isset($element['#required'])) {
       unset($element['#required']);
@@ -225,39 +224,6 @@ class EntitySubForm extends FormElement {
       }
 
       $element[$child_id] = $child;
-    }
-
-    return $element;
-  }
-
-  /**
-   * Form element processing handler. Assign "parents" to sub-form children elements.
-   *
-   * @param array $element
-   *   An associative array containing the properties of the element.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current state of the form.
-   * @param array $complete_form
-   *   The complete form structure.
-   *
-   * @return array
-   *   The processed element.
-   */
-  public static function processParents(&$element, FormStateInterface $form_state, array &$complete_form) {
-    $sub_elements = array_intersect_key($element, array_flip(ElementPlus::getVisibleChildren($element)));
-    foreach ($sub_elements as $child_id => $child) {
-      if (!array_key_exists('#type', $child)) {
-        continue;
-      }
-      if (empty(ElementPlus::children($child)) || (isset($child['#tree']) && $child['#tree'])) {
-        $element[$child_id]['#parents'] = array_merge($element['#parents'], [$child_id]);
-      }
-      else {
-        // TODO: Children of elements which set #tree = TRUE must add themselves as parents.
-        $element[$child_id]['#parents'] = $element['#parents'];
-      }
-      // TODO: Form #states break when element names change due to re-assigning #parents.
-      $element[$child_id] = static::processParents($element[$child_id], $form_state, $complete_form);
     }
 
     return $element;
