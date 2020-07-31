@@ -21,6 +21,19 @@ class SubFormBuilder extends FormBuilder {
     $form['#parents'] = array_merge($form['#parents'], $parents);
     $form['#tree'] = FALSE;
     parent::prepareForm($form_id, $form, $form_state);
+    $form['form_id']['#parents'] = array_merge($parents, $form['form_id']['#parents']);
+
+    $form['form_build_id']['#parents'] = array_merge($parents, $form['form_build_id']['#parents']);
+    $form['form_build_id']['#name'] = '';
+    foreach ($form['form_build_id']['#parents'] as $parent) {
+      if (empty($form['form_build_id']['#name'])) {
+        $form['form_build_id']['#name'] = $parent;
+      }
+      else {
+        $form['form_build_id']['#name'] .= "[{$parent}]";
+      }
+    }
+    $form['form_token']['#parents'] = array_merge($parents, $form['form_token']['#parents']);
   }
 
   /**
