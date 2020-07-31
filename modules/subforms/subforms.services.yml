@@ -1,0 +1,4 @@
+services:
+  subform_builder:
+    class: Drupal\subforms\Form\SubFormBuilder
+    parent: 'form_builder'

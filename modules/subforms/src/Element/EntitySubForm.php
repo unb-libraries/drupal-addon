@@ -43,9 +43,9 @@ class EntitySubForm extends FormElement {
   /**
    * The entity form builder service.
    *
-   * @var \Drupal\Core\Entity\EntityFormBuilderInterface
+   * @var \Drupal\Core\Form\FormBuilderInterface
    */
-  protected static $entityFormBuilder;
+  protected static $subFormBuilder;
 
   /**
    * Retrieve an entity type manager service instance.
@@ -63,14 +63,14 @@ class EntitySubForm extends FormElement {
   /**
    * Retrieve a form builder service instance.
    *
-   * @return \Drupal\Core\Entity\EntityFormBuilderInterface
+   * @return \Drupal\Core\Form\FormBuilderInterface
    *   A form builder.
    */
-  protected static function entityFormBuilder() {
-    if (!isset(static::$entityFormBuilder)) {
-      static::$entityFormBuilder = \Drupal::service('entity.form_builder');
+  protected static function subFormBuilder() {
+    if (!isset(static::$subFormBuilder)) {
+      static::$subFormBuilder = \Drupal::service('subform_builder');
     }
-    return static::$entityFormBuilder;
+    return static::$subFormBuilder;
   }
 
   /**
