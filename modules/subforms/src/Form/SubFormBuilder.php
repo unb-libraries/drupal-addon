@@ -18,7 +18,9 @@ class SubFormBuilder extends FormBuilder {
    */
   public function prepareForm($form_id, &$form, FormStateInterface &$form_state) {
     $parents = $form_state->getBuildInfo()['parents'];
-    $form['#parents'] = array_merge($form['#parents'], $parents);
+    $form['#parents'] = isset($form['#parents'])
+      ? array_merge($form['#parents'], $parents)
+      : $parents;
     $form['#tree'] = FALSE;
     parent::prepareForm($form_id, $form, $form_state);
     $form['form_id']['#parents'] = array_merge($parents, $form['form_id']['#parents']);
