@@ -111,10 +111,20 @@ class EntitySubForm extends FormElement {
         $input[$entity_type->getKey('bundle')] = $element['#bundle'];
       }
 
-      $element['#value'] = static::entityTypeManager()
+      $entity = static::entityTypeManager()
         ->getStorage($element['#entity_type'])
         ->create($input);
+
       $element['#tree'] = TRUE;
+      $element['#form_object'] = static::entityTypeManager()
+        ->getFormObject($element['#entity_type'], $element['#operation'])
+        ->setEntity($entity);
+
+      $element['#form_state'] = new FormState();
+      $element['#form_state']->addBuildInfo('parents', $element['#parents']);
+      $element['#form'] = static::subFormBuilder()
+        ->buildForm($element['#form_object'], $element['#form_state']);
+      $element['#value'] = $element['#form_object']->getEntity();
     }
     else {
       $element['#value'] = $element['#default_value'];
@@ -169,19 +179,14 @@ class EntitySubForm extends FormElement {
    *   The processed element.
    */
   public static function processBuildForm(&$element, FormStateInterface $form_state, array &$complete_form) {
-    $element['#form_object'] = static::entityTypeManager()
-      ->getFormObject($element['#entity_type'], $element['#operation'])
-      ->setEntity($element['#value']);
-
-    $sub_form = $element['#form_object']->buildForm([], new FormState());
-    foreach (ElementPlus::getVisibleChildren($sub_form) as $child_id) {
-      if ($sub_form[$child_id]['#type'] === 'actions') {
-        unset($sub_form[$child_id]);
+    $children = array_intersect_key($element['#form'], array_flip(ElementPlus::children($element['#form'])));
+    foreach ($children as $child_id => $child) {
+      if (isset($child['#type']) && $child['#type'] !== 'actions') {
+        $element[$child_id] = $child;
       }
-
-
     }
-    return $element + $sub_form;
+
+    return $element;
   }
 
   /**
