@@ -3,6 +3,7 @@
 namespace Drupal\subforms\Element;
 
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element\CompositeFormElementTrait;
@@ -106,14 +107,7 @@ class EntitySubForm extends FormElement {
         $input = [];
       }
 
-      $entity_type = static::entityTypeManager()->getDefinition($element['#entity_type']);
-      if (isset($element['#bundle']) && $entity_type->getBundleEntityType()) {
-        $input[$entity_type->getKey('bundle')] = $element['#bundle'];
-      }
-
-      $entity = static::entityTypeManager()
-        ->getStorage($element['#entity_type'])
-        ->create($input);
+      $entity = static::getEntity($element);
 
       $element['#tree'] = TRUE;
       $element['#form_object'] = static::entityTypeManager()
@@ -138,6 +132,54 @@ class EntitySubForm extends FormElement {
     }
 
     return $element['#value'];
+  }
+
+  /**
+   * Build an entity object based on the given element.
+   *
+   * @param array $element
+   *   The element.
+   * @return \Drupal\Core\Entity\EntityInterface
+   *   An entity object.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  protected static function getEntity(array $element) {
+    if (static::isEntity($element['#default_value'], $element)) {
+      $entity = $element['#default_value'];
+    }
+    else {
+      $values = [];
+      $entity_type = static::entityTypeManager()->getDefinition($element['#entity_type']);
+      if (isset($element['#bundle']) && $entity_type->getBundleEntityType()) {
+        $values[$entity_type->getKey('bundle')] = $element['#bundle'];
+      }
+
+      $entity = static::entityTypeManager()
+        ->getStorage($element['#entity_type'])
+        ->create($values);
+    }
+
+    return $entity;
+  }
+
+  /**
+   * Whether the given value is a valid entity according to the provided element definition.
+   *
+   * @param mixed $value
+   *   The value to check.
+   * @param array $element
+   *   The element.
+   *
+   * @return bool
+   *   TRUE if the given value is a valid entity object of the
+   *   type as defined by the given element. FALSE otherwise.
+   */
+  protected static function isEntity($value, array $element) {
+    return isset($value)
+      && $value instanceof EntityInterface
+      && $value->getEntityTypeId() === $element['#entity_type'];
   }
 
   /**
