@@ -9,7 +9,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element\CompositeFormElementTrait;
 use Drupal\Core\Render\Element\Container;
 use Drupal\Core\Render\Element\FormElement;
-use Drupal\Component\Utility\Html as HtmlUtility;
 
 /**
  * Renders a form "select" element containing entities of a given type as its options.
@@ -102,34 +101,24 @@ class EntitySubForm extends FormElement {
   * {@inheritdoc}
   */
   public static function valueCallback(&$element, $input, FormStateInterface $form_state) {
-    if (!$input || !isset($element['#default_value'])) {
-      if (!$input) {
-        $input = [];
-      }
+    $element['#tree'] = TRUE;
+    $element['#form_object'] = static::entityTypeManager()
+      ->getFormObject($element['#entity_type'], $element['#operation'])
+      ->setEntity(static::getEntity($element));
+    $element['#form_state'] = new FormState();
+    $element['#form_state']->addBuildInfo('parents', $element['#parents']);
 
-      $entity = static::getEntity($element);
-
-      $element['#tree'] = TRUE;
-      $element['#form_object'] = static::entityTypeManager()
-        ->getFormObject($element['#entity_type'], $element['#operation'])
-        ->setEntity($entity);
-
-      $element['#form_state'] = new FormState();
-      $element['#form_state']->addBuildInfo('parents', $element['#parents']);
-
-      if ($input) {
-        $subform_input = [];
-        NestedArray::setValue($subform_input, $element['#parents'], $input);
-        $element['#form_state']->setUserInput($subform_input);
-      }
-
-      $element['#form'] = static::subFormBuilder()
-        ->buildForm($element['#form_object'], $element['#form_state']);
-      $element['#value'] = $element['#form_object']->getEntity();
+    if ($input) {
+      $subform_input = [];
+      NestedArray::setValue($subform_input, $element['#parents'], $input);
+      $element['#form_state']->setUserInput($subform_input);
     }
-    else {
-      $element['#value'] = $element['#default_value'];
-    }
+
+    $element['#form'] = static::subFormBuilder()
+      ->buildForm($element['#form_object'], $element['#form_state']);
+
+    $element['#value'] = $element['#form_object']
+      ->getEntity();
 
     return $element['#value'];
   }
