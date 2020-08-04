@@ -35,7 +35,6 @@ class SubFormBuilder extends FormBuilder {
         $form['form_build_id']['#name'] .= "[{$parent}]";
       }
     }
-    $form['form_token']['#parents'] = array_merge($parents, $form['form_token']['#parents']);
   }
 
   /**
