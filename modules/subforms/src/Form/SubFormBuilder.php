@@ -23,39 +23,30 @@ class SubFormBuilder extends FormBuilder {
       : $parents;
     $form['#tree'] = FALSE;
     parent::prepareForm($form_id, $form, $form_state);
-    $form['form_id']['#parents'] = array_merge($parents, $form['form_id']['#parents']);
-
-    $form['form_build_id']['#parents'] = array_merge($parents, $form['form_build_id']['#parents']);
-    $form['form_build_id']['#name'] = '';
-    foreach ($form['form_build_id']['#parents'] as $parent) {
-      if (empty($form['form_build_id']['#name'])) {
-        $form['form_build_id']['#name'] = $parent;
-      }
-      else {
-        $form['form_build_id']['#name'] .= "[{$parent}]";
-      }
-    }
   }
 
   /**
    * {@inheritDoc}
    */
   public function doBuildForm($form_id, &$element, FormStateInterface &$form_state) {
-    foreach (Element::children($element) as $key) {
-      if (!isset($element[$key]['#tree'])) {
-        $element[$key]['#tree'] = $element['#tree'];
-      }
-
-      $has_children = !empty(Element::children($element[$key]));
-      if (!isset($element[$key]['#parents'])) {
-        if (!$element[$key]['#tree'] && $has_children) {
-          $element[$key]['#parents'] = $element['#parents'];
+    if (!$form_state->isProcessingInput()) {
+      foreach (Element::children($element) as $key) {
+        if (!isset($element[$key]['#tree'])) {
+          $element[$key]['#tree'] = $element['#tree'];
         }
-        else {
-          $element[$key]['#parents'] = array_merge($element['#parents'], [$key]);
+
+        $has_children = !empty(Element::children($element[$key]));
+        if (!isset($element[$key]['#parents'])) {
+          if (!$element[$key]['#tree'] && $has_children) {
+            $element[$key]['#parents'] = $element['#parents'];
+          }
+          else {
+            $element[$key]['#parents'] = array_merge($element['#parents'], [$key]);
+          }
         }
       }
     }
+
     return parent::doBuildForm($form_id, $element, $form_state);
   }
 
