@@ -109,9 +109,7 @@ class EntitySubForm extends FormElement {
     $element['#form_state']->addBuildInfo('parents', $element['#parents']);
 
     if ($input) {
-      $subform_input = [];
-      NestedArray::setValue($subform_input, $element['#parents'], $input);
-      $element['#form_state']->setValues($subform_input);
+      $element['#form_state']->setValues($input);
       static::subFormBuilder()
         ->submitForm($element['#form_object'], $element['#form_state']);
     }
