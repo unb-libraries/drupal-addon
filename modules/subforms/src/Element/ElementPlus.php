@@ -61,6 +61,21 @@ class ElementPlus extends Element {
   }
 
   /**
+   * Whether the given element defines any "optional" states.
+   *
+   * @param array $element
+   *   The element.
+   *
+   * @return bool
+   *   TRUE if the given element includes a "optional" condition
+   *   in its list of "#states". FALSE otherwise.
+   */
+  public static function isConditionallyOptional(array $element) {
+    return array_key_exists('#states', $element)
+      && array_key_exists('optional', $element['#states']);
+  }
+
+  /**
    * Merge the state arrays of the given elements.
    *
    * @param array $element1
@@ -77,14 +92,14 @@ class ElementPlus extends Element {
    *   already define itself.
    */
   public static function mergeElementStates(array &$element1, array $element2, $conjunction = 'and') {
-    $states1 = array_key_exists('#states', $element1)
-      ? $element1['#states']
-      : [];
-    $states2 = array_key_exists('#states', $element2)
-      ? $element2['#states']
-      : [];
+    if (!array_key_exists('#states', $element1)) {
+      $element1['#states'] = [];
+    }
+    if (!array_key_exists('#states', $element2)) {
+      $element2['#states'] = [];
+    }
+    $element1['#states'] = ElementState::mergeStates($element1['#states'], $element2['#states'], $conjunction);
 
-    $element1['#states'] = ElementState::mergeStates($states1, $states2, $conjunction);
     return $element1;
   }
 

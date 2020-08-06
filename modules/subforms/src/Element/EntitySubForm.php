@@ -88,7 +88,6 @@ class EntitySubForm extends FormElement {
       '#process' => [
         [static::class, 'processContainerOrFieldset'],
         [static::class, 'processBuildForm'],
-        [static::class, 'processConditionallyRequiredStates'],
         [static::class, 'processGroup'],
       ],
       '#element_validate' => [
@@ -107,6 +106,9 @@ class EntitySubForm extends FormElement {
       ->setEntity(static::getEntity($element));
     $element['#form_state'] = new FormState();
     $element['#form_state']->addBuildInfo('parents', $element['#parents']);
+    if (array_key_exists('#states', $element)) {
+      $element['#form_state']->addBuildInfo('states', $element['#states']);
+    }
 
     if ($input) {
       $element['#form_state']->setValues($input);
@@ -222,50 +224,6 @@ class EntitySubForm extends FormElement {
     return $element;
   }
 
-  /**
-   * Form element processing handler. Forward 'required' states of the form element to sub-form elements.
-   *
-   * @param array $element
-   *   An associative array containing the properties of the element.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current state of the form.
-   * @param array $complete_form
-   *   The complete form structure.
-   *
-   * @return array
-   *   The processed element.
-   */
-  public static function processConditionallyRequiredStates(array &$element, FormStateInterface $form_state, array &$complete_form) {
-    foreach (ElementPlus::children($element) as $child_id) {
-      if (!isset($element[$child_id]['#type'])) {
-        continue;
-      }
-
-      $child = $element[$child_id];
-      $states = isset($element['#states']) ? $element['#states'] : [];
-      $child_states = isset($child['#states']) ? $child['#states'] : [];
-
-      ElementState::mergeStates($child_states, $states);
-      if (ElementPlus::isConditionallyRequired($element)) {
-        ElementState::addState($child_states, 'required', $states['required']);
-
-        $child['#states'] = $child_states;
-        $child = static::processConditionallyRequiredStates(
-          $child, $form_state, $complete_form);
-
-        if (ElementPlus::isRequiredElement($child)) {
-          unset($child['#required']);
-        }
-        else {
-          ElementState::removeState($child['#states'], 'required');
-        }
-      }
-
-      $element[$child_id] = $child;
-    }
-
-    return $element;
-  }
 
   /**
    * Form element validation handler.
