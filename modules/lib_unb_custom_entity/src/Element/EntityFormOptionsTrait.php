@@ -91,6 +91,7 @@ trait EntityFormOptionsTrait {
       '#options' => [],
       '#entity_key' => 'id',
       '#filter' => [],
+      '#filter_callback' => [],
       '#label_callback' => static::class . '::entityLabel',
     ];
   }
@@ -141,9 +142,15 @@ trait EntityFormOptionsTrait {
    */
   protected static function loadEntities(array $element) {
     $entity_type = static::getEntityType($element);
-    return static::entityTypeManager()
+    $entities = static::entityTypeManager()
       ->getStorage($entity_type->id())
       ->loadMultiple(static::entityQuery($element)->execute());
+
+    if (is_callable($element['#filter_callback'])) {
+      $entities = array_filter($entities, $element['#filter_callback']);
+    }
+
+    return $entities;
   }
 
   /**
