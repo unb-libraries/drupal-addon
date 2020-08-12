@@ -92,6 +92,7 @@ trait EntityFormOptionsTrait {
       '#entity_key' => 'id',
       '#filter' => [],
       '#filter_callback' => [],
+      '#group_by_callback' => [],
       '#label_callback' => static::class . '::entityLabel',
     ];
   }
@@ -115,11 +116,24 @@ trait EntityFormOptionsTrait {
         if (!is_scalar($key_value)) {
           $key_value = $key_value->value;
         }
+
+        $group = '';
+        if (!empty($element['#group_by_callback'] && is_callable($element['#group_by_callback']))) {
+          $group = call_user_func($element['#group_by_callback'], $entity);
+        }
+
         $label = is_callable($element['#label_callback'])
           ? call_user_func($element['#label_callback'], $entity)
           : call_user_func(static::class . '::entityLabel', $entity);
-        $entities[$key_value] = $label;
+
+        if (!empty($group)) {
+          $entities[$group][$key_value] = $label;
+        }
+        else {
+          $entities[$key_value] = $label;
+        }
       }
+
       return $entities;
     }
     catch (\Exception $e) {
