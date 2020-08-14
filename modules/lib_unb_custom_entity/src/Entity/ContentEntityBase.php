@@ -16,13 +16,10 @@ use Drupal\lib_unb_custom_entity\FieldObserver\RevisionableEntityFieldObserver;
  *
  * @package Drupal\lib_unb_custom_entity\Entity
  */
-abstract class ContentEntityBase extends DefaultContentEntityBase {
+abstract class ContentEntityBase extends DefaultContentEntityBase implements ContentEntityInterface {
 
   use RevisionLogEntityTrait;
   use UserTimeTrait;
-
-  const FIELD_CREATED = 'created';
-  const FIELD_CHANGED = 'changed';
 
   /**
    * Retrieve the storage handler.
@@ -82,29 +79,35 @@ abstract class ContentEntityBase extends DefaultContentEntityBase {
   }
 
   /**
-   * Retrieve the entity's creation date and time.
-   *
-   * The timezone is set to the currently logged-in user's.
-   *
-   * @return \Drupal\datetime_plus\Datetime\DrupalDateTimePlus
-   *   A datetime object.
+   * {@inheritDoc}
    */
   public function getCreated() {
     return $this->userTime()
-      ->createFromTimestamp($this->get(self::FIELD_CREATED)->value);
+      ->createFromTimestamp($this->getCreatedTimestamp());
   }
 
   /**
-   * Retrieve the entity's date and time of its most recent edit.
-   *
-   * The timezone is set to the currently logged-in user's.
-   *
-   * @return \Drupal\datetime_plus\Datetime\DrupalDateTimePlus
-   *   A datetime object.
+   * {@inheritDoc}
+   */
+  public function getCreatedTimestamp() {
+    return $this->get(self::CREATED)
+      ->value;
+  }
+
+  /**
+   * {@inheritDoc}
    */
   public function getChanged() {
     return $this->userTime()
-      ->createFromTimestamp($this->get(self::FIELD_CHANGED)->value);
+      ->createFromTimestamp($this->getChangedTimestamp());
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getChangedTimestamp() {
+    return $this->get(self::CHANGED)
+      ->value;
   }
 
   /**
@@ -129,11 +132,11 @@ abstract class ContentEntityBase extends DefaultContentEntityBase {
       $fields += static::revisionLogBaseFieldDefinitions($entity_type);
     }
 
-    $fields[self::FIELD_CREATED] = BaseFieldDefinition::create('created')
+    $fields[self::CREATED] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
       ->setDescription(t("Timestamp indicating the location's creation."));
 
-    $fields[self::FIELD_CHANGED] = BaseFieldDefinition::create('changed')
+    $fields[self::CHANGED] = BaseFieldDefinition::create('changed')
       ->setLabel(t('Changed'))
       ->setDescription(t("Timestamp indicating the location's last update."));
 
