@@ -9,6 +9,8 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\RevisionLogEntityTrait;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\datetime_plus\DependencyInjection\UserTimeTrait;
+use Drupal\lib_unb_custom_entity\Event\EntityEvent;
+use Drupal\lib_unb_custom_entity\Event\EntityEvents;
 use Drupal\lib_unb_custom_entity\FieldObserver\RevisionableEntityFieldObserver;
 
 /**
@@ -120,6 +122,40 @@ abstract class ContentEntityBase extends DefaultContentEntityBase implements Con
       $entity_subject->notify();
     }
     parent::preSave($storage);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function postSave(EntityStorageInterface $storage, $update = TRUE) {
+    $dispatcher = $this->getEventDispatcher();
+    $event = new EntityEvent($this);
+    $dispatcher->dispatch(EntityEvents::SAVE, $event);
+    $dispatcher->dispatch($update ? EntityEvents::UPDATE : EntityEvents::CREATE, $event);
+    parent::postSave($storage, $update);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public static function postDelete(EntityStorageInterface $storage, array $entities) {
+    $dispatcher = static::getEventDispatcher();
+    foreach ($entities as $entity) {
+      $dispatcher->dispatch(EntityEvents::DELETE, new EntityEvent($entity));
+    }
+    parent::postDelete($storage, $entities);
+  }
+
+  /**
+   * Retrieve the event dispatcher service.
+   *
+   * @return \Symfony\Component\EventDispatcher\EventDispatcherInterface
+   *   An even dispatcher object.
+   */
+  protected static function getEventDispatcher() {
+    /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher */
+    $dispatcher = \Drupal::service('event_dispatcher');
+    return $dispatcher;
   }
 
   /**
