@@ -144,7 +144,7 @@ class HtmlRouteProvider extends DefaultHtmlRouteProvider {
       $route = new Route($entity_type->getLinkTemplate('delete-all-form'));
       $route->addDefaults([
         '_form' => $entity_type->getFormClass('delete-all'),
-        '_title' => t('Delete all ' . $entity_type->getPluralLabel()),
+        '_title' => t('Delete all ') . $entity_type->getPluralLabel(),
         'entity_type_id' => $entity_type_id,
       ])
         ->setRequirement('_permission', "delete all {$entity_type_id} entities");
