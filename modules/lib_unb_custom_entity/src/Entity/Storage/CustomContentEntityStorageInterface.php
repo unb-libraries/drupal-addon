@@ -9,7 +9,7 @@ use Drupal\Core\Entity\ContentEntityStorageInterface;
  *
  * @package Drupal\lib_unb_custom_entity\Entity\Storage
  */
-interface CustomContentEntityStorageInterface extends ContentEntityStorageInterface {
+interface CustomContentEntityStorageInterface extends ContentEntityStorageInterface, RevisionableEntityStorageInterface {
 
   /**
    * Load entities that have not been changed since the given time.

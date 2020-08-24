@@ -17,6 +17,7 @@ use Drupal\lib_unb_custom_entity\Entity\ContentEntityInterface;
 class CustomSqlContentEntityStorage extends SqlContentEntityStorage implements CustomContentEntityStorageInterface {
 
   use StorageTimeTrait;
+  use RevisionableEntityStorageTrait;
 
   /**
    * {@inheritDoc}
