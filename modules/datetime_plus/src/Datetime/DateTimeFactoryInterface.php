@@ -94,7 +94,7 @@ interface DateTimeFactoryInterface {
    *     indicates the format can be used for validation. Defaults to TRUE.
    *   @see __construct()
    *
-   * @return static
+   * @return \Drupal\datetime_plus\Datetime\DrupalDateTimePlus
    *   A new DateTimePlus object.
    *
    * @throws \InvalidArgumentException
