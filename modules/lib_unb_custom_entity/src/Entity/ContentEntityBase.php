@@ -8,6 +8,8 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\RevisionLogEntityTrait;
 use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\datetime_plus\DependencyInjection\StorageTimeTrait;
+use Drupal\datetime_plus\DependencyInjection\SystemTimeTrait;
 use Drupal\datetime_plus\DependencyInjection\UserTimeTrait;
 use Drupal\lib_unb_custom_entity\Event\EntityEvent;
 use Drupal\lib_unb_custom_entity\Event\EntityEvents;
@@ -22,6 +24,7 @@ abstract class ContentEntityBase extends DefaultContentEntityBase implements Con
 
   use RevisionLogEntityTrait;
   use UserTimeTrait;
+  use StorageTimeTrait;
 
   /**
    * {@inheritDoc}
@@ -96,8 +99,9 @@ abstract class ContentEntityBase extends DefaultContentEntityBase implements Con
    * {@inheritDoc}
    */
   public function getCreated() {
-    return $this->userTime()
-      ->createFromTimestamp($this->getCreatedTimestamp());
+    return $this->storageTime()
+      ->createFromTimestamp($this->getCreatedTimestamp())
+      ->setTimezone($this->userTime()->getTimeZone());
   }
 
   /**
@@ -112,8 +116,9 @@ abstract class ContentEntityBase extends DefaultContentEntityBase implements Con
    * {@inheritDoc}
    */
   public function getChanged() {
-    return $this->userTime()
-      ->createFromTimestamp($this->getChangedTimestamp());
+    return $this->storageTime()
+      ->createFromTimestamp($this->getChangedTimestamp())
+      ->setTimezone($this->userTime()->getTimeZone());
   }
 
   /**

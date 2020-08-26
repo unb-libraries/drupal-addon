@@ -32,7 +32,7 @@ class CustomSqlContentEntityStorage extends SqlContentEntityStorage implements C
     $datetime->setTimezone($this->storageTime()->getTimeZone());
 
     $entity_ids = $this->getQuery()
-      ->condition(ContentEntityInterface::CHANGED, $datetime->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT), '>=')
+      ->condition(ContentEntityInterface::CHANGED, $datetime->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT), '<=')
       ->execute();
     if (!empty($entity_ids)) {
       return $this->loadMultiple($entity_ids);
