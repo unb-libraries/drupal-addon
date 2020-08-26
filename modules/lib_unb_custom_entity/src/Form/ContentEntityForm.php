@@ -94,44 +94,18 @@ class ContentEntityForm extends DefaultContentEntityForm {
 
     $default_values = [];
     foreach ($content_entity->getFields() as $field_id => $field) {
-      if ($field->getFieldDefinition()->getFieldStorageDefinition()->getCardinality() !== 1) {
-        $default_values[$field_id] = $this->getMultiItemFieldValues($field);
-      }
-      else {
-        $default_values[$field_id] = $this->getSingleItemFieldValue($field);
+      $default_values[$field_id] = $this->getFieldValues($field);
+      if ($field->getFieldDefinition()->getFieldStorageDefinition()->getCardinality() == 1) {
+        if (!empty($default_values[$field_id])) {
+          $index = array_keys($default_values[$field_id])[0];
+          $default_values[$field_id] = $default_values[$field_id][$index];
+        }
+        else {
+          $default_values[$field_id] = NULL;
+        }
       }
     }
     return $default_values;
-  }
-
-  /**
-   * Retrieve the value of a single-item field.
-   *
-   * @param \Drupal\Core\Field\FieldItemListInterface $field
-   *   The field to parse.
-   *
-   * @return mixed|null
-   *   A value or, if the field's schema consists
-   *   of more than one column, an array of values.
-   */
-  private function getSingleItemFieldValue(FieldItemListInterface $field) {
-    $columns = array_keys($field->getFieldDefinition()->getFieldStorageDefinition()->getColumns());
-
-    if (!empty($field_value = $field->getValue())) {
-      if (count($columns) > 1) {
-        // single-value, multi-column
-        foreach (array_keys($columns) as $column_id) {
-          $value[$column_id] = $field_value[0][$column_id];
-        }
-      }
-      else {
-        // single-value, single column
-        $column_id = $columns[0];
-        $value = $field_value[0][$column_id];
-      }
-    }
-
-    return isset($value) ? $value : NULL;
   }
 
   /**
@@ -146,14 +120,14 @@ class ContentEntityForm extends DefaultContentEntityForm {
    *   will also be an array.
    *
    */
-  private function getMultiItemFieldValues(FieldItemListInterface $field) {
+  private function getFieldValues(FieldItemListInterface $field) {
     $columns = array_keys($field->getFieldDefinition()->getFieldStorageDefinition()->getColumns());
 
     $values = [];
     foreach ($field->getValue() as $index => $value) {
       if (count($columns) > 1) {
         foreach ($columns as $column_id) {
-          $values[$index][$column_id] = $value[$index][$column_id];
+          $values[$index][$column_id] = $value[$column_id];
         }
       }
       else {
