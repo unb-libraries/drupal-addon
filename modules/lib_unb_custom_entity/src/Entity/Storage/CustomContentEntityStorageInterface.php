@@ -12,19 +12,34 @@ use Drupal\Core\Entity\ContentEntityStorageInterface;
 interface CustomContentEntityStorageInterface extends ContentEntityStorageInterface, RevisionableEntityStorageInterface {
 
   /**
+   * Load all entities created before the given time.
+   *
+   * @param \Drupal\Core\Datetime\DrupalDateTime|string $datetime
+   *   A datetime object or string.
+   * @return \Drupal\lib_unb_custom_entity\Entity\ContentEntityInterface[]
+   *   An array of content entities.
+   */
+  public function loadCreatedBefore($datetime);
+
+  /**
+   * Load all entities created after the given time.
+   *
+   * @param \Drupal\Core\Datetime\DrupalDateTime|string $datetime
+   *   A datetime object or string.
+   * @return \Drupal\lib_unb_custom_entity\Entity\ContentEntityInterface[]
+   *   An array of content entities.
+   */
+  public function loadCreatedAfter($datetime);
+
+  /**
    * Load entities that have not been changed since the given time.
    *
    * @param \Drupal\Core\Datetime\DrupalDateTime|string $datetime
    *   A datetime object or string.
-   * @param \DateTimeZone|string|null $timezone
-   *   (optional) The timezone to which the given
-   *   datetime object is set. If none is provided the
-   *   storage timezone will be used.
-   *
    * @return \Drupal\lib_unb_custom_entity\Entity\ContentEntityInterface[]
    *   An array of content entities.
    */
-  public function loadUnalteredSince($datetime, $timezone = NULL);
+  public function loadUnalteredSince($datetime);
 
   /**
    * Load entities that have not been altered for the given time period.
