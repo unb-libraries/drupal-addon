@@ -221,6 +221,7 @@ class EntitySubForm extends FormElement {
       }
     }
 
+    $element['#attributes']['class'][] = 'form-subform';
     return $element;
   }
 
