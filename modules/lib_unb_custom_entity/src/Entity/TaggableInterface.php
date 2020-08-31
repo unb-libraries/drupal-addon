@@ -15,6 +15,20 @@ interface TaggableInterface extends EntityInterface {
   const FIELD_TAGS = 'tags';
 
   /**
+   * Whether the entity is assigned the given tag.
+   *
+   * @param string|int|\Drupal\taxonomy\TermInterface $tag
+   *   A tag name, ID, or entity object.
+   * @param string $vid
+   *   (optional) The vocabulary which the tag belongs to.
+   *
+   * @return bool
+   *   TRUE if the given tag is assigned to the entity.
+   *   FALSE if it is not.
+   */
+  public function hasTag($tag, $vid = '');
+
+  /**
    * Retrieve all assigned tags.
    *
    * @param string $vid
@@ -49,22 +63,22 @@ interface TaggableInterface extends EntityInterface {
   /**
    * Assign the given taxonomy term.
    *
+   * @param string|int|\Drupal\taxonomy\TermInterface
+   *   The tag name, ID, or entity object to add.
    * @param string $vid
-   *   The vocabulary ID.
-   * @param \Drupal\taxonomy\Entity\Term $tag
-   *   A taxonomy term entity.
+   *   (optional) The vocabulary ID.
    */
-  public function addTag(Term $tag, $vid = '');
+  public function addTag($tag, $vid = '');
 
   /**
    * Remove the given taxonomy term.
    *
+   * @param string|int|\Drupal\taxonomy\Entity\Term $tag
+   *   A tag name, ID, or entity object.
    * @param string $vid
    *   The vocabulary ID.
-   * @param \Drupal\taxonomy\Entity\Term $tag
-   *   A taxonomy term entity.
    */
-  public function removeTag(Term $tag, $vid = '');
+  public function removeTag($tag, $vid = '');
 
   /**
    * Remove all assigned taxonomy terms.

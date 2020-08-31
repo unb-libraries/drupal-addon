@@ -14,6 +14,26 @@ use Drupal\taxonomy\TermInterface;
 trait TaggableTrait {
 
   /**
+   * {@inheritDoc
+   */
+  public function hasTag($tag, $vid = '') {
+    $has_tag = FALSE;
+    if (is_string($tag)) {
+      $has_tag = in_array($tag, $this->getTagNames($vid));
+    }
+    else {
+      $tags = $this->getTags($vid);
+      if (is_int($tag)) {
+        $has_tag = array_key_exists($tag, $tags);
+      }
+      elseif ($tag instanceof TermInterface) {
+        $has_tag = array_key_exists($tag->id(), $tags);
+      }
+    }
+    return $has_tag;
+  }
+
+  /**
    * {@inheritDoc}
    */
   public function getTags($vid = '') {
@@ -52,10 +72,28 @@ trait TaggableTrait {
    *
    * @throws \Exception
    */
-  public function addTag(Term $tag, $vid = '') {
-    $tags = $this->getTags($vid);
-    $tags[$tag->id()] = $tag;
-    return $this->setTags($tags, $vid);
+  public function addTag($tag, $vid = '') {
+    if (is_string($tag)) {
+      $query = $this->tagStorage()->getQuery()
+        ->condition('name', $tag);
+      if ($vid) {
+        $query->condition('vid', $vid);
+      }
+
+      if (!empty($tag_ids = $this->tagStorage()->loadMultiple($query->execute()))) {
+        return $this->addTag($tag_ids[array_keys($tag_ids)[0]], $vid);
+      }
+    }
+    else {
+      $tags = $this->getTags($vid);
+      if (is_int($tag)) {
+        return $this->addTag($this->tagStorage()->load($tag), $vid);
+      }
+      elseif ($tag instanceof TermInterface) {
+        $tags[$tag->id()] = $tag;
+        return $this->setTags($tags, $vid);
+      }
+    }
   }
 
   /**
@@ -63,10 +101,45 @@ trait TaggableTrait {
    *
    * @throws \Exception
    */
-  public function removeTag(Term $tag, $vid = '') {
-    $tags = $this->getTags($vid);
-    unset($tags[$tag->id()]);
-    return $this->setTags($tags, $vid);
+  public function removeTag($tag, $vid = '') {
+    if(is_string($tag)) {
+      $query = $this->tagStorage()->getQuery()
+        ->condition('name', $tag);
+      if ($vid) {
+        $query->condition('vid', $vid);
+      }
+
+      if (!empty($tag_ids = $this->tagStorage()->loadMultiple($query->execute()))) {
+        return $this->removeTag($tag_ids[array_keys($tag_ids)[0]], $vid);
+      }
+    }
+    else {
+      $tags = $this->getTags($vid);
+      if (is_int($tag)) {
+        return $this->removeTag($this->tagStorage()->load($tag), $vid);
+      }
+      elseif ($tag instanceof TermInterface) {
+        unset($tags[$tag->id()]);
+        return $this->setTags($tags, $vid);
+      }
+    }
+  }
+
+  /**
+   * Retrieve the taxonomy term storage handler.
+   *
+   * @return \Drupal\taxonomy\TermStorageInterface
+   *   An entity storage handler for taxonomy term entities.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  protected function tagStorage() {
+    /** @noinspection PhpUnhandledExceptionInspection */
+    /** @var \Drupal\taxonomy\TermStorageInterface $storage */
+    $storage = \Drupal::entityTypeManager()
+      ->getStorage('taxonomy_term');
+    return $storage;
   }
 
   /**
