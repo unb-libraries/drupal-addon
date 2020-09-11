@@ -1,4 +1,5 @@
 services:
-  subform_builder:
-    class: Drupal\subforms\Form\SubFormBuilder
-    parent: 'form_builder'
+  element_builder:
+    class: Drupal\subforms\Element\ElementBuilder
+    arguments:
+      - '@plugin.manager.element_info'

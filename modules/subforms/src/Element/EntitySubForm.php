@@ -6,6 +6,7 @@ use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Element\CompositeFormElementTrait;
 use Drupal\Core\Render\Element\Container;
 use Drupal\Core\Render\Element\FormElement;
@@ -41,11 +42,11 @@ class EntitySubForm extends FormElement {
   protected static $entityTypeManager;
 
   /**
-   * The entity form builder service.
+   * The element builder service.
    *
-   * @var \Drupal\subforms\Form\SubFormBuilderInterface
+   * @var \Drupal\subforms\Element\ElementBuilderInterface
    */
-  protected static $subFormBuilder;
+  protected static $elementBuilder;
 
   /**
    * Retrieve an entity type manager service instance.
@@ -61,16 +62,16 @@ class EntitySubForm extends FormElement {
   }
 
   /**
-   * Retrieve a form builder service instance.
+   * Retrieve the element builder service.
    *
-   * @return \Drupal\subforms\Form\SubFormBuilderInterface
-   *   A form builder.
+   * @return \Drupal\subforms\Element\ElementBuilderInterface
+   *   An element builder instance.
    */
-  protected static function subFormBuilder() {
-    if (!isset(static::$subFormBuilder)) {
-      static::$subFormBuilder = \Drupal::service('subform_builder');
+  protected static function elementBuilder() {
+    if (!isset(static::$elementBuilder)) {
+      static::$elementBuilder = \Drupal::service('element_builder');
     }
-    return static::$subFormBuilder;
+    return static::$elementBuilder;
   }
 
   /**
@@ -101,21 +102,21 @@ class EntitySubForm extends FormElement {
   */
   public static function valueCallback(&$element, $input, FormStateInterface $form_state) {
     $element['#tree'] = TRUE;
+
+    $element['#form_state'] = new FormState();
     $element['#form_object'] = static::entityTypeManager()
       ->getFormObject($element['#entity_type'], $element['#operation'])
       ->setEntity(static::getEntity($element));
+    $element['#form_state']->setFormObject($element['#form_object']);
 
-    $element['#form_state'] = new FormState();
-
-    $element['#form'] = static::subFormBuilder()
-      ->retrieveForm($element['#form_object'], $element['#form_state']);
+    $element['#form'] = $element['#form_object']
+      ->buildForm(['#type' => 'container'], $element['#form_state']);
     $element['#form']['#parents'] = $element['#parents'];
-    static::subFormBuilder()->prepareForm($element['#form'], $element['#form_state']);
+    static::prepareSubForm($element['#form'], $element['#form_state']);
 
     if ($input) {
       $element['#form_state']->setUserInput($input);
-      $element['#value'] = static::subFormBuilder()
-        ->getFormValue($element['#form'], $element['#form_state']);
+      $element['#value'] = static::getSubFormValue($element['#form'], $element['#form_state']);
     }
     else {
       $element['#value'] = $element['#default_value'];
@@ -170,6 +171,43 @@ class EntitySubForm extends FormElement {
     return isset($value)
       && $value instanceof EntityInterface
       && $value->getEntityTypeId() === $element['#entity_type'];
+  }
+
+  /**
+   * Prepare the form for further processing.
+   *
+   * @param array $form
+   *   The current form render array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   */
+  protected static function prepareSubForm(array &$form, FormStateInterface &$form_state) {
+    foreach (Element::children($form) as $field_id) {
+      static::elementBuilder()->prepareElement($field_id, $form[$field_id], $form, $form_state);
+    }
+  }
+
+  /**
+   * Retrieve the value of the form.
+   *
+   * @param array $form
+   *   The current form render array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   *
+   * @return mixed
+   *   The value of the form.
+   */
+  protected static function getSubFormValue(array &$form, FormStateInterface $form_state) {
+    $form_state->setValues([]);
+    foreach (Element::children($form) as $field_id) {
+      static::elementBuilder()->getElementValue($form[$field_id], $form, $form_state);
+    }
+
+    /** @var \Drupal\Core\Entity\EntityFormInterface $form_obj */
+    $form_obj = $form_state->getFormObject();
+
+    return $form_obj->buildEntity($form, $form_state);
   }
 
   /**
