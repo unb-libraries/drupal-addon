@@ -43,7 +43,7 @@ class EntitySubForm extends FormElement {
   /**
    * The entity form builder service.
    *
-   * @var \Drupal\Core\Form\FormBuilderInterface
+   * @var \Drupal\subforms\Form\SubFormBuilderInterface
    */
   protected static $subFormBuilder;
 
@@ -63,7 +63,7 @@ class EntitySubForm extends FormElement {
   /**
    * Retrieve a form builder service instance.
    *
-   * @return \Drupal\Core\Form\FormBuilderInterface
+   * @return \Drupal\subforms\Form\SubFormBuilderInterface
    *   A form builder.
    */
   protected static function subFormBuilder() {
@@ -104,23 +104,22 @@ class EntitySubForm extends FormElement {
     $element['#form_object'] = static::entityTypeManager()
       ->getFormObject($element['#entity_type'], $element['#operation'])
       ->setEntity(static::getEntity($element));
-    $element['#form_state'] = new FormState();
-    $element['#form_state']->addBuildInfo('parents', $element['#parents']);
-    if (array_key_exists('#states', $element)) {
-      $element['#form_state']->addBuildInfo('states', $element['#states']);
-    }
 
-    if ($input) {
-      $element['#form_state']->setValues($input);
-      static::subFormBuilder()
-        ->submitForm($element['#form_object'], $element['#form_state']);
-    }
+    $element['#form_state'] = new FormState();
 
     $element['#form'] = static::subFormBuilder()
-      ->buildForm($element['#form_object'], $element['#form_state']);
+      ->retrieveForm($element['#form_object'], $element['#form_state']);
+    $element['#form']['#parents'] = $element['#parents'];
+    static::subFormBuilder()->prepareForm($element['#form'], $element['#form_state']);
 
-    $element['#value'] = $element['#form_object']
-      ->getEntity();
+    if ($input) {
+      $element['#form_state']->setUserInput($input);
+      $element['#value'] = static::subFormBuilder()
+        ->getFormValue($element['#form'], $element['#form_state']);
+    }
+    else {
+      $element['#value'] = $element['#default_value'];
+    }
 
     return $element['#value'];
   }
@@ -220,11 +219,8 @@ class EntitySubForm extends FormElement {
         $element[$child_id] = $child;
       }
     }
-
-    $element['#attributes']['class'][] = 'form-subform';
     return $element;
   }
-
 
   /**
    * Form element validation handler.
