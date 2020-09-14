@@ -7,47 +7,22 @@ namespace Drupal\subforms\Element;
  *
  * @package Drupal\subforms\Element
  */
-class ElementState {
-
-  const CONJUNCT_AND = 'and';
-  const CONJUNCT_OR = 'or';
+class ElementStateBuilder implements ElementStateBuilderInterface {
 
   /**
-   * Add a state to the given array of states.
-   *
-   * @param array $states
-   *   The array of state definitions to which to add a state.
-   * @param string $state
-   *   The state key.
-   * @param array $rules
-   *   An array of rules.
-   * @param string $conjunction
-   *   The conjunction to use when adding the state,
-   *   either 'and' (default) or 'or'.
-   *
-   * @return array
-   *   The modified element.
+   * {@inheritDoc}
    */
-  public static function addState(array &$states, $state, array $rules, $conjunction = self::CONJUNCT_AND) {
-    $states = static::mergeStates($states, [
+  public function addState(array &$states, $state, array $rules, $conjunction = self::CONJUNCT_AND) {
+    $states = $this->mergeStates($states, [
       $state => $rules,
     ], $conjunction);
     return $states;
   }
 
   /**
-   * Remove the state with the given key from the given states array.
-   *
-   * @param array $states
-   *   The states array.
-   * @param string $state
-   *   The state key.
-   *
-   * @return array
-   *   The states array after the state with the
-   *   given key has been removed.
+   * {@inheritDoc}
    */
-  public static function removeState(array &$states, $state) {
+  public function removeState(array &$states, $state) {
     if (array_key_exists($state, $states)) {
       unset($states[$state]);
     }
@@ -55,59 +30,50 @@ class ElementState {
   }
 
   /**
-   * Merge two arrays of state definitions.
-   *
-   * @param array $states1
-   *   The array of state definitions to merge into.
-   * @param array $states2
-   *   The array of state to merge.
-   * @param string $conjunction
-   *   The conjunction to use when merging arrays,
-   *   either 'and' (default) or 'or'.
-   *
-   * @return array
-   *   The first states array with all rules of
-   *   of the other states array merged into it.
+   * {@inheritDoc}
    */
-  public static function mergeStates(array &$states1, array $states2, $conjunction = self::CONJUNCT_AND) {
+  public function mergeElementStates(array &$element1, array $element2, $conjunction = self::CONJUNCT_AND) {
+    if (!array_key_exists('#states', $element1)) {
+      $element1['#states'] = [];
+    }
+    if (!array_key_exists('#states', $element2)) {
+      $element2['#states'] = [];
+    }
+    $element1['#states'] = $this->mergeStates($element1['#states'], $element2['#states'], $conjunction);
+
+    return $element1;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function mergeStates(array &$states1, array $states2, $conjunction = self::CONJUNCT_AND) {
     foreach ($states2 as $state => $rules) {
       if (!array_key_exists($state, $states1)) {
         $states1[$state] = $rules;
       }
       else {
-        $states1[$state] = static::mergeRules($states1[$state], $rules);
+        $states1[$state] = $this->mergeRules($states1[$state], $rules);
       }
     }
     return $states1;
   }
 
   /**
-   * Merge two arrays of state rules.
-   *
-   * @param array $rules1
-   *   The array of rules to merge into.
-   * @param array $rules2
-   *   The array of rules to merge.
-   * @param string $conjunction
-   *   The conjunction to use when merging rules,
-   *   either 'and' (default) or 'or'.
-   *
-   * @return array
-   *   The first rules array with all rules of
-   *   the other rules array merged into it.
+   * {@inheritDoc}
    */
-  public static function mergeRules(array &$rules1, array $rules2, $conjunction = self::CONJUNCT_AND) {
-    if (static::isComplex($rules1) && static::isComplex($rules2)) {
-      $rules1 = static::mergeComplexRules($rules1, $rules2, $conjunction);
+  public function mergeRules(array &$rules1, array $rules2, $conjunction = self::CONJUNCT_AND) {
+    if ($this->isComplex($rules1) && static::isComplex($rules2)) {
+      $rules1 = $this->mergeComplexRules($rules1, $rules2, $conjunction);
     }
-    elseif (static::isComplex($rules1)) {
-      $rules1 = static::mergeSimpleAndComplexRules($rules1, $rules2, $conjunction);
+    elseif ($this->isComplex($rules1)) {
+      $rules1 = $this->mergeSimpleAndComplexRules($rules1, $rules2, $conjunction);
     }
-    elseif (static::isComplex($rules2)) {
-      $rules1 = static::mergeSimpleAndComplexRules($rules2, $rules1, $conjunction);
+    elseif ($this->isComplex($rules2)) {
+      $rules1 = $this->mergeSimpleAndComplexRules($rules2, $rules1, $conjunction);
     }
     else {
-      $rules1 = static::mergeSimpleRules($rules1, $rules2, $conjunction);
+      $rules1 = $this->mergeSimpleRules($rules1, $rules2, $conjunction);
     }
     return $rules1;
   }
@@ -122,7 +88,7 @@ class ElementState {
    *   TRUE if the given array is a definition of complex rules.
    *   FALSE if the given array is a definition of simple rules.
    */
-  public static function isComplex(array $rules) {
+  protected function isComplex(array $rules) {
     if (!empty($rules)) {
       $complex = is_int(array_keys($rules)[0]);
     }
@@ -161,7 +127,7 @@ class ElementState {
    *   from $simple1 and those rules from $simple2,
    *   that do not already exist in $simple1.
    */
-  public static function mergeSimpleRules(array &$simple1, array $simple2, $conjunction = self::CONJUNCT_AND) {
+  protected function mergeSimpleRules(array &$simple1, array $simple2, $conjunction = self::CONJUNCT_AND) {
     if ($conjunction === self::CONJUNCT_AND) {
       foreach ($simple2 as $selector => $condition) {
         if (!array_key_exists($selector, $simple1)) {
@@ -170,9 +136,9 @@ class ElementState {
       }
     }
     else {
-      $complex1 = static::simpleToComplex($simple1);
-      $complex2 = static::simpleToComplex($simple2);
-      $simple1 = static::mergeComplexRules($complex1, $complex2, self::CONJUNCT_OR);
+      $complex1 = $this->simpleToComplex($simple1);
+      $complex2 = $this->simpleToComplex($simple2);
+      $simple1 = $this->mergeComplexRules($complex1, $complex2, self::CONJUNCT_OR);
     }
     return $simple1;
   }
@@ -187,7 +153,7 @@ class ElementState {
    *   An array of complex rules containing all simple
    *   rules conjunct with 'and'.
    */
-  public static function simpleToComplex(array $simple) {
+  protected function simpleToComplex(array $simple) {
     $complex = [];
     foreach ($simple as $selector => $condition) {
       $complex[] = [$selector => $condition];
@@ -232,7 +198,7 @@ class ElementState {
    *   from $complex1 and those rules from $complex2,
    *   that do not already exist in $complex1.
    */
-  public static function mergeComplexRules(array &$complex1, array $complex2, $conjunction = self::CONJUNCT_AND) {
+  public function mergeComplexRules(array &$complex1, array $complex2, $conjunction = self::CONJUNCT_AND) {
     $complex1 = [
       [$complex1],
       $conjunction,
@@ -257,10 +223,40 @@ class ElementState {
    *   int one and $simple's rules grouped into another group
    *   of rules.
    */
-  public static function mergeSimpleAndComplexRules(array &$complex, array $simple, $conjunction = self::CONJUNCT_AND) {
-    $complex2 = static::simpleToComplex($simple);
-    $complex = static::mergeComplexRules($complex, $complex2);
+  protected function mergeSimpleAndComplexRules(array &$complex, array $simple, $conjunction = self::CONJUNCT_AND) {
+    $complex2 = $this->simpleToComplex($simple);
+    $complex = $this->mergeComplexRules($complex, $complex2, $conjunction);
     return $complex;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function isConditionallyOptional(array $element) {
+    return array_key_exists('#states', $element)
+      && array_key_exists('optional', $element['#states']);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function isConditionallyRequired(array $element) {
+    return array_key_exists('#states', $element)
+      && array_key_exists('required', $element['#states']);
+  }
+
+  /**
+   * Whether the given element is required.
+   *
+   * @param array $element
+   *   The element.
+   *
+   * @return bool
+   *   TRUE if the given element or any of its children
+   *   sets #required = TRUE. FALSE otherwise.
+   */
+  public static function isRequiredElement(array $element) {
+    return isset($element['#required']) && $element['#required'];
   }
 
 }

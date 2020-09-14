@@ -123,4 +123,18 @@ class ElementBuilder implements ElementBuilderInterface {
     return $value_callback = [Element\FormElement::class, 'valueCallback'];
   }
 
+  /**
+   * Whether the given element is required.
+   *
+   * @param array $element
+   *   The element.
+   *
+   * @return bool
+   *   TRUE if the given element or any of its children
+   *   sets #required = TRUE. FALSE otherwise.
+   */
+  public function isRequired(array $element) {
+    return isset($element['#required']) && $element['#required'];
+  }
+
 }

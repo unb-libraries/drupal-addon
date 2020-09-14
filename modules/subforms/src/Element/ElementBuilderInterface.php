@@ -37,4 +37,16 @@ interface ElementBuilderInterface {
    */
   public function getElementValue(array &$element, array &$form, FormStateInterface &$form_state);
 
+  /**
+   * Whether the given element is required.
+   *
+   * @param array $element
+   *   The element.
+   *
+   * @return bool
+   *   TRUE if the given element or any of its children
+   *   sets #required = TRUE. FALSE otherwise.
+   */
+  public function isRequired(array $element);
+
 }

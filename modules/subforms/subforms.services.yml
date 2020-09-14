@@ -3,3 +3,5 @@ services:
     class: Drupal\subforms\Element\ElementBuilder
     arguments:
       - '@plugin.manager.element_info'
+  element_builder.state:
+    class: Drupal\subforms\Element\ElementStateBuilder
