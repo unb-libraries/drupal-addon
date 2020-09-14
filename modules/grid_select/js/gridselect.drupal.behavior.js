@@ -11,6 +11,11 @@
         .each(function (rid, rowSelector) {
           Drupal.prepareRowSelector($(rowSelector));
         });
+      $(context)
+        .find('table.grid-select input.cell-select')
+        .each(function (cid, cellSelector) {
+          Drupal.prepareCellSelector($(cellSelector));
+        });
     }
   };
 
@@ -72,6 +77,11 @@
   Drupal.rowCellSelectors = function(index, table) {
     return table
       .find('.cell-select[data-row="' + index + '"]');
+  }
+
+  // Select cells
+  Drupal.prepareCellSelector = function(cellSelector) {
+    cellSelector.on('change', Drupal.cellSelectorChanged);
   }
 
   Drupal.cellSelectorChanged = function(event) {
