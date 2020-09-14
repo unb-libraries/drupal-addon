@@ -1,0 +1,16 @@
+{
+  "name": "unb-libraries/grid_select",
+  "description": "Form element to render a grid of checkboxes.",
+  "type": "drupal-module",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Patrick Schilf",
+      "email": "pschilf@unb.ca"
+    },
+    {
+      "name": "UNB Libraries",
+      "email": "libsupport@unb.ca"
+    }
+  ]
+}

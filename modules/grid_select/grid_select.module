@@ -1,0 +1,31 @@
+<?php
+
+/**
+ * @file
+ * Contains grid_select.module.
+ */
+
+/**
+* Implements hook_theme().
+*/
+function grid_select_theme() {
+  return [
+    'grid_select' => [
+      'render element' => 'element',
+    ],
+  ];
+}
+
+/**
+ * Implements template_preprocess_hook.
+ *
+ * @param array $variables
+ *   An array of variables to pass to the template.
+ */
+function template_preprocess_grid_select(&$variables) {
+  $variables['legend'] = $variables['element']['#legend'];
+  foreach (\Drupal\Core\Render\Element::children($variables['element']) as $key) {
+    [$row, $column] = explode('-', $key);
+    $variables['cells'][$row][$column] = $variables['element'][$key];
+  }
+}

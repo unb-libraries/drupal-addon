@@ -1,0 +1,10 @@
+gridselect:
+  version: 1.x
+  css:
+    component:
+      css/gridselect.css: {}
+  js:
+    js/gridselect.drupal.behavior.js: {}
+  dependencies:
+    - core/drupal
+    - core/jquery
