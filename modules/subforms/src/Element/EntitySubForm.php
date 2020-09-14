@@ -103,10 +103,12 @@ class EntitySubForm extends FormElement {
   public static function valueCallback(&$element, $input, FormStateInterface $form_state) {
     $element['#tree'] = TRUE;
 
-    $element['#form_state'] = new FormState();
     $element['#form_object'] = static::entityTypeManager()
       ->getFormObject($element['#entity_type'], $element['#operation'])
       ->setEntity(static::getEntity($element));
+
+    $element['#form_state'] = new FormState();
+    $element['#parent_form_state'] = $form_state;
     $element['#form_state']->setFormObject($element['#form_object']);
 
     $element['#form'] = $element['#form_object']
@@ -271,7 +273,15 @@ class EntitySubForm extends FormElement {
    *   The complete form.
    */
   public static function validateSubForm(&$element, FormStateInterface $form_state, &$complete_form) {
-    $form_state->setValueForElement($element, $element['#value']);
+    /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
+    $entity = $element['#form_object']->validateForm($element, $element['#form_state']);
+
+    foreach ($element['#form_state']->getErrors() as $field_name => $error) {
+      $form_state->setErrorByName($field_name, $error);
+    }
+    $element_id = $element['#parents'][count($element['#parents']) - 1];
+    $element['#parent_form_state']->setValue([$element_id], $entity);
+    $element['#form_object']->setEntity($entity);
   }
 
 }
