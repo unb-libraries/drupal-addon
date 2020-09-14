@@ -49,6 +49,13 @@ class EntitySubForm extends FormElement {
   protected static $elementBuilder;
 
   /**
+   * The element state builder.
+   *
+   * @var \Drupal\subforms\Element\ElementStateBuilderInterface
+   */
+  protected static $_elementStateBuilder;
+
+  /**
    * Retrieve an entity type manager service instance.
    *
    * @return \Drupal\Core\Entity\EntityTypeManagerInterface
@@ -75,6 +82,19 @@ class EntitySubForm extends FormElement {
   }
 
   /**
+   * Retrieve the element state builder.
+   *
+   * @return \Drupal\subforms\Element\ElementStateBuilderInterface
+   *   An element state builder instance.
+   */
+  protected static function elementStateBuilder() {
+    if (!isset(static::$_elementStateBuilder)) {
+      static::$_elementStateBuilder = \Drupal::service('element_builder.state');
+    }
+    return static::$_elementStateBuilder;
+  }
+
+  /**
    * {@inheritDoc}
    */
   public function getInfo() {
@@ -89,6 +109,7 @@ class EntitySubForm extends FormElement {
       '#process' => [
         [static::class, 'processContainerOrFieldset'],
         [static::class, 'processBuildForm'],
+        [static::class, 'processStates'],
         [static::class, 'processGroup'],
       ],
       '#element_validate' => [
@@ -253,11 +274,39 @@ class EntitySubForm extends FormElement {
    *   The processed element.
    */
   public static function processBuildForm(&$element, FormStateInterface $form_state, array &$complete_form) {
-    $children = array_intersect_key($element['#form'], array_flip(ElementPlus::children($element['#form'])));
-    foreach ($children as $child_id => $child) {
-      if (isset($child['#type']) && $child['#type'] !== 'actions') {
-        $element[$child_id] = $child;
+    foreach (Element::children($element['#form']) as $child_id) {
+      if ($element['#form'][$child_id]['#type'] !== 'actions') {
+        $element[$child_id] = $element['#form'][$child_id];
       }
+    }
+
+    return $element;
+  }
+
+  /**
+   * Process the states of the subform, i.e. pass any state definitions down to the children.
+   *
+   * @param array $element
+   *   An element render array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   * @param array $complete_form
+   *   The complete form render array.
+   */
+  public static function processStates(&$element, FormStateInterface $form_state, array &$complete_form) {
+    foreach (Element::children($element) as $child_id) {
+      $has_children = !empty(Element::children($element[$child_id]));
+      if (isset($element['#states']) && isset($element[$child_id]['#type'])) {
+        static::elementStateBuilder()->mergeElementStates($element[$child_id], $element);
+        if ((static::elementStateBuilder()->isConditionallyRequired($element) || static::elementStateBuilder()->isConditionallyOptional($element[$child_id])) && (static::elementBuilder()->isRequired($element[$child_id]) || $has_children)) {
+          // if the element is conditionally required, convert required children or children with children
+          // into conditionally required children.
+          if (isset($element[$child_id]['#required'])) {
+            unset($element[$child_id]['#required']);
+          }
+        }
+      }
+      static::processStates($element[$child_id], $form_state, $complete_form);
     }
     return $element;
   }
