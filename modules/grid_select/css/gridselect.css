@@ -7,7 +7,7 @@ table.grid-select input.row-select,
 table.grid-select input.cell-select {
     z-index: 10;
 }
-table.grid-select label.custom-checkbox:hover {
+table.grid-select .custom-checkbox label.custom-control-label:hover {
     cursor: pointer;
 }
 @media (max-width: 992px) {
