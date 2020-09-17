@@ -80,6 +80,7 @@ class GridSelect extends FormElement {
           'class' => [
             'row-select',
           ],
+          'id' => 'row-' . strtolower($rid),
           'data-row' => $rid,
         ],
       ];
@@ -91,6 +92,7 @@ class GridSelect extends FormElement {
             'class' => [
               'column-select',
             ],
+            'id' => 'col-' . strtolower($cid),
             'data-column' => $cid,
           ],
         ];
