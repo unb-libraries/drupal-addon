@@ -1,17 +1,21 @@
+table.grid-select td,
+table.grid-select th {
+    padding: 10px 12px;
+}
 table.grid-select input.column-select,
 table.grid-select input.row-select,
 table.grid-select input.cell-select {
     z-index: 10;
 }
-
-table.grid-select td {
-    background-color: #fff;
-    padding: 10px 12px;
-    border: 1px solid #ececec;
+table.grid-select label.custom-checkbox:hover {
+    cursor: pointer;
 }
-table.grid-select .grid-legend {
-    background-color: #393e44;
-    color: #fff;
-    font-weight: bold;
-    border-color: #717171;
+@media (max-width: 992px) {
+    table.grid-select thead th label {
+        display: inline-block;
+        font-size: 0;
+    }
+    table.grid-select thead th label::first-letter {
+        font-size: 1rem;
+    }
 }
