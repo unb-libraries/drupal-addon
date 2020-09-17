@@ -41,21 +41,25 @@
  * @ingroup themeable
  */
 #}
-<table{{ attributes }}>
-    <tbody>
-    <tr>
-        <td class="grid-legend grid-legend-col grid-legend-row"></td>
-        {% for key, element in legend['x'] %}
-            <td class="grid-legend grid-legend-col">{{ element }}</td>
-        {% endfor %}
-    </tr>
-    {% for rid, row in cells %}
-        <tr>
-            <td class="grid-legend grid-legend-row">{{ legend['y'][rid] }}</td>
-            {% for cid, column in row %}
-                <td class="grid-cell">{{ column }}</td>
+<div class="table-responsive">
+    <table{{ attributes }}>
+        <thead class="thead-dark">
+        <tr {{ row.attributes }}>
+            <th class="grid-legend grid-legend-col grid-legend-row"></th>
+            {% for key, element in legend['x'] %}
+                <th class="grid-legend grid-legend-col" scope="col">{{- element -}}</th>
             {% endfor %}
         </tr>
-    {% endfor %}
-    </tbody>
-</table>
+        </thead>
+        <tbody class="thead-dark">
+            {% for rid, row in cells %}
+                <tr {{ row.attributes }}>
+                    <th class="grid-legend grid-legend-row" scope="row">{{- legend['y'][rid] -}}</th>
+                    {% for cid, column in row %}
+                        <td class="grid-cell">{{- column -}}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
