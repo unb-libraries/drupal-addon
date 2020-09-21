@@ -15,7 +15,7 @@ trait SystemTimeTrait {
    * @return \Drupal\datetime_plus\Datetime\DateTimeFactoryInterface
    *   A datetime factory service instance.
    */
-  protected function systemTime() {
+  protected static function systemTime() {
     return \Drupal::service('datetime_plus.system');
   }
 

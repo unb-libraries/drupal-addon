@@ -15,7 +15,7 @@ trait UserTimeTrait {
    * @return \Drupal\datetime_plus\Datetime\DateTimeFactoryInterface
    *   A datetime factory service instance.
    */
-  protected function userTime() {
+  protected static function userTime() {
     return \Drupal::service('datetime_plus.user');
   }
 

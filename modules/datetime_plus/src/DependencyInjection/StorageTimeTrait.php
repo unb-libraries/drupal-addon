@@ -15,7 +15,7 @@ trait StorageTimeTrait {
    * @return \Drupal\datetime_plus\Datetime\DateTimeFactoryInterface
    *   A datetime factory service instance.
    */
-  protected function storageTime() {
+  protected static function storageTime() {
     return \Drupal::service('datetime_plus.storage');
   }
 
