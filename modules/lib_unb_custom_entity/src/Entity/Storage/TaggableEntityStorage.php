@@ -59,11 +59,27 @@ class TaggableEntityStorage extends SqlContentEntityStorage implements TaggableC
    * {@inheritDoc}
    */
   public function loadByTagNames(array $names) {
+    $tags = $this->loadTagsByName($names);
+    return $this->loadByTags($tags);
+  }
+
+  /**
+   * Load taxonomy term entities based on the given names.
+   *
+   * @param array $names
+   *   An array of taxonomy term names.
+   *
+   * @return \Drupal\taxonomy\TermInterface[]
+   *   An array of taxonomy term entities.
+   */
+  protected function loadTagsByName(array $names) {
     $query = $this->getTagStorage()
       ->getQuery()
       ->condition('name', $names, 'IN');
-    $tags = $this->getTagStorage()->loadMultiple($query->execute());
-    return $this->loadByTags($tags);
+    /** @var \Drupal\taxonomy\TermInterface[] $tags */
+    $tags = $this->getTagStorage()
+      ->loadMultiple($query->execute());
+    return $tags;
   }
 
   /**
@@ -124,6 +140,10 @@ class TaggableEntityStorage extends SqlContentEntityStorage implements TaggableC
    * {@inheritDoc}
    */
   public function loadRetired(array $tags) {
+    if(!empty($tags) && is_string($tags[array_keys($tags)[0]])) {
+      $tags = $this->loadTagsByName($tags);
+    }
+
     $previously_or_currently_tagged_entity_ids = array_unique(array_map(function (RevisionableInterface $revision) {
       return $revision->id();
     }, $this->loadTaggedRevisions($tags)));

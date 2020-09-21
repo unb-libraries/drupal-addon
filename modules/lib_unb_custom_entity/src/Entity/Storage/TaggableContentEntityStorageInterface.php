@@ -52,7 +52,7 @@ interface TaggableContentEntityStorageInterface extends ContentEntityStorageInte
   /**
    * Retrieve all entities that used to be assigned one of the given tags.
    *
-   * @param \Drupal\taxonomy\TermInterface[] $tags
+   * @param array $tags
    *   An array of taxonomy term entities.
    *
    * @return \Drupal\lib_unb_custom_entity\Entity\TaggableInterface[]
