@@ -97,6 +97,11 @@ class ElementBuilder implements ElementBuilderInterface {
         $value_callback = $this->getValueCallback($element);
         $value = call_user_func_array($value_callback, [&$element, $input, $form_state]);
 
+        // TODO: What if value is a single-value array (e.g. entity_reference_revisions)?
+        if (is_array($value)) {
+          $value = array_values($value);
+        }
+
         $form_state->setValue($parents, $value);
       }
     }
