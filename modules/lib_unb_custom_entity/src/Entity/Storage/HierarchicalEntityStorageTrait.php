@@ -27,12 +27,16 @@ trait HierarchicalEntityStorageTrait {
    */
   public function loadFellows(EntityInterface $entity) {
     /** @var HierarchicalInterface $entity */
-    $superior_id = $entity->getSuperior()->id();
 
-    $query = $this
-      ->getQuery()
-      ->condition(HierarchicalInterface::FIELD_PARENT, $superior_id);
-    return $this->loadMultiple($query->execute());
+    $ids = [];
+    if ($superior = $entity->getSuperior()) {
+      $ids = $this
+        ->getQuery()
+        ->condition(HierarchicalInterface::FIELD_PARENT, $superior->id())
+        ->execute();
+    }
+
+    return $this->loadMultiple($ids);
   }
 
 }
