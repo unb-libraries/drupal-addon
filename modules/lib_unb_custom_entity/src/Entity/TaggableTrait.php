@@ -168,6 +168,7 @@ trait TaggableTrait {
    */
   private static function tagFieldDefinition($vid, $options = []) {
     $fields = [];
+
     /** @noinspection PhpUnhandledExceptionInspection */
     $vocabulary = \Drupal::entityTypeManager()
       ->getStorage('taxonomy_vocabulary')
@@ -176,12 +177,16 @@ trait TaggableTrait {
     $options += [
       'field_id' => sprintf('%s_%s', TaggableInterface::FIELD_TAGS, $vid),
       'label' => sprintf("%s tags", $vocabulary ? $vocabulary->label() : ucfirst($vid)),
+      'required' => FALSE,
+      'cardinality' => BaseFieldDefinition::CARDINALITY_UNLIMITED,
+      'revisionable' => FALSE,
     ];
 
     $fields[$options['field_id']] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t($options['label']))
-      ->setRequired(FALSE)
-      ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED)
+      ->setRequired($options['required'])
+      ->setCardinality($options['cardinality'])
+      ->setRevisionable($options['revisionable'])
       ->setSettings([
         'target_type' => 'taxonomy_term',
         'handler_settings' => [
