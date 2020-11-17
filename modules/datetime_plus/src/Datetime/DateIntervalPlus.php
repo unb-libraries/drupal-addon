@@ -10,7 +10,7 @@ namespace Drupal\datetime_plus\Datetime;
  *
  * @package Drupal\datetime_plus\Datetime
  */
-class DateIntervalPlus {
+class DateIntervalPlus implements IntervalInterface {
 
   /**
    * The start of the interval.
@@ -57,30 +57,21 @@ class DateIntervalPlus {
   }
 
   /**
-   * Retrieve the start of the timespan.
-   *
-   * @return \Drupal\datetime_plus\Datetime\DrupalDateTimePlus
-   *   A datetime object.
+   * {@inheritDoc}
    */
   public function start() {
     return $this->start;
   }
 
   /**
-   * Retrieve the end of the timespan object.
-   *
-   * @return \Drupal\datetime_plus\Datetime\DrupalDateTimePlus
-   *   A datetime object.
+   * {@inheritDoc}
    */
   public function end() {
     return $this->end;
   }
 
   /**
-   * Retrieve the duration of the interval.
-   *
-   * @return \Drupal\datetime_plus\Datetime\Timespan
-   *   A timespan object.
+   * {@inheritDoc}
    */
   public function duration() {
     if (!isset($this->duration)) {
@@ -90,65 +81,50 @@ class DateIntervalPlus {
   }
 
   /**
-   * The number of entire years between start and end of the timespan.
-   *
-   * @return int
-   *   An integer.
+   * {@inheritDoc}
    */
   public function years() {
     return $this->duration()->y;
   }
 
   /**
-   * The (relative) number of months between start and end of the timespan.
-   *
-   * @return int
-   *   An integer between 0 and 11.
+   * {@inheritDoc}
    */
   public function months() {
     return $this->duration()->m;
   }
 
   /**
-   * The (relative) number of days between start and end of the timespan.
-   *
-   * @return int
-   *   An integer between 0 and 30.
+   * {@inheritDoc}
    */
   public function days() {
     return $this->duration()->d;
   }
 
   /**
-   * The (relative) number of hours between start and end of the timespan.
-   *
-   * @return int
-   *   An integer between 0 and 23.
+   * {@inheritDoc}
    */
   public function hours() {
     return $this->duration()->h;
   }
 
   /**
-   * The (relative) number of minutes between start and end of the timespan.
-   *
-   * @return int
-   *   An integer between 0 and 59.
+   * {@inheritDoc}
    */
   public function minutes() {
     return $this->duration()->i;
   }
 
   /**
-   * The (relative) number of seconds between start and end of the timespan.
-   *
-   * @return int
-   *   An integer between 0 and 59.
+   * {@inheritDoc}
    */
   public function seconds() {
     return $this->duration()->s;
   }
 
+  /**
+   * {@inheritDoc}
+   */
   public function setTimeZone(\DateTimeZone $timezone) {
     $this->start()->setTimezone($timezone);
     $this->end()->setTimezone($timezone);
