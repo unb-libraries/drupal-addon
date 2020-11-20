@@ -2,7 +2,8 @@
 
 namespace Drupal\testgen\generate;
 
-use TestGen\TestGen;
+use Drupal\Core\Config\ImmutableConfig;
+use Drupal\testgen\Tozart\TozartTrait;
 
 /**
  * Drupal wrapper for PHP-TestGen TestGenerator.
@@ -10,6 +11,8 @@ use TestGen\TestGen;
  * @package Drupal\testgen\generate
  */
 abstract class DrupalTestGenerator {
+
+  use TozartTrait;
 
   /**
    * Configuration.
@@ -19,43 +22,22 @@ abstract class DrupalTestGenerator {
   private $config;
 
   /**
-   * Original php-testgen generator.
+   * Retrieve the configuration for the generator.
    *
-   * @var \TestGen\generate\TestGenerator
+   * @return \Drupal\Core\Config\ImmutableConfig
+   *   An immutable configuration object.
    */
-  private $generator;
-
-  protected function config() {
+  public function config() {
     return $this->config;
   }
 
   /**
-   * Retrieve a php-testgen generator instance.
-   *
-   * @return mixed|\TestGen\generate\TestGenerator
-   *   A php-testgen generator instance.
-   */
-  private function generator() {
-    return $this->generator;
-  }
-
-  /**
-   * Inject the actual generator.
-   *
-   * @param \TestGen\TestGen $testgen
-   *   A TestGen service instance.
-   */
-  public function setGenerator(TestGen $testgen) {
-    $this->generator = $testgen->generator();
-  }
-
-  /**
-   * Create a new DrupalTestGenerator instance.
+   * Assign configuration to this generator.
    *
    * @param \Drupal\Core\Config\ImmutableConfig $config
-   *   Configuration.
+   *   A configuration object.
    */
-  public function __construct($config) {
+  public function setConfig(ImmutableConfig $config) {
     $this->config = $config;
   }
 

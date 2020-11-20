@@ -2,8 +2,6 @@
 
 namespace Drupal\testgen\generate;
 
-use Drupal\Core\Config\ImmutableConfig;
-use Drupal\Core\Extension\Extension;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Extension\Exception\UnknownExtensionException;
 
@@ -24,6 +22,13 @@ class ModuleTestGenerator extends DrupalTestGenerator {
   protected $moduleHandler;
 
   /**
+   * Name of the module.
+   *
+   * @var string
+   */
+  protected $moduleName;
+
+  /**
    * Retrieves the module handler service.
    *
    * @return \Drupal\Core\Extension\ModuleHandlerInterface
@@ -34,23 +39,25 @@ class ModuleTestGenerator extends DrupalTestGenerator {
   }
 
   /**
-   * Create a ModuleTestGenerator instance.
+   * Retrieve the name of the module.
    *
-   * @param \Drupal\Core\Config\ImmutableConfig $config
-   *   Configuration.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
-   *   Module handler service.
+   * @return string
+   *   A string.
    */
-  public function __construct(ImmutableConfig $config, ModuleHandlerInterface $module_handler) {
-    parent::__construct($config);
-    $this->moduleHandler = $module_handler;
+  protected function getModuleName() {
+    return $this->moduleName;
   }
 
   /**
    * Generate test cases for the given module.
+   * Create a ModuleTestGenerator instance.
    *
    * @param $module_name
    *   Name of the module for which to generate test cases.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   Module handler service.
+   * @param string $module_name
+   *   Name of a module.
    */
   public function generateTests($module_name) {
     if ($module = $this->getModule($module_name)) {
@@ -58,40 +65,46 @@ class ModuleTestGenerator extends DrupalTestGenerator {
         $this->getModuleModelRoot($module),
         $this->getModuleTestRoot($module));
     }
+  public function __construct(ModuleHandlerInterface $module_handler, string $module_name) {
+    $this->moduleHandler = $module_handler;
+    $this->moduleName = $module_name;
+    static::tozart()
+      ->subjectDiscovery()
+      ->addDirectory($this->getSubjectRoot());
   }
 
   /**
    * Load a module instance, if one exists under the given name.
    *
-   * @param $module_name
-   *   The name of the module to load.
-   *
    * @return \Drupal\Core\Extension\Extension|null
    *   An Extension instance.
    */
-  protected function getModule($module_name) {
+  protected function getModule() {
     try {
-      return $this->moduleHandler()->getModule($module_name);
+      return $this->moduleHandler()->getModule($this->getModuleName());
     } catch (UnknownExtensionException $e) {
       return NULL;
     }
   }
 
   /**
-   * Retrieve the path to where the given module keeps its tests.
-   *
-   * @param \Drupal\Core\Extension\Extension $module
-   *   The module instance.
+   * Retrieve the path to the test root folder.
    *
    * @return string
-   *   Absolute path to the given module's test root.
+   *   Absolute directory path.
    */
-  protected function getModuleTestRoot(Extension $module) {
-    return $module->getPath() . '/tests';
+  protected function getModuleTestRoot() {
+    return $this->getModule()->getPath() . '/tests';
   }
 
-  protected function getModuleModelRoot(Extension $module) {
-    return $this->getModuleTestRoot($module) . '/models';
+  /**
+   * Retrieve the path to the folder which contains subject definitions.
+   *
+   * @return string
+   *   Absolute directory path.
+   */
+  protected function getSubjectRoot() {
+    return $this->getModuleTestRoot() . '/subjects';
   }
 
 }

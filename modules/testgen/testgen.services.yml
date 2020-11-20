@@ -1,19 +1,21 @@
 services:
-  testgen:
-    class: '\TestGen\TestGen'
+  tozart:
+    class: Tozart\Tozart
   testgen.config:
-    factory: ['@config.factory', 'get']
-    class: 'Drupal\Core\Config\ImmutableConfig'
-    arguments: ['testgen.settings']
+    factory: ['@config.factory', get]
+    class: Drupal\Core\Config\ImmutableConfig
+    arguments: [testgen.settings]
   test_generator:
-    class: 'Drupal\testgen\generate\DrupalTestGenerator'
-    arguments: ['@testgen.config']
+    class: Drupal\testgen\generate\DrupalTestGenerator
     calls:
-      - ['setGenerator', ['@testgen']]
+      - [setConfig, ['@testgen.config']]
+    abstract: true
   test_generator.module:
-    class: 'Drupal\testgen\generate\ModuleTestGenerator'
-    parent: 'test_generator'
-    arguments: ['@module_handler']
+    class: Drupal\testgen\generate\ModuleTestGenerator
+    parent: test_generator
+    arguments:
+      - '@module_handler'
+      - testgen_test
   test_generator.site:
     class: 'Drupal\testgen\generate\SiteTestGenerator'
-    parent: 'test_generator'
+    parent: test_generator
