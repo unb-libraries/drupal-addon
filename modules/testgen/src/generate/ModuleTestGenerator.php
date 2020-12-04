@@ -49,28 +49,33 @@ class ModuleTestGenerator extends DrupalTestGenerator {
   }
 
   /**
-   * Generate test cases for the given module.
    * Create a ModuleTestGenerator instance.
    *
-   * @param $module_name
-   *   Name of the module for which to generate test cases.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   Module handler service.
    * @param string $module_name
    *   Name of a module.
    */
-  public function generateTests($module_name) {
-    if ($module = $this->getModule($module_name)) {
-      $this->generate(
-        $this->getModuleModelRoot($module),
-        $this->getModuleTestRoot($module));
-    }
   public function __construct(ModuleHandlerInterface $module_handler, string $module_name) {
     $this->moduleHandler = $module_handler;
     $this->moduleName = $module_name;
     static::tozart()
       ->subjectDiscovery()
       ->addDirectory($this->getSubjectRoot());
+  }
+
+  /**
+   * Generate test cases for the given module.
+   *
+   * @param $module_name
+   *   Name of the module for which to generate test cases.
+   */
+  public function generateTests($module_name) {
+    if ($module = $this->getModule($module_name)) {
+      $this->generate(
+        $this->getSubjectRoot($module),
+        $this->getModuleTestRoot($module));
+    }
   }
 
   /**

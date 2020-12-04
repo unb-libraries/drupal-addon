@@ -50,9 +50,7 @@ abstract class DrupalTestGenerator {
    *   Path to the output folder in which to put generated files.
    */
   protected function generate($model_root, $output_root) {
-    $this->generator()->setModelRoot($model_root);
-    $this->generator()->setOutputRoot($output_root);
-    $this->generator()->generate();
+    static::tozart()->generate($output_root);
   }
 
 }
