@@ -27,15 +27,13 @@ class DateTimePlusItem extends DateTimeItem {
   public function setValue($values, $notify = TRUE) {
     if (is_array($values)) {
       foreach ($values as $index => $value) {
-        if (!is_string($value)) {
+        if ($values instanceof DateTimePlus) {
           $values[$index] = $this->toStorageValue($value);
         }
       }
     }
-    else {
-      if (!is_string($values)) {
-        $values = $this->toStorageValue($values);
-      }
+    elseif ($values instanceof DateTimePlus) {
+      $values = $this->toStorageValue($values);
     }
     parent::setValue($values, $notify);
   }
