@@ -2,6 +2,7 @@
 
 namespace Drupal\testgen\generate;
 
+use Drupal\Core\Extension\Extension;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Extension\Exception\UnknownExtensionException;
 
@@ -22,13 +23,6 @@ class ModuleTestGenerator extends DrupalTestGenerator {
   protected $moduleHandler;
 
   /**
-   * Name of the module.
-   *
-   * @var string
-   */
-  protected $moduleName;
-
-  /**
    * Retrieves the module handler service.
    *
    * @return \Drupal\Core\Extension\ModuleHandlerInterface
@@ -39,29 +33,13 @@ class ModuleTestGenerator extends DrupalTestGenerator {
   }
 
   /**
-   * Retrieve the name of the module.
-   *
-   * @return string
-   *   A string.
-   */
-  protected function getModuleName() {
-    return $this->moduleName;
-  }
-
-  /**
    * Create a ModuleTestGenerator instance.
    *
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   Module handler service.
-   * @param string $module_name
-   *   Name of a module.
    */
-  public function __construct(ModuleHandlerInterface $module_handler, string $module_name) {
+  public function __construct(ModuleHandlerInterface $module_handler) {
     $this->moduleHandler = $module_handler;
-    $this->moduleName = $module_name;
-    static::tozart()
-      ->subjectDiscovery()
-      ->addDirectory($this->getSubjectRoot());
   }
 
   /**
@@ -81,13 +59,16 @@ class ModuleTestGenerator extends DrupalTestGenerator {
   /**
    * Load a module instance, if one exists under the given name.
    *
+   * @param string $module_name
+   *
    * @return \Drupal\Core\Extension\Extension|null
    *   An Extension instance.
    */
-  protected function getModule() {
+  protected function getModule(string $module_name) {
     try {
-      return $this->moduleHandler()->getModule($this->getModuleName());
-    } catch (UnknownExtensionException $e) {
+      return $this->moduleHandler()->getModule($module_name);
+    }
+    catch (UnknownExtensionException $e) {
       return NULL;
     }
   }
@@ -95,21 +76,27 @@ class ModuleTestGenerator extends DrupalTestGenerator {
   /**
    * Retrieve the path to the test root folder.
    *
+   * @param \Drupal\Core\Extension\Extension $module
+   *   A Drupal module.
+   *
    * @return string
    *   Absolute directory path.
    */
-  protected function getModuleTestRoot() {
-    return $this->getModule()->getPath() . '/tests';
+  protected function getModuleTestRoot(Extension $module) {
+    return $module->getPath() . '/tests';
   }
 
   /**
    * Retrieve the path to the folder which contains subject definitions.
    *
+   * @param \Drupal\Core\Extension\Extension $module
+   *   A Drupal module.
+   *
    * @return string
    *   Absolute directory path.
    */
-  protected function getSubjectRoot() {
-    return $this->getModuleTestRoot() . '/subjects';
+  protected function getSubjectRoot(Extension $module) {
+    return $this->getModuleTestRoot($module) . '/subjects';
   }
 
 }

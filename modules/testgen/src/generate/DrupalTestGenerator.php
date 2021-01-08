@@ -44,12 +44,13 @@ abstract class DrupalTestGenerator {
   /**
    * Call the original generator to generate test cases.
    *
-   * @param string $model_root
+   * @param string $subject_root
    *   Path to the folder which to scan for model files.
    * @param string $output_root
    *   Path to the output folder in which to put generated files.
    */
-  protected function generate($model_root, $output_root) {
+  protected function generate($subject_root, $output_root) {
+    static::tozart()->subjectDiscovery()->addDirectory($subject_root);
     static::tozart()->generate($output_root);
   }
 

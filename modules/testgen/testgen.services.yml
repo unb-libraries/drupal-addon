@@ -16,7 +16,6 @@ services:
     parent: test_generator
     arguments:
       - '@module_handler'
-      - testgen_test
   test_generator.site:
     class: 'Drupal\testgen\generate\SiteTestGenerator'
     parent: test_generator
