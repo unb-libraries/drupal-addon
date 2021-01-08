@@ -50,8 +50,7 @@ abstract class DrupalTestGenerator {
    *   Path to the output folder in which to put generated files.
    */
   protected function generate($subject_root, $output_root) {
-    static::tozart()->subjectDiscovery()->addDirectory($subject_root);
-    static::tozart()->generate($output_root);
+    static::tozart()->generate($subject_root, $output_root);
   }
 
 }
