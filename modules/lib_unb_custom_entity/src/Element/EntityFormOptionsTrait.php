@@ -90,6 +90,7 @@ trait EntityFormOptionsTrait {
       '#tags' => [],
       '#options' => [],
       '#entity_key' => 'id',
+      '#sort_key' => '',
       '#filter' => [],
       '#filter_callback' => [],
       '#group_by_callback' => [],
@@ -132,6 +133,11 @@ trait EntityFormOptionsTrait {
         else {
           $entities[$key_value] = $label;
         }
+      }
+
+      // TODO: Handle sorting of groups.
+      if ($element['#sort_key'] && $element['#sort_key'] === 'label') {
+        natsort($entities);
       }
 
       return $entities;
