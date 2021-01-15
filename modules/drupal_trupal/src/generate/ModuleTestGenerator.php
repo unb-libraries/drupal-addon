@@ -47,12 +47,17 @@ class ModuleTestGenerator extends DrupalTestGenerator {
    *
    * @param $module_name
    *   Name of the module for which to generate test cases.
+   * @param array $options
+   *   (optional) Array of options to configure the test
+   *   generation.
    */
-  public function generateTests($module_name) {
+  public function generateTests($module_name, array $options = []) {
     if ($module = $this->getModule($module_name)) {
-      $this->generate(
-        $this->getSubjectRoot($module),
-        $this->getModuleTestRoot($module));
+      $options += [
+        'trupal_dir' => $this->getSubjectRoot($module),
+        'output_dir' => $this->getModuleTestRoot($module),
+      ];
+      $this->generate($options['trupal_dir'], $options['output_dir']);
     }
   }
 
@@ -96,7 +101,12 @@ class ModuleTestGenerator extends DrupalTestGenerator {
    *   Absolute directory path.
    */
   protected function getSubjectRoot(Extension $module) {
-    return $this->getModuleTestRoot($module) . '/subjects';
+    $trupal_test_root = $this->config()->get('trupal_test_root');
+    if ($trupal_test_root) {
+      return "{$this->getModuleTestRoot($module)}/{$trupal_test_root}";
+    }
+    return "{$this->getModuleTestRoot($module)}/trupal";
+
   }
 
 }
