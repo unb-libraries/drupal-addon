@@ -1,0 +1,2 @@
+module_root: '/tests/drupal_trupal'
+site_root: '/app/tests/drupal_trupal'

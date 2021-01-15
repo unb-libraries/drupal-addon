@@ -1,8 +1,8 @@
 <?php
 
-namespace Drupal\testgen\Commands;
+namespace Drupal\drupal_trupal\Commands;
 
-use Drupal\testgen\generate\ModuleTestGenerator;
+use Drupal\drupal_trupal\generate\ModuleTestGenerator;
 use Drush\Commands\DrushCommands;
 
 class ModuleTestsCommands extends DrushCommands {
@@ -10,14 +10,14 @@ class ModuleTestsCommands extends DrushCommands {
   /**
    * Test generator service.
    *
-   * @var \Drupal\testgen\generate\ModuleTestGenerator
+   * @var \Drupal\drupal_trupal\generate\ModuleTestGenerator
    */
   protected $generator;
 
   /**
    * Retrieve the test generator service.
    *
-   * @return \Drupal\testgen\generate\ModuleTestGenerator
+   * @return \Drupal\drupal_trupal\generate\ModuleTestGenerator
    *   A test generator service instance.
    */
   public function generator() {
@@ -27,7 +27,7 @@ class ModuleTestsCommands extends DrushCommands {
   /**
    * Creates the TestgenCommands instance.
    *
-   * @param \Drupal\testgen\generate\ModuleTestGenerator $generator
+   * @param \Drupal\drupal_trupal\generate\ModuleTestGenerator $generator
    *   Module generator service.
    */
   public function __construct(ModuleTestGenerator $generator) {
@@ -41,7 +41,7 @@ class ModuleTestsCommands extends DrushCommands {
    * @param array $module_names
    *   Name of the module for which to generate test cases.
    *
-   * @command testgen:generate:module
+   * @command drupal_trupal:generate:module
    * @aliases tg-module,tgm
    */
   public function generate(array $module_names) {

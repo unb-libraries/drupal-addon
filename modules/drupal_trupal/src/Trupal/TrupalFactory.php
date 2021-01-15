@@ -1,13 +1,13 @@
 <?php
 
-namespace Drupal\testgen\Trupal;
+namespace Drupal\drupal_trupal\Trupal;
 
 use Trupal\Trupal;
 
 /**
  * Factory to create the Trupal service.
  *
- * @package Drupal\testgen\Trupal
+ * @package Drupal\drupal_trupal\Trupal
  */
 class TrupalFactory {
 

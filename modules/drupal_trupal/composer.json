@@ -1,6 +1,6 @@
 {
-  "name": "drupal/testgen",
-  "description": "Generate test cases for Drupal components using PHP-TestGen",
+  "name": "unb-libraries/drupal-trupal",
+  "description": "Trupal test generation for Drupal.",
   "type": "drupal-module",
   "license": "MIT",
   "authors": [

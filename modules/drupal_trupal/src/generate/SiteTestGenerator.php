@@ -1,11 +1,11 @@
 <?php
 
-namespace Drupal\testgen\generate;
+namespace Drupal\drupal_trupal\generate;
 
 /**
  * Generates test cases which apply to an entire site.
  *
- * @package Drupal\testgen\generate
+ * @package Drupal\drupal_trupal\generate
  */
 class SiteTestGenerator extends DrupalTestGenerator {
 

@@ -1,0 +1,11 @@
+services:
+  drupal_trupal.commands.module:
+    class: 'Drupal\drupal_trupal\Commands\ModuleTestsCommands'
+    arguments: ['@test_generator.module']
+    tags:
+      - { name: drush.command }
+  drupal_trupal.commands.site:
+    class: 'Drupal\drupal_trupal\Commands\SiteTestsCommands'
+    arguments: ['@test_generator.site']
+    tags:
+      - { name: drush.command }

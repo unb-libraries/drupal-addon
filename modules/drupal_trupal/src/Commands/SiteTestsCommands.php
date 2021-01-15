@@ -1,8 +1,8 @@
 <?php
 
-namespace Drupal\testgen\Commands;
+namespace Drupal\drupal_trupal\Commands;
 
-use Drupal\testgen\generate\SiteTestGenerator;
+use Drupal\drupal_trupal\generate\SiteTestGenerator;
 use Drush\Commands\DrushCommands;
 
 class SiteTestsCommands extends DrushCommands {
@@ -10,14 +10,14 @@ class SiteTestsCommands extends DrushCommands {
   /**
    * Test generator service.
    *
-   * @var \Drupal\testgen\generate\SiteTestGenerator
+   * @var \Drupal\drupal_trupal\generate\SiteTestGenerator
    */
   protected $generator;
 
   /**
    * Retrieve the test generator service.
    *
-   * @return \Drupal\testgen\generate\SiteTestGenerator
+   * @return \Drupal\drupal_trupal\generate\SiteTestGenerator
    *   A test generator service instance.
    */
   public function generator() {
@@ -27,7 +27,7 @@ class SiteTestsCommands extends DrushCommands {
   /**
    * Creates the SiteTestsCommands instance.
    *
-   * @param \Drupal\testgen\generate\SiteTestGenerator $generator
+   * @param \Drupal\drupal_trupal\generate\SiteTestGenerator $generator
    *   Module generator service.
    */
   public function __construct(SiteTestGenerator $generator) {
@@ -38,7 +38,7 @@ class SiteTestsCommands extends DrushCommands {
   /**
    * Generates test files that apply to an entire site.
    *
-   * @command testgen:generate:site
+   * @command drupal_trupal:generate:site
    * @aliases tg-site,tgs
    */
   public function generate() {

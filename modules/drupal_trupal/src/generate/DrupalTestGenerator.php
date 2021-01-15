@@ -1,14 +1,14 @@
 <?php
 
-namespace Drupal\testgen\generate;
+namespace Drupal\drupal_trupal\generate;
 
 use Drupal\Core\Config\ImmutableConfig;
-use Drupal\testgen\Trupal\TrupalTrait;
+use Drupal\drupal_trupal\Trupal\TrupalTrait;
 
 /**
- * Drupal wrapper for PHP-TestGen TestGenerator.
+ * Drupal wrapper for the Trupal generator.
  *
- * @package Drupal\testgen\generate
+ * @package Drupal\drupal_trupal\generate
  */
 abstract class DrupalTestGenerator {
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\testgen\Trupal;
+namespace Drupal\drupal_trupal\Trupal;
 
 /**
  * Provides dependency injection for the Trupal service.

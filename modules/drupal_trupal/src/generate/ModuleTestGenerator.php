@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\testgen\generate;
+namespace Drupal\drupal_trupal\generate;
 
 use Drupal\Core\Extension\Extension;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -9,7 +9,7 @@ use Drupal\Core\Extension\Exception\UnknownExtensionException;
 /**
  * Generates test cases for modules.
  *
- * @package Drupal\testgen\generate
+ * @package Drupal\drupal_trupal\generate
  */
 class ModuleTestGenerator extends DrupalTestGenerator {
 
