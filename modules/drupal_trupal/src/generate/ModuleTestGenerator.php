@@ -54,10 +54,10 @@ class ModuleTestGenerator extends DrupalTestGenerator {
   public function generateTests($module_name, array $options = []) {
     if ($module = $this->getModule($module_name)) {
       $options += [
-        'trupal_dir' => $this->getSubjectRoot($module),
-        'output_dir' => $this->getModuleTestRoot($module),
+        'trupalDir' => $this->getSubjectRoot($module),
+        'outputDir' => $this->getModuleTestRoot($module),
       ];
-      $this->generate($options['trupal_dir'], $options['output_dir']);
+      $this->generate($options['trupalDir'], $options['outputDir']);
     }
   }
 

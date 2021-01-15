@@ -25,7 +25,7 @@ class ModuleTestsCommands extends DrushCommands {
   }
 
   /**
-   * Creates the TestgenCommands instance.
+   * Creates the ModuleTestsCommands instance.
    *
    * @param \Drupal\drupal_trupal\generate\ModuleTestGenerator $generator
    *   Module generator service.
@@ -40,13 +40,26 @@ class ModuleTestsCommands extends DrushCommands {
    *
    * @param array $module_names
    *   Name of the module for which to generate test cases.
+   * @param array $options
+   *  Additional, optional parameters.
    *
-   * @command drupal_trupal:generate:module
+   * @command trupal:generate:module
+   *
+   * @option source-dir
+   * @option output-dir
+   *
    * @aliases tg-module,tgm
    */
-  public function generate(array $module_names) {
+  public function generate(array $module_names, array $options = ['source-dir' => '', 'output-dir' => '']) {
+    $params = [];
+    if ($options['source-dir']) {
+      $params['trupalDir'] = $options['source-dir'];
+    }
+    if ($options['output-dir']) {
+      $params['outputDir'] = $options['output-dir'];
+    }
     foreach ($module_names as $module_name) {
-      $this->generator()->generateTests($module_name);
+      $this->generator()->generateTests($module_name, $params);
     }
   }
 
