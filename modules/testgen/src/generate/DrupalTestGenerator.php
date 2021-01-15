@@ -3,7 +3,7 @@
 namespace Drupal\testgen\generate;
 
 use Drupal\Core\Config\ImmutableConfig;
-use Drupal\testgen\Tozart\TozartTrait;
+use Drupal\testgen\Trupal\TrupalTrait;
 
 /**
  * Drupal wrapper for PHP-TestGen TestGenerator.
@@ -12,7 +12,7 @@ use Drupal\testgen\Tozart\TozartTrait;
  */
 abstract class DrupalTestGenerator {
 
-  use TozartTrait;
+  use TrupalTrait;
 
   /**
    * Configuration.
@@ -50,7 +50,7 @@ abstract class DrupalTestGenerator {
    *   Path to the output folder in which to put generated files.
    */
   protected function generate($subject_root, $output_root) {
-    static::tozart()->generate($subject_root, $output_root);
+    static::trupal()->generate($subject_root, $output_root);
   }
 
 }

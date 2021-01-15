@@ -1,7 +1,7 @@
 services:
-  tozart:
-    class: Tozart\Tozart
-    factory: [Drupal\testgen\Tozart\TozartFactory, 'create']
+  trupal:
+    class: Trupal\Trupal
+    factory: [Drupal\testgen\Trupal\TrupalFactory, 'create']
   testgen.config:
     factory: ['@config.factory', get]
     class: Drupal\Core\Config\ImmutableConfig
