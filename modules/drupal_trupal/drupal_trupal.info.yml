@@ -1,6 +1,0 @@
-name: 'Trupal'
-type: module
-description: 'Trupal test generation for Drupal.'
-core: 8.x
-package: 'Development'
-dependencies: {  }
