@@ -110,9 +110,15 @@ trait EntityFormOptionsTrait {
   protected static function buildEntityOptions($element) {
     try {
       $entities = [];
+      $entity_type = static::getEntityType($element);
       foreach (static::loadEntities($element) as $entity) {
-        $key = static::getEntityType($element)->getKey($element['#entity_key']);
-        $key_value = $entity->get($key);
+        if ($entity_type->hasKey($element['#entity_key'])) {
+          $key_value = $entity->get($entity_type->getKey($element['#entity_key']));
+        }
+        else {
+          $key_value = $entity->get($element['#entity_key']);
+        }
+
         // Enable extracting both content and config entity field values.
         if (!is_scalar($key_value)) {
           $key_value = $key_value->value;
