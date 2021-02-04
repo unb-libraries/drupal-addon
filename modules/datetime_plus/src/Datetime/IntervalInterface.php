@@ -18,12 +18,32 @@ interface IntervalInterface {
   public function start();
 
   /**
+   * Set the start of the timespan.
+   *
+   * @param \Drupal\datetime_plus\Datetime\DrupalDateTimePlus $start
+   *   A date time object.
+   *
+   * @return static
+   */
+  public function setStart(DrupalDateTimePlus $start);
+
+  /**
    * Retrieve the end of the timespan object.
    *
    * @return \Drupal\datetime_plus\Datetime\DrupalDateTimePlus
    *   A datetime object.
    */
   public function end();
+
+  /**
+   * Set the end of the timespan.
+   *
+   * @param \Drupal\datetime_plus\Datetime\DrupalDateTimePlus $end
+   *   A date time object.
+   *
+   * @return static
+   */
+  public function setEnd(DrupalDateTimePlus $end);
 
   /**
    * Retrieve the duration of the interval.

@@ -66,6 +66,38 @@ class DateIntervalPlus implements IntervalInterface {
   /**
    * {@inheritDoc}
    */
+  public function setStart(DrupalDateTimePlus $start) {
+    if ($this->start()->getTimezone()->getName() !== $start->getTimezone()->getName()) {
+      $start->setTimezone($this->start()->getTimezone());
+    }
+
+    if ($start > $this->end()) {
+      $this->setEnd($start);
+    }
+    $this->start = $start;
+
+    return $this;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function setEnd(DrupalDateTimePlus $end) {
+    if ($this->end()->getTimezone()->getName() !== $end->getTimezone()->getName()) {
+      $end->setTimezone($this->end()->getTimezone());
+    }
+
+    if ($end < $this->start()) {
+      $this->setStart($end);
+    }
+    $this->end = $end;
+
+    return $this;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public function end() {
     return $this->end;
   }
