@@ -2,6 +2,7 @@
 
 namespace Drupal\lib_unb_custom_entity\Entity;
 
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\taxonomy\TermInterface;
@@ -156,37 +157,18 @@ trait TaggableTrait {
    *
    * @param string $vid
    *   The vocabulary ID.
-   * @param array $options
-   *   (optional) Array of options accepting the following keys:
-   *   - field_id: (string) ID of the field to create.
-   *   Defaults to "tags_VID".
-   *   - label: (string) Label of the field to create.
-   *   Defaults to "VOCABULARY_LABEL tags".
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   The entity type to which the field will be attached.
    *
-   * @return \Drupal\Core\Field\FieldDefinitionInterface[]
+   * @return \Drupal\Core\Field\FieldDefinitionInterface
    *   A field definition.
    */
-  private static function tagFieldDefinition($vid, $options = []) {
-    $fields = [];
-
-    /** @noinspection PhpUnhandledExceptionInspection */
-    $vocabulary = \Drupal::entityTypeManager()
-      ->getStorage('taxonomy_vocabulary')
-      ->load($vid);
-
-    $options += [
-      'field_id' => sprintf('%s_%s', TaggableInterface::FIELD_TAGS, $vid),
-      'label' => sprintf("%s tags", $vocabulary ? $vocabulary->label() : ucfirst($vid)),
-      'required' => FALSE,
-      'cardinality' => BaseFieldDefinition::CARDINALITY_UNLIMITED,
-      'revisionable' => FALSE,
-    ];
-
-    $fields[$options['field_id']] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t($options['label']))
-      ->setRequired($options['required'])
-      ->setCardinality($options['cardinality'])
-      ->setRevisionable($options['revisionable'])
+  private static function tagFieldDefinition(string $vid, EntityTypeInterface $entity_type) {
+    return BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Tags'))
+      ->setRequired(FALSE)
+      ->setCardinality(BaseFieldDefinition::CARDINALITY_UNLIMITED)
+      ->setRevisionable($entity_type->isRevisionable())
       ->setSettings([
         'target_type' => 'taxonomy_term',
         'handler_settings' => [
@@ -194,9 +176,15 @@ trait TaggableTrait {
             $vid => $vid,
           ],
         ],
+      ])
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE)
+      ->setDisplayOptions('form', [
+        'weight' => 40,
+      ])
+      ->setDisplayOptions('view', [
+        'weight' => 40,
       ]);
-
-    return $fields;
   }
 
 }
