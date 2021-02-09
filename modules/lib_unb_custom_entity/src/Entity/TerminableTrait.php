@@ -39,18 +39,24 @@ trait TerminableTrait {
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
    *   The entity type definition.
    *
-   * @return \Drupal\Core\Field\FieldDefinitionInterface[]
+   * @return \Drupal\Core\Field\FieldDefinitionInterface
    *   An array of base field definitions for the entity type, keyed by field
    *   name.
    */
   public static function terminatedBaseFieldDefinitions(EntityTypeInterface $entity_type) {
-    $fields[TerminableInterface::FIELD_DELETED] = BaseFieldDefinition::create('timestamp')
+    return BaseFieldDefinition::create('timestamp')
       ->setLabel(t('Deleted'))
       ->setDescription(t('When the entity was marked as deleted.'))
       ->setRequired(FALSE)
-      ->setRevisionable($entity_type->isRevisionable());
-
-    return $fields;
+      ->setRevisionable($entity_type->isRevisionable())
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE)
+      ->setDisplayOptions('form', [
+        'weight' => 70,
+      ])
+      ->setDisplayOptions('view', [
+        'weight' => 70,
+      ]);
   }
 
 }
