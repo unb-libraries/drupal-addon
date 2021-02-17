@@ -38,12 +38,12 @@ trait SortableHierarchicalTrait {
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
    *   The entity type definition.
    *
-   * @return \Drupal\Core\Field\FieldDefinitionInterface
+   * @return \Drupal\Core\Field\BaseFieldDefinition
    *   A "sort_key" base field definition for the given entity type.
    */
   public static function sortKeyBaseFieldDefinition(EntityTypeInterface $entity_type) {
-    return BaseFieldDefinition::create('string')
-      ->setLabel(t('Sort key'))
+    return BaseFieldDefinition::create('hierarchy_sort')
+      ->setLabel(t('Hierarchy sort key'))
       ->setRequired(TRUE)
       ->setRevisionable(FALSE);
   }
