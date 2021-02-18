@@ -92,10 +92,7 @@ class HtmlRouteProvider extends DefaultHtmlRouteProvider {
         $route = new Route($link_template);
         $route->addDefaults([
           '_entity_form' => "{$entity_type_id}.{$operation}",
-          '_title' => $this->t('@operation @entity', [
-            '@operation' => ucfirst($operation),
-            '@entity' => $entity_type->getSingularLabel(),
-          ]),
+          '_title' => sprintf('%s %s', ucfirst($operation), $entity_type->getSingularLabel()),
         ]);
         $route->setRequirement('_entity_access', "{$entity_type_id}.{$operation}");
         $route->setOption('parameters', [
