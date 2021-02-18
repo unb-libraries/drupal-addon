@@ -118,7 +118,6 @@ class ContentEntityForm extends DefaultContentEntityForm {
    *   An array of arrays. If the field's schema
    *   consists of more than one column, the value
    *   will also be an array.
-   *
    */
   private function getFieldValues(FieldItemListInterface $field) {
     $columns = array_keys($field->getFieldDefinition()->getFieldStorageDefinition()->getColumns());

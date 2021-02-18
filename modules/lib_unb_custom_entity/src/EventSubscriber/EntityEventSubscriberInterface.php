@@ -4,6 +4,11 @@ namespace Drupal\lib_unb_custom_entity\EventSubscriber;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
+/**
+ * Interface for subscribers to entity events.
+ *
+ * @package Drupal\lib_unb_custom_entity\EventSubscriber
+ */
 interface EntityEventSubscriberInterface extends EventSubscriberInterface {
 
   /**

@@ -4,9 +4,17 @@ namespace Drupal\lib_unb_custom_entity\Entity\Routing;
 
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\Routing\DefaultHtmlRouteProvider;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\Routing\Route;
 
+/**
+ * Provides default (HTML) routes for entities.
+ *
+ * @package Drupal\lib_unb_custom_entity\Entity\Routing
+ */
 class HtmlRouteProvider extends DefaultHtmlRouteProvider {
+
+  use StringTranslationTrait;
 
   /**
    * {@inheritDoc}
@@ -65,9 +73,15 @@ class HtmlRouteProvider extends DefaultHtmlRouteProvider {
   }
 
   /**
-   * Create routes from all non-
+   * Create routes for no-default templates.
+   *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   The entity type.
+   *
    * @return array
+   *   An array of routes, keyed by each route's name.
+   *
+   * @see \Drupal\lib_unb_custom_entity\Entity\Routing\HtmlRouteProvider::isCustomFormLink()
    */
   protected function getCustomFormRoutes(EntityTypeInterface $entity_type) {
     $routes = [];
@@ -78,7 +92,10 @@ class HtmlRouteProvider extends DefaultHtmlRouteProvider {
         $route = new Route($link_template);
         $route->addDefaults([
           '_entity_form' => "{$entity_type_id}.{$operation}",
-          '_title' => sprintf('%s %s', t(ucfirst($operation)), $entity_type->getSingularLabel()),
+          '_title' => $this->t('@operation @entity', [
+            '@operation' => ucfirst($operation),
+            '@entity' => $entity_type->getSingularLabel(),
+          ]),
         ]);
         $route->setRequirement('_entity_access', "{$entity_type_id}.{$operation}");
         $route->setOption('parameters', [
@@ -93,7 +110,13 @@ class HtmlRouteProvider extends DefaultHtmlRouteProvider {
   }
 
   /**
-   * Whether the given link template leads to a form route.
+   * Whether the given link template leads to a non-default form.
+   *
+   * Default link templates are:
+   * - add-form
+   * - edit-form
+   * - delete-form
+   * - delete-all-form.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
    *   The entity type that defines the link template.
@@ -105,7 +128,14 @@ class HtmlRouteProvider extends DefaultHtmlRouteProvider {
    *   FALSE otherwise.
    */
   protected function isCustomFormLink(EntityTypeInterface $entity_type, $link_template) {
-    if (preg_match('/(\w)(-\w)*-form/', $link_template) && !in_array($link_template, ['add-form', 'edit-form', 'delete-form', 'delete-all-form'])) {
+    $default_templates = [
+      'add-form',
+      'edit-form',
+      'delete-form',
+      'delete-all-form',
+    ];
+
+    if (preg_match('/(\w)(-\w)*-form/', $link_template) && !in_array($link_template, $default_templates)) {
       $operation = substr($link_template, 0, -5);
       return !is_null($entity_type->getFormClass($operation));
     }
@@ -144,7 +174,9 @@ class HtmlRouteProvider extends DefaultHtmlRouteProvider {
       $route = new Route($entity_type->getLinkTemplate('delete-all-form'));
       $route->addDefaults([
         '_form' => $entity_type->getFormClass('delete-all'),
-        '_title' => t('Delete all ') . $entity_type->getPluralLabel(),
+        '_title' => $this->t('Delete all @entities', [
+          '@entities' => $entity_type->getPluralLabel(),
+        ]),
         'entity_type_id' => $entity_type_id,
       ])
         ->setRequirement('_permission', "delete all {$entity_type_id} entities");

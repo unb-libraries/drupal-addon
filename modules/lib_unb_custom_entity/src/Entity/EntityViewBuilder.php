@@ -5,7 +5,6 @@ namespace Drupal\lib_unb_custom_entity\Entity;
 use Drupal\Core\Entity\EntityViewBuilder as DefaultEntityViewBuilder;
 use Drupal\Core\Messenger\MessengerTrait;
 
-
 /**
  * Enhances Drupal's default EntityViewBuilder.
  *

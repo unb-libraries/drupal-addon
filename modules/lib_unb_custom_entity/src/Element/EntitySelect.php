@@ -3,11 +3,10 @@
 namespace Drupal\lib_unb_custom_entity\Element;
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Annotation\FormElement;
 use Drupal\Core\Render\Element\Select;
 
 /**
- * An enhanced "select" element which provides instances of a given entity type as its selectable options.
+ * Provides entity selection from "select" form element.
  *
  * @see \Drupal\lib_unb_custom_entity\Element\EntityFormOptionsTrait
  *

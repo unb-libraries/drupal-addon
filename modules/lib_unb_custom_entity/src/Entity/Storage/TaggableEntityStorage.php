@@ -109,7 +109,7 @@ class TaggableEntityStorage extends SqlContentEntityStorage implements TaggableC
    * {@inheritDoc}
    */
   public function getTagField($vid = '') {
-    foreach ($this->getTagFields() as $field_id => $field_definition) {
+    foreach ($this->getTagFields() as $field_definition) {
       $settings = $field_definition->getSettings();
       if (!$vid || array_key_exists($vid, $settings['handler_settings']['target_bundles'])) {
         return $field_definition;
@@ -140,7 +140,7 @@ class TaggableEntityStorage extends SqlContentEntityStorage implements TaggableC
    * {@inheritDoc}
    */
   public function loadRetired(array $tags) {
-    if(!empty($tags) && is_string($tags[array_keys($tags)[0]])) {
+    if (!empty($tags) && is_string($tags[array_keys($tags)[0]])) {
       $tags = $this->loadTagsByName($tags);
     }
 
@@ -171,7 +171,7 @@ class TaggableEntityStorage extends SqlContentEntityStorage implements TaggableC
   }
 
   /**
-   * Build a query to retrieve all entity revisions associated with one of the given tags.
+   * Build a query to load tagged entity revisions.
    *
    * @param \Drupal\taxonomy\Entity\Term[] $tags
    *   An array of taxonomy term entities.
@@ -189,7 +189,9 @@ class TaggableEntityStorage extends SqlContentEntityStorage implements TaggableC
     foreach ($vocabularies as $vid => $tag_ids) {
       $base_query = "SELECT revision_id FROM {@table_name} WHERE @target_column IN (@tag_ids)";
 
-      // TODO: Implement this using Drupal\Core\Entity\Sql\SqlEntityStorageInterface::getTableMapping() and Drupal\Core\Entity\Sql\DefaultTableMapping::getFieldTableName().
+      // @todo Use
+      // Drupal\Core\Entity\Sql\SqlEntityStorageInterface::getTableMapping() and
+      // Drupal\Core\Entity\Sql\DefaultTableMapping::getFieldTableName().
       $field_name = $this->getTagField($vid)->getName();
       $placeholders = [
         '@table_name' => $this->getEntityType()->getRevisionTable() . '__' . $field_name,

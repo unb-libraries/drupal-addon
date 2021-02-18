@@ -9,16 +9,16 @@ use Drupal\Core\Entity\ContentEntityInterface as DefaultContentEntityInterface;
  *
  * @package Drupal\lib_unb_custom_entity\Entity
  */
-interface ContentEntityInterface extends DefaultContentEntityInterface, Revisionable {
+interface ContentEntityInterface extends DefaultContentEntityInterface, RevisionableInterface {
 
   const CREATED = 'created';
   const CHANGED = 'changed';
 
   /**
-   * Retrieve the entity's creation datetime, set to the currently logged-in user's timezone.
+   * Retrieve the entity's creation datetime.
    *
    * @return \Drupal\datetime_plus\Datetime\DrupalDateTimePlus
-   *   A datetime object.
+   *   A datetime object, set to the currently logged-in user's timezone.
    */
   public function getCreated();
 
@@ -31,10 +31,10 @@ interface ContentEntityInterface extends DefaultContentEntityInterface, Revision
   public function getCreatedTimestamp();
 
   /**
-   * Retrieve the datetime of the most recent edit, set to the currently logged-in user's timezone.
+   * Retrieve the datetime of the most recent edit.
    *
    * @return \Drupal\datetime_plus\Datetime\DrupalDateTimePlus
-   *   A datetime object.
+   *   A datetime object, set to the currently logged-in user's timezone.
    */
   public function getChanged();
 

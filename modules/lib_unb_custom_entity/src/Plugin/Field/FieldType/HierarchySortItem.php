@@ -2,8 +2,6 @@
 
 namespace Drupal\lib_unb_custom_entity\Plugin\Field\FieldType;
 
-use Drupal\Component\Utility\Random;
-use Drupal\Core\Field\Annotation\FieldType;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\Plugin\Field\FieldType\StringItem;
 use Drupal\lib_unb_custom_entity\Entity\SortableHierarchicalInterface;
@@ -147,4 +145,5 @@ class HierarchySortItem extends StringItem {
     return $this->getFieldDefinition()
       ->getSetting(self::FIELDS)[0];
   }
+
 }

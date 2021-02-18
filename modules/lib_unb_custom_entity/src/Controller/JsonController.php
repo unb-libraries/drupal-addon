@@ -19,14 +19,15 @@ class JsonController extends ControllerBase {
   /**
    * Retrieve the storage handler for the given entity type.
    *
-   * @param $entity_type
+   * @param string $entity_type
    *   The entity type for which to retrieve a storage handler.
    *
    * @return \Drupal\Core\Entity\EntityStorageInterface
    *   An instance of EntityStorageInterface.
    */
-  protected function getStorage($entity_type) {
-    return \Drupal::entityTypeManager()->getStorage($entity_type);
+  protected function getStorage(string $entity_type) {
+    return $this->entityTypeManager()
+      ->getStorage($entity_type);
   }
 
   /**
@@ -43,7 +44,7 @@ class JsonController extends ControllerBase {
   public function view(EntityInterface $entity, Request $request) {
     $json = $entity->toArray() + [
       'url' => $entity->toUrl('canonical', [
-        'format' => self::FORMAT
+        'format' => self::FORMAT,
       ])->toString(),
     ];
 
@@ -63,7 +64,7 @@ class JsonController extends ControllerBase {
    */
   public function add($entity_type, Request $request) {
     return $this->respond([
-      'message' => 'Nothing to see or do here.'
+      'message' => 'Nothing to see or do here.',
     ]);
   }
 
@@ -80,7 +81,7 @@ class JsonController extends ControllerBase {
    */
   public function edit(EntityInterface $entity, Request $request) {
     return $this->respond([
-      'message' => 'Nothing to see or do here.'
+      'message' => 'Nothing to see or do here.',
     ]);
   }
 
@@ -97,7 +98,7 @@ class JsonController extends ControllerBase {
    */
   public function delete(EntityInterface $entity, Request $request) {
     return $this->respond([
-      'message' => 'Nothing to see or do here.'
+      'message' => 'Nothing to see or do here.',
     ]);
   }
 
@@ -117,8 +118,8 @@ class JsonController extends ControllerBase {
       $json[] = [
         'id' => $entity->id(),
         'label' => $entity->label(),
-        'url' => $entity->toUrl('canonical',[
-          'format' => self::FORMAT
+        'url' => $entity->toUrl('canonical', [
+          'format' => self::FORMAT,
         ])->toString(),
       ];
     }
@@ -128,7 +129,7 @@ class JsonController extends ControllerBase {
   /**
    * Build a respond object.
    *
-   * @param $data
+   * @param mixed $data
    *   The data to contain in the response.
    * @param int $status
    *   The HTTP respond code.

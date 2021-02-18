@@ -6,7 +6,10 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Symfony\Component\Validator\Exception\ValidatorException;
 
 /**
- * Trait to enable entity validation upon saving, rather than only form submission only.
+ * Trait to always enable entity validation.
+ *
+ * By default Drupal only validates entities that have been created or edited
+ * through form submission.
  *
  * @package Drupal\lib_unb_custom_entity\Entity
  */

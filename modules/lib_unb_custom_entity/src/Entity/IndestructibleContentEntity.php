@@ -74,7 +74,6 @@ class IndestructibleContentEntity extends ContentEntityBase {
    *
    * @throws \LogicException
    *   If the given datetime points at a time in the future.
-   *
    */
   public function existedOn(DrupalDateTimePlus $datetime) {
     $now = $this->userTime()->now();

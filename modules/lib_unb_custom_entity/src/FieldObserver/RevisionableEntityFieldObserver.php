@@ -2,12 +2,12 @@
 
 namespace Drupal\lib_unb_custom_entity\FieldObserver;
 
-use SplSubject;
 use Drupal\Core\Entity\RevisionLogInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\changed_fields\EntitySubject;
 use Drupal\changed_fields\ObserverInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * Field observer to detect changes to any revisionable entity fields.
@@ -18,6 +18,8 @@ use Drupal\changed_fields\ObserverInterface;
  * @package Drupal\lib_unb_custom_entity\Field
  */
 class RevisionableEntityFieldObserver implements ObserverInterface {
+
+  use StringTranslationTrait;
 
   /**
    * An entity field manager service instance.
@@ -72,7 +74,8 @@ class RevisionableEntityFieldObserver implements ObserverInterface {
   public function getInfo() {
     $revisionable_fields = [];
 
-    $revisionable_field_filter = \Closure::fromCallable([$this, 'isRevisionableField']);
+    $callable = [$this, 'isRevisionableField'];
+    $revisionable_field_filter = \Closure::fromCallable($callable);
     if ($bundle_type_id = $this->getEntityType()->getBundleEntityType()) {
       $bundles = \Drupal::entityTypeManager()->getStorage($bundle_type_id)->loadMultiple();
       foreach ($bundles as $bundle) {
@@ -109,14 +112,15 @@ class RevisionableEntityFieldObserver implements ObserverInterface {
   /**
    * {@inheritDoc}
    */
-  public function update(SplSubject $subject) {
+  public function update(\SplSubject $subject) {
     if ($subject instanceof EntitySubject) {
       if (!empty($subject->getChangedFields())) {
         $entity = $subject->getEntity();
         $entity->setNewRevision();
         if ($entity instanceof RevisionLogInterface) {
-          $message = t("Updated @field_names.", [
-            '@field_names' => implode(', ', array_keys($subject->getChangedFields())),
+          $message = $this->t("Updated @field_names.", [
+            '@field_names' => implode(', ', array_keys(
+              $subject->getChangedFields())),
           ]);
           $entity->setRevisionLogMessage($message);
         }

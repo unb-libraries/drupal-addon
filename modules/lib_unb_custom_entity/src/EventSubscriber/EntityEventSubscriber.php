@@ -81,9 +81,10 @@ abstract class EntityEventSubscriber implements EntityEventSubscriberInterface {
   }
 
   /**
-   * The actual processing of a SAVE event, after the given event has been found eligible.
+   * The actual processing of a SAVE event.
    *
    * @param \Drupal\lib_unb_custom_entity\Event\EntityEvent $event
+   *   An entity event object.
    */
   public function doOnSave(EntityEvent $event) {}
 
@@ -100,7 +101,7 @@ abstract class EntityEventSubscriber implements EntityEventSubscriberInterface {
   }
 
   /**
-   * The actual processing of a CREATE event, after the given event has been found eligible.
+   * The actual processing of a CREATE event.
    *
    * @param \Drupal\lib_unb_custom_entity\Event\EntityEvent $event
    *   An entity event object.
@@ -120,14 +121,6 @@ abstract class EntityEventSubscriber implements EntityEventSubscriberInterface {
   }
 
   /**
-   * The actual processing of an UPDATE event, after the given event has been found eligible.
-   *
-   * @param \Drupal\lib_unb_custom_entity\Event\EntityEvent $event
-   *   An entity event object.
-   */
-  public function doOnUpdate(EntityEvent $event) {}
-
-  /**
    * Process a DELETE event.
    *
    * @param \Drupal\lib_unb_custom_entity\Event\EntityEvent $event
@@ -140,7 +133,15 @@ abstract class EntityEventSubscriber implements EntityEventSubscriberInterface {
   }
 
   /**
-   * The actual processing of a DELETE event, after the given event has been found eligible.
+   * The actual processing of an UPDATE event.
+   *
+   * @param \Drupal\lib_unb_custom_entity\Event\EntityEvent $event
+   *   An entity event object.
+   */
+  public function doOnUpdate(EntityEvent $event) {}
+
+  /**
+   * The actual processing of a DELETE event.
    *
    * @param \Drupal\lib_unb_custom_entity\Event\EntityEvent $event
    *   An entity event object.

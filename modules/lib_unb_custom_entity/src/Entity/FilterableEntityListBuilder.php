@@ -27,14 +27,14 @@ class FilterableEntityListBuilder extends EntityListBuilder {
   ];
 
   /**
-   * All values considered "any", i.e. "do no filter".
+   * Values to filter by "is any".
    *
    * @var array
    */
   protected $anyValues = ['', 'any', 'all'];
 
   /**
-   * All values considered "none", i.e. "explicitly filter by non-existing values".
+   * Values to filter by "is empty".
    *
    * @var array
    */
@@ -58,8 +58,10 @@ class FilterableEntityListBuilder extends EntityListBuilder {
    * Retrieve the form object used to control the filtering of this list.
    *
    * @return \Drupal\lib_unb_custom_entity\Form\EntityFilterForm
+   *   An entity filter form.
    */
   protected function getForm() {
+    // @todo Create a interface for EntityFilterForm.
     if (!isset($this->form) && $form_class = $this->getFormClass()) {
       $this->form = new $form_class($this->getEntityType());
     }
@@ -153,14 +155,14 @@ class FilterableEntityListBuilder extends EntityListBuilder {
   /**
    * Parse a string of the form PARAM::OP into separate variables.
    *
-   * @param $param
+   * @param string $param
    *   A string containing both a param and an operand.
    *
    * @return array|bool
    *   Array containing a field ID and an operand.
    *   FALSE if the string could not be parsed.
    */
-  protected function parseParam($param) {
+  protected function parseParam(string $param) {
     if (!empty($field_id_and_op = explode('::', $param))) {
       if (!in_array($field_id = $field_id_and_op[0], $this->filterableFieldIds())) {
         return FALSE;
@@ -260,15 +262,15 @@ class FilterableEntityListBuilder extends EntityListBuilder {
   }
 
   /**
-   * Maps an HTTP GET operand to an operand that can be used in an entity query condition.
+   * Converts an HTTP GET operand to one that can be used in a query.
    *
-   * @param $op
+   * @param string $op
    *   The HTTP GET operand, e.g. 'gte'.
    *
    * @return string
    *   A QueryInterface operand, e.g. '>='.
    */
-  protected function toQueryOperand($op) {
+  protected function toQueryOperand(string $op) {
     $query_operands = $this->queryOperands();
     if ($op && array_key_exists($op, $query_operands)) {
       return $query_operands[$op];
@@ -295,7 +297,10 @@ class FilterableEntityListBuilder extends EntityListBuilder {
    *   If no parameters have been passed, an empty array is returned.
    */
   protected function getRequestParams() {
-    return \Drupal::request()->query->all();
+    // @todo Use dependency injection.
+    return \Drupal::request()
+      ->query
+      ->all();
   }
 
   /**
@@ -315,8 +320,9 @@ class FilterableEntityListBuilder extends EntityListBuilder {
     $context_base = 'url.query_args';
     foreach ($this->filterableFieldIds() as $field_id) {
       $contexts[] = sprintf('%s:%s', $context_base, $field_id);
-      foreach (array_keys($this->queryOperands()) as $op)
+      foreach (array_keys($this->queryOperands()) as $op) {
         $contexts[] = sprintf('%s:%s::%s', $context_base, $field_id, $op);
+      }
     }
     return $contexts;
   }

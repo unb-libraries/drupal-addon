@@ -47,7 +47,9 @@ class EntityAccessControlHandler extends DefaultEntityAccessControlHandler {
 
       $entity_type_id = $entity->getEntityTypeId();
       $required_permission = "$operation $entity_type_id entities";
-      $access = AccessResult::allowedIfHasPermission($account, $required_permission); // TODO: cache access checking.
+      // @todo Cache access checking.
+      $access = AccessResult::allowedIfHasPermission(
+        $account, $required_permission);
     }
 
     return $access;
@@ -79,4 +81,5 @@ class EntityAccessControlHandler extends DefaultEntityAccessControlHandler {
     }
     return $access;
   }
+
 }

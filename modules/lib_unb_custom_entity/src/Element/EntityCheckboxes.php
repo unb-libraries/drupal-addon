@@ -6,7 +6,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element\Checkboxes;
 
 /**
- * An enhanced "checkboxes" element which provides instances of a given entity type as its selectable options.
+ * Provides entity selection as "checkboxes".
  *
  * @see \Drupal\lib_unb_custom_entity\Element\EntityFormOptionsTrait
  *

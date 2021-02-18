@@ -9,6 +9,11 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Form to confirm the deletion of all entities.
+ *
+ * @package Drupal\lib_unb_custom_entity\Form
+ */
 class EntityDeleteAllForm extends ConfirmFormBase {
 
   /**
@@ -81,10 +86,10 @@ class EntityDeleteAllForm extends ConfirmFormBase {
   }
 
   /**
-   * {@inheritDoc}}
+   * {@inheritDoc}
    */
   public static function create(ContainerInterface $container) {
-    /** @var EntityTypeManagerInterface $entity_type_manager */
+    /** @var \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager */
     $entity_type_manager = $container->get('entity_type.manager');
     return new static($entity_type_manager);
   }
@@ -127,7 +132,6 @@ class EntityDeleteAllForm extends ConfirmFormBase {
     catch (\Exception $e) {
       return NULL;
     }
-
   }
 
   /**
@@ -150,8 +154,6 @@ class EntityDeleteAllForm extends ConfirmFormBase {
   public function getConfirmText() {
     return $this->t('Delete');
   }
-
-
 
   /**
    * {@inheritDoc}

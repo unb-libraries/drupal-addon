@@ -10,7 +10,7 @@ namespace Drupal\lib_unb_custom_entity\Entity;
 trait RestorableTrait {
 
   /**
-   *  {@inheritDoc}
+   * {@inheritDoc}
    */
   public function restore() {
     return $this->set(TerminableInterface::FIELD_DELETED, NULL)

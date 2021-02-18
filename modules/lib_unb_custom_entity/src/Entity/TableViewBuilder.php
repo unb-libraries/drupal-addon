@@ -5,8 +5,7 @@ namespace Drupal\lib_unb_custom_entity\Entity;
 use Drupal\Core\Entity\EntityInterface;
 
 /**
- * View builder that renders an entity as a table of property
- * labels and values.
+ * Renders an entity as a table listing of its properties.
  *
  * @package Drupal\lib_unb_custom_entity\Entity
  */
@@ -67,8 +66,6 @@ abstract class TableViewBuilder extends EntityViewBuilder {
    *
    * @return array
    *   An array of the form COLUMN_ID => COLUMN_VALUE.
-   *   Column IDs must match the array keys returned
-   *   by @see \Drupal\lib_unb_custom_entity\Entity\TableViewBuilder::buildHeader().
    */
   protected function buildRows(EntityInterface $entity) {
     $rows = [];

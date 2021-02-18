@@ -2,7 +2,6 @@
 
 namespace Drupal\lib_unb_custom_entity\Entity;
 
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 
@@ -70,14 +69,14 @@ trait HierarchicalTrait {
    *   name.
    */
   public static function hierarchyBaseFieldDefinitions(EntityTypeInterface $entity_type) {
-    $label = $entity_type->getLabel();
     $fields[HierarchicalInterface::FIELD_PARENT] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t("Superior {$label}"))
+      ->setLabel(t("Superior @entity", [
+        '@entity' => $entity_type->getLabel(),
+      ]))
       ->setRequired(FALSE)
       ->setDefaultValue(0)
       ->setRevisionable($entity_type->isRevisionable())
       ->setSetting('target_type', $entity_type->id());
-
     return $fields;
   }
 

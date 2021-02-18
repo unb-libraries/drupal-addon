@@ -7,29 +7,35 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\FieldDefinitionInterface;
 
 /**
- * Trait to enable element to pre-occupy their '#options' property with instances of a given entity type.
+ * Provides elements supporting the "#options" attribute with entity population.
  *
  * @package Drupal\lib_unb_custom_entity\Element
  */
 trait EntityFormOptionsTrait {
 
   /**
+   * The entity type manager.
+   *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected static $entityTypeManager;
 
   /**
+   * The entity field manager.
+   *
    * @var \Drupal\Core\Entity\EntityFieldManagerInterface
    */
   protected static $entityFieldManager;
 
   /**
+   * The storage handler for taxonomy term entities.
+   *
    * @var \Drupal\taxonomy\TermStorageInterface
    */
   protected static $tagStorage;
 
   /**
-   * Retrieve an entity type manager service instance.
+   * Retrieve the entity type manager.
    *
    * @return \Drupal\Core\Entity\EntityTypeManagerInterface
    *   An entity type manager.
@@ -42,7 +48,7 @@ trait EntityFormOptionsTrait {
   }
 
   /**
-   * Retrieve an entity field manager service instance.
+   * Retrieve the entity field manager.
    *
    * @return \Drupal\Core\Entity\EntityFieldManagerInterface
    *   An entity field manager.
@@ -55,7 +61,7 @@ trait EntityFormOptionsTrait {
   }
 
   /**
-   * Retrieve a storage handler for taxonomy term entities.
+   * Retrieve the storage handler for taxonomy term entities.
    *
    * @return \Drupal\taxonomy\TermStorageInterface
    *   A storage handler for taxonomy term entities.
@@ -73,11 +79,15 @@ trait EntityFormOptionsTrait {
    *
    * @return array
    *   An array of element properties:
-   *   - #entity_type: (string) ID of the entity type which the select options will be populated with.
+   *   - #entity_type: (string) ID of the entity type which the select options
+   *   will be populated with.
    *   - #bundle: (string) limit the select options to the given bundle value.
-   *   - #tags: (array) limit the select options to those tagged with the given vocabulary and tag names.
-   *   - #entity_key: (string) use the given entity key to generate select option identifiers.
-   *   - #label_callback: (callable) provide a callable to customize option labels.
+   *   - #tags: (array) limit the select options to those tagged with the given
+   *   vocabulary and tag names.
+   *   - #entity_key: (string) use the given entity key to generate select
+   *   option identifiers.
+   *   - #label_callback: (callable) provide a callable to customize option
+   *   labels.
    *
    *   See \Drupal\Core\Render\ElementInfoManagerInterface::getInfo() for
    *   documentation of the standard properties of all elements, and the
@@ -101,13 +111,13 @@ trait EntityFormOptionsTrait {
   /**
    * Create the options for the select element.
    *
-   * @param $element
+   * @param array $element
    *   The element.
    *
    * @return array
    *   An array of the form VALUE => LABEL.
    */
-  protected static function buildEntityOptions($element) {
+  protected static function buildEntityOptions(array $element) {
     try {
       $entities = [];
       $entity_type = static::getEntityType($element);
@@ -141,7 +151,7 @@ trait EntityFormOptionsTrait {
         }
       }
 
-      // TODO: Handle sorting of groups.
+      // @todo Handle sorting of groups.
       if ($element['#sort_key'] && $element['#sort_key'] === 'label') {
         natsort($entities);
       }
@@ -149,7 +159,7 @@ trait EntityFormOptionsTrait {
       return $entities;
     }
     catch (\Exception $e) {
-      // TODO: This should not go silent.
+      // @todo This should not go silent.
       return [];
     }
   }
@@ -245,7 +255,7 @@ trait EntityFormOptionsTrait {
     $tag_query = $tag_storage->getQuery();
 
     foreach ($element['#tags'] as $vid => $tag_names) {
-      /** @noinspection PhpUnhandledExceptionInspection */
+      /* @noinspection PhpUnhandledExceptionInspection */
       $vid_field = static::entityTypeManager()->getDefinition('taxonomy_term')->getKey('bundle');
       if (!empty($tag_names)) {
         $tag_query->condition($vid_field, $vid, '=');
@@ -279,7 +289,7 @@ trait EntityFormOptionsTrait {
     if (!$entity_type_id = $element['#entity_type']) {
       $entity_type_id = 'node';
     }
-    /** @noinspection PhpUnhandledExceptionInspection */
+    /* @noinspection PhpUnhandledExceptionInspection */
     return static::entityTypeManager()
       ->getDefinition($entity_type_id);
   }

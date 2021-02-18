@@ -22,7 +22,9 @@ class EntityListBuilder extends DefaultEntityListBuilder {
 
   /**
    * Whether the rendered list should be paginated.
+   *
    * @return bool
+   *   TRUE if pagination is activated and set to a limit > 0. FALSE otherwise.
    */
   protected function paginate() {
     return $this->limit() > 0 && $this->paginate;
@@ -229,7 +231,9 @@ class EntityListBuilder extends DefaultEntityListBuilder {
         if ($this->createAccessCheck()->access($add_route, $route_match, $this->currentUser())->isAllowed()) {
           return [
             '#type' => 'link',
-            '#title' => $this->t('Add ' . $this->getEntityType()->getSingularLabel()),
+            '#title' => $this->t('Add @entity', [
+              '@entity' => $this->getEntityType()->getSingularLabel(),
+            ]),
             '#url' => Url::fromRoute(array_keys($routes)[0]),
           ];
         }
@@ -254,7 +258,9 @@ class EntityListBuilder extends DefaultEntityListBuilder {
         if ($this->currentUser()->hasPermission($required_permission)) {
           return [
             '#type' => 'link',
-            '#title' => $this->t('Delete all ' . strtolower($this->getEntityType()->getPluralLabel())),
+            '#title' => $this->t('Delete all @entities', [
+              '@entities' => strtolower($this->getEntityType()->getPluralLabel()),
+            ]),
             '#url' => Url::fromRoute($delete_all_route_name),
             '#button_type' => 'danger',
           ];
@@ -265,10 +271,10 @@ class EntityListBuilder extends DefaultEntityListBuilder {
   }
 
   /**
-   * Retrieve cache contexts based on by which entity fields the list can be filtered.
+   * Retrieve cache contexts.
    *
    * @return array
-   *   Array containing cache contexts of the form "url.query_args:ENTITY_FIELD_ID".
+   *   Array of strings.
    *
    * @link https://www.drupal.org/docs/8/api/cache-api/cache-contexts
    */

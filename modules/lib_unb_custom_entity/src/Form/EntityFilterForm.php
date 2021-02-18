@@ -6,7 +6,6 @@ use Consolidation\OutputFormatters\Exception\InvalidFormatException;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Url;
 
 /**
  * Form implementation to filter lists of entities.
@@ -46,14 +45,14 @@ class EntityFilterForm extends FormBase {
   }
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   public function getFormId() {
     return $this->getEntityType()->id() . '__filter_form';
   }
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     // During the initial form build, add this form object to the form state and
@@ -70,7 +69,7 @@ class EntityFilterForm extends FormBase {
         '#weight' => 99,
       ];
     }
-    
+
     // Retrieve and add form attributes, such as CSS classes.
     if (!empty($attributes = $this->attributes($form, $form_state))) {
       $form['#attributes'] = array_merge_recursive($form['#attributes'], $attributes);
@@ -92,7 +91,7 @@ class EntityFilterForm extends FormBase {
   }
 
   /**
-   * Initialize the form state. Populate the form state by inheriting values from the query string.
+   * Initialize the form state. Inherit values from the query string.
    *
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state.
@@ -182,12 +181,11 @@ class EntityFilterForm extends FormBase {
       }
     }
 
-
     $form_state->setRedirect($this->getRedirectRoute(), $form_state->getValues());
   }
 
   /**
-   * @inheritDoc
+   * Clear all form input.
    */
   public function resetForm(array &$form, FormStateInterface $form_state) {
     $form_state->cleanValues();

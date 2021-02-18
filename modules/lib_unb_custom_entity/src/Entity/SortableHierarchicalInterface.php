@@ -3,7 +3,7 @@
 namespace Drupal\lib_unb_custom_entity\Entity;
 
 /**
- * Interface for entities that shape a hierarchical relationship with each other.
+ * Interface for sortable, hierarchical entities.
  *
  * @package Drupal\lib_unb_custom_entity\Entity
  */

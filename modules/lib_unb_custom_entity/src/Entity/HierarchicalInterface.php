@@ -5,7 +5,10 @@ namespace Drupal\lib_unb_custom_entity\Entity;
 use Drupal\Core\Entity\EntityInterface;
 
 /**
- * Interface for entities that shape a hierarchical relationship with each other.
+ * Interface for hierarchical entities.
+ *
+ * A hierarchical entity is one that shapes superior-inferior (aka
+ * parent-child) relationships with other entities of the same type.
  *
  * @package Drupal\lib_unb_custom_entity\Entity
  */

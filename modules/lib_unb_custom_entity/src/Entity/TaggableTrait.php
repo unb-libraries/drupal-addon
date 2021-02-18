@@ -15,7 +15,7 @@ use Drupal\taxonomy\TermInterface;
 trait TaggableTrait {
 
   /**
-   * {@inheritDoc
+   * {@inheritDoc}
    */
   public function hasTag($tag, $vid = '') {
     $has_tag = FALSE;
@@ -103,7 +103,7 @@ trait TaggableTrait {
    * @throws \Exception
    */
   public function removeTag($tag, $vid = '') {
-    if(is_string($tag)) {
+    if (is_string($tag)) {
       $query = $this->tagStorage()->getQuery()
         ->condition('name', $tag);
       if ($vid) {
@@ -136,7 +136,7 @@ trait TaggableTrait {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   protected function tagStorage() {
-    /** @noinspection PhpUnhandledExceptionInspection */
+    /* @noinspection PhpUnhandledExceptionInspection */
     /** @var \Drupal\taxonomy\TermStorageInterface $storage */
     $storage = \Drupal::entityTypeManager()
       ->getStorage('taxonomy_term');

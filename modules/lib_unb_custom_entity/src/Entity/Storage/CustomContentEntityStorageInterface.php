@@ -16,6 +16,7 @@ interface CustomContentEntityStorageInterface extends ContentEntityStorageInterf
    *
    * @param \Drupal\Core\Datetime\DrupalDateTime|string $datetime
    *   A datetime object or string.
+   *
    * @return \Drupal\lib_unb_custom_entity\Entity\ContentEntityInterface[]
    *   An array of content entities.
    */
@@ -26,6 +27,7 @@ interface CustomContentEntityStorageInterface extends ContentEntityStorageInterf
    *
    * @param \Drupal\Core\Datetime\DrupalDateTime|string $datetime
    *   A datetime object or string.
+   *
    * @return \Drupal\lib_unb_custom_entity\Entity\ContentEntityInterface[]
    *   An array of content entities.
    */
@@ -36,6 +38,7 @@ interface CustomContentEntityStorageInterface extends ContentEntityStorageInterf
    *
    * @param \Drupal\Core\Datetime\DrupalDateTime|string $datetime
    *   A datetime object or string.
+   *
    * @return \Drupal\lib_unb_custom_entity\Entity\ContentEntityInterface[]
    *   An array of content entities.
    */

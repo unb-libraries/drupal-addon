@@ -2,8 +2,6 @@
 
 namespace Drupal\lib_unb_custom_entity\Plugin\Validation\Constraint;
 
-use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\Validator\Constraint;
 
 /**

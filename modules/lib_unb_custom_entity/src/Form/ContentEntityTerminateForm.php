@@ -19,7 +19,7 @@ class ContentEntityTerminateForm extends ContentEntityConfirmFormBase {
   public function getQuestion() {
     return $this->t('Are you sure you want to terminate the @entity_type @label?', [
       '@entity_type' => $this->getEntity()->getEntityType()->getSingularLabel(),
-      '@label' => $this->getEntity()->label()
+      '@label' => $this->getEntity()->label(),
     ]);
   }
 

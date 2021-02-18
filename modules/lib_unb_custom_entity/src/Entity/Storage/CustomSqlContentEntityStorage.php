@@ -4,7 +4,6 @@ namespace Drupal\lib_unb_custom_entity\Entity\Storage;
 
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\Sql\SqlContentEntityStorage;
-use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\datetime_plus\Datetime\Timespan;
 use Drupal\datetime_plus\DependencyInjection\StorageTimeTrait;
 use Drupal\lib_unb_custom_entity\Entity\ContentEntityInterface;

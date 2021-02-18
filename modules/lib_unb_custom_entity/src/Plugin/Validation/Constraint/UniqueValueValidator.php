@@ -5,12 +5,10 @@ namespace Drupal\lib_unb_custom_entity\Plugin\Validation\Constraint;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\FieldItemListInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 /**
  * Validates the UniqueField constraint.
@@ -62,6 +60,9 @@ class UniqueValueValidator extends ConstraintValidator implements ContainerInjec
         $this->validateProperty($value, $constraint);
       }
     }
+    else {
+      // Validate entity (and properties)
+    }
   }
 
   /**
@@ -69,13 +70,13 @@ class UniqueValueValidator extends ConstraintValidator implements ContainerInjec
    *
    * @param \Drupal\Core\Field\FieldItemListInterface $field
    *   The definition of the field to validate.
-   * @param \Drupal\lib_unb_custom_entity\Plugin\Validation\Constraint\UniqueValue $constraint
+   * @param \Symfony\Component\Validator\Constraint $constraint
    *   The constraint.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  protected function validateProperty(FieldItemListInterface $field, UniqueValue $constraint) {
+  protected function validateProperty(FieldItemListInterface $field, Constraint $constraint) {
     if (empty($value = $field->getValue())) {
       return;
     }
@@ -103,9 +104,6 @@ class UniqueValueValidator extends ConstraintValidator implements ContainerInjec
    *   The value.
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   An entity which uses the value.
-   *
-   * @return \Drupal\Core\StringTranslation\TranslatableMarkup
-   *   A translatable error message.
    */
   protected function addViolation(string $value, EntityInterface $entity) {
     $this->context->addViolation("@value is already used by @entity.", [
@@ -151,6 +149,5 @@ class UniqueValueValidator extends ConstraintValidator implements ContainerInjec
     return $this->entityTypeManager()
       ->getStorage($entity_type_id);
   }
-
 
 }
