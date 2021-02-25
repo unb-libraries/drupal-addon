@@ -156,12 +156,42 @@ class ContentEntityForm extends DefaultContentEntityForm {
    * Post save handler for newly created entities.
    */
   protected function postEntityCreated() {
+    $this->messenger()
+      ->addStatus($this->getCreatedNewMessage());
   }
 
   /**
    * Post save handler for updated entities.
    */
   protected function postEntityUpdated() {
+    $this->messenger()
+      ->addStatus($this->getUpdatedMessage());
+  }
+
+  /**
+   * The message to be displayed when a new entity has been created.
+   *
+   * @return \Drupal\Core\StringTranslation\TranslatableMarkup|string
+   *   A (translatable) string.
+   */
+  protected function getCreatedNewMessage() {
+    return $this->t('Created @entity_type @entity.', [
+      '@entity_type' => $this->getEntity()->getEntityType()->getLabel(),
+      '@entity' => $this->getEntity()->label(),
+    ]);
+  }
+
+  /**
+   * The message to be displayed when an entity has been updated.
+   *
+   * @return \Drupal\Core\StringTranslation\TranslatableMarkup|string
+   *   A (translatable) string.
+   */
+  protected function getUpdatedMessage() {
+    return $this->t('Updated @entity_type @entity.', [
+      '@entity_type' => $this->getEntity()->getEntityType()->getLabel(),
+      '@entity' => $this->getEntity()->label(),
+    ]);
   }
 
 }
