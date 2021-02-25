@@ -138,4 +138,30 @@ class ContentEntityForm extends DefaultContentEntityForm {
     return $values;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  public function save(array $form, FormStateInterface $form_state) {
+    $saved = parent::save($form, $form_state);
+    if ($saved === SAVED_NEW) {
+      $this->postEntityCreated();
+    }
+    elseif ($saved === SAVED_UPDATED) {
+      $this->postEntityUpdated();
+    }
+    return $saved;
+  }
+
+  /**
+   * Post save handler for newly created entities.
+   */
+  protected function postEntityCreated() {
+  }
+
+  /**
+   * Post save handler for updated entities.
+   */
+  protected function postEntityUpdated() {
+  }
+
 }
