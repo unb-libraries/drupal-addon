@@ -1,4 +1,7 @@
 services:
+  plugin.manager.timezone_resolver:
+    class: Drupal\datetime_plus\Plugin\TimeZoneResolver\DateTimeZoneResolverManager
+    parent: 'default_plugin_manager'
   datetime_plus.timezone_resolver:
     class: '\Drupal\datetime_plus\Datetime\DateTimeZoneResolver'
   datetime_plus:
