@@ -44,4 +44,64 @@ abstract class EntityTypeListController extends ControllerBase {
     return $entity_type->getGroup() === 'content';
   }
 
+  /**
+   * Whether the entity type has bundles.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   The entity type.
+   *
+   * @return bool
+   *   TRUE if the entity type can be bundled, even if no instances of the
+   *   bundle type exist. FALSE if the entity type cannot be bundled.
+   */
+  protected function isBundled(EntityTypeInterface $entity_type) {
+    return !is_null($entity_type->getBundleEntityType());
+  }
+
+  /**
+   * Get bundle instances for the entity type.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   The entity type.
+   *
+   * @return \Drupal\Core\Config\Entity\ConfigEntityInterface[]
+   *   An array of bundle entities.
+   */
+  protected function getBundles(EntityTypeInterface $entity_type) {
+    if ($storage = $this->getBundleStorage($entity_type)) {
+      /** @var \Drupal\Core\Config\Entity\ConfigEntityInterface[] $bundles */
+      $bundles = $storage->loadMultiple();
+      return $bundles;
+    }
+    else {
+      $this->messenger()
+        ->addError($this->t("@entity_type uses a bundle type that does not exist.", [
+          '@entity_type' => $entity_type->getLabel(),
+        ]));
+      return [];
+    }
+  }
+
+  /**
+   * Get the storage handler for the entity type's bundle type.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   The entity type.
+   *
+   * @return \Drupal\Core\Entity\EntityStorageInterface|null
+   *   An entity storage handler. NULL if none could be found, e.g. the
+   *   defined bundle type does not exist or references a storage handler
+   *   that does not exist.
+   */
+  protected function getBundleStorage(EntityTypeInterface $entity_type) {
+    try {
+      $bundle_type_id = $entity_type->getBundleEntityType();
+      return $this->entityTypeManager()
+        ->getStorage($bundle_type_id);
+    }
+    catch (\Exception $e) {
+      return NULL;
+    }
+  }
+
 }

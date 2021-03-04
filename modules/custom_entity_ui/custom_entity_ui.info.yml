@@ -3,4 +3,5 @@ type: module
 description: 'The module provides an administration UI for custom entity types.'
 core: 8.x
 package: 'Custom Entity'
-dependencies: { }
+dependencies:
+  - field_ui
