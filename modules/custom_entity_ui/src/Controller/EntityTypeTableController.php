@@ -43,7 +43,7 @@ class EntityTypeTableController extends EntityTypeListController {
       'machine_name' => $this->t('Machine name'),
       'name' => $this->t('Name'),
       'provider' => $this->t('Defined by'),
-      'operations' => $this->t('Operations')
+      'operations' => $this->t('Operations'),
     ];
   }
 
@@ -81,7 +81,7 @@ class EntityTypeTableController extends EntityTypeListController {
       'name' => $entity_type->getLabel(),
       'provider' => $entity_type->getProvider(),
       'operations' => [
-        'data' => $this->buildOperations($entity_type)
+        'data' => $this->buildOperations($entity_type),
       ],
     ];
   }
@@ -127,7 +127,7 @@ class EntityTypeTableController extends EntityTypeListController {
     $operations = [];
 
     if ($this->isBundled($entity_type) && !empty($bundles = $this->getBundles($entity_type))) {
-      foreach ($bundles as $bundle_id => $bundle) {
+      foreach ($bundles as $bundle) {
         $operations += $this->getFieldUiOperations($entity_type, $bundle);
       }
     }
