@@ -2,8 +2,9 @@
 
 namespace Drupal\custom_entity_ui\Form;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\Form\FormBase;
+use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -12,7 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @package Drupal\custom_entity_ui\Form
  */
-class EntityTypeSettingsForm extends FormBase implements EntityTypeSettingsFormInterface {
+class EntityTypeSettingsForm extends ConfigFormBase implements EntityTypeSettingsFormInterface {
 
   /**
    * The entity type.
@@ -36,8 +37,11 @@ class EntityTypeSettingsForm extends FormBase implements EntityTypeSettingsFormI
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
    *   An entity type.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The factory for configuration objects.
    */
-  public function __construct(EntityTypeInterface $entity_type) {
+  public function __construct(EntityTypeInterface $entity_type, ConfigFactoryInterface $config_factory) {
+    parent::__construct($config_factory);
     $this->entityType = $entity_type;
   }
 
@@ -51,8 +55,19 @@ class EntityTypeSettingsForm extends FormBase implements EntityTypeSettingsFormI
       ->getDefault('entity_type_id');
     $entity_type = $container->get('entity_type.manager')
       ->getDefinition($entity_type_id);
+    $config_factory = $container->get('config.factory');
 
-    return new static($entity_type);
+    return new static($entity_type, $config_factory);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  protected function getEditableConfigNames() {
+    $entity_type_id = $this->getEntityType()->id();
+    return [
+      'settings' => "{$entity_type_id}.settings",
+    ];
   }
 
   /**
@@ -75,15 +90,25 @@ class EntityTypeSettingsForm extends FormBase implements EntityTypeSettingsFormI
   /**
    * {@inheritDoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
-    return $form;
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+    $form_state->cleanValues();
+    $this->save($form, $form_state);
+    parent::submitForm($form, $form_state);
   }
 
   /**
-   * {@inheritDoc}
+   * Save to settings.
+   *
+   * @param array $form
+   *   An associative array containing the structure of the form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  protected function save(array &$form, FormStateInterface $form_state) {
+    $config = $this->config($this->getEditableConfigNames()['settings']);
+    foreach ($form_state->getValues() as $key => $value) {
+      $config->set($key, $value);
+    }
   }
-
 
 }
