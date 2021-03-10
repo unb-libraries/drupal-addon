@@ -105,10 +105,11 @@ class EntityTypeSettingsForm extends ConfigFormBase implements EntityTypeSetting
    *   The current state of the form.
    */
   protected function save(array &$form, FormStateInterface $form_state) {
-    $config = $this->config($this->getEditableConfigNames()['settings']);
+    $settings = $this->config($this->getEditableConfigNames()['settings']);
     foreach ($form_state->getValues() as $key => $value) {
-      $config->set($key, $value);
+      $settings->set($key, $value);
     }
+    $settings->save();
   }
 
 }
