@@ -3,6 +3,7 @@
 namespace Drupal\datetime_plus\Plugin\Field\FieldType;
 
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\TypedData\DataDefinitionInterface;
 use Drupal\Core\TypedData\TypedDataInterface;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItem;
@@ -53,6 +54,35 @@ class TimezoneAwareDateTimeItem extends DateTimeItem {
     return [
       'timezone' => 'user',
     ] + parent::defaultFieldSettings();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function fieldSettingsForm(array $element, FormStateInterface $form_state) {
+    $element = parent::fieldSettingsForm($element, $form_state);
+
+    $element['timezone'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Timezone'),
+      '#descriptions' => $this->t('Select the timezone to which values will be converted.'),
+      '#options' => $this->buildTimeZoneResolverOptions(),
+      '#default_value' => $this->getSetting('timezone'),
+    ];
+
+    return $element;
+  }
+
+  /**
+   * Build a renderable array of timezone resolver options.
+   *
+   * @return array
+   *   An array of the form PLUGIN_ID => LABEL.
+   */
+  protected function buildTimeZoneResolverOptions() {
+    return array_map(function (array $plugin_definition) {
+      return $plugin_definition['label'];
+    }, $this->dateTimeZoneResolverManager()->getDefinitions());
   }
 
 }
