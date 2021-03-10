@@ -7,6 +7,7 @@ use Drupal\Core\TypedData\DataDefinitionInterface;
 use Drupal\Core\TypedData\TypedDataInterface;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItem;
 use Drupal\datetime_plus\Datetime\TimezoneAwareDateTimeComputed;
+use Drupal\datetime_plus\Plugin\TimeZoneResolver\DateTimeZoneResolverTrait;
 
 /**
  * Plugin implementation of the 'datetime_plus' field type.
@@ -23,22 +24,7 @@ use Drupal\datetime_plus\Datetime\TimezoneAwareDateTimeComputed;
  */
 class TimezoneAwareDateTimeItem extends DateTimeItem {
 
-  /**
-   * The timezone resolver service.
-   *
-   * @var \Drupal\datetime_plus\Plugin\TimeZoneResolver\DateTimeZoneResolverManagerInterface
-   */
-  protected static $dateTimeZoneResolverManager;
-
-  /**
-   * Get the timezone resolver service.
-   *
-   * @return \Drupal\datetime_plus\Plugin\TimeZoneResolver\DateTimeZoneResolverManagerInterface
-   *   A timezone resolver plugin manager.
-   */
-  protected static function dateTimeZoneResolverManager() {
-    return static::$dateTimeZoneResolverManager;
-  }
+  use DateTimeZoneResolverTrait;
 
   /**
    * {@inheritDoc}
@@ -52,12 +38,10 @@ class TimezoneAwareDateTimeItem extends DateTimeItem {
   public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
     $properties = parent::propertyDefinitions($field_definition);
 
-    $resolver = static::dateTimeZoneResolverManager()
-      ->createInstance($field_definition
-      ->getSetting('timezone'));
     $properties['date']
       ->setClass(TimezoneAwareDateTimeComputed::class)
-      ->setSetting('timezone', $resolver->getTimeZone());
+      ->setSetting('timezone', static::resolve($field_definition
+        ->getSetting('timezone')));
 
     return $properties;
   }
