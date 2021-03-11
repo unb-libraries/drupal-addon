@@ -33,14 +33,16 @@ trait DateTimeZoneResolverTrait {
    *
    * @param string $timezone_name
    *   A (dynamic) timezone name, e.g. "user".
+   * @param array $settings
+   *   Array of settings to pass to the resolver.
    *
    * @return \DateTimeZone
    *   A timezone object.
    */
-  protected static function resolve($timezone_name) {
+  protected static function resolve($timezone_name, array $settings = []) {
     try {
       return static::dateTimeZoneResolverManager()
-        ->createInstance($timezone_name)
+        ->createInstance($timezone_name, $settings)
         ->getTimeZone();
     }
     catch (PluginException $e) {

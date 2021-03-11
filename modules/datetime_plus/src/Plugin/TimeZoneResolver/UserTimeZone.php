@@ -9,7 +9,7 @@ use Drupal\datetime_plus\Annotation\DateTimeZoneResolver;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Defines the "UserTimeZone" timezone resolver plugin.
+ * Resolves to the timezone configured by the user.
  *
  * @DateTimeZoneResolver(
  *   id = "user",
@@ -18,7 +18,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @package Drupal\datetime_plus\Plugin\TimeZoneResolver
  */
-class UserTimeZone extends PluginBase implements DateTimeZoneResolverInterface, ContainerFactoryPluginInterface {
+class UserTimeZone extends DateTimeZoneResolverBase implements ContainerFactoryPluginInterface {
 
   /**
    * The currently logged-in user.

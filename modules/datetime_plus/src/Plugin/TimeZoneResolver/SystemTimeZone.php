@@ -8,7 +8,7 @@ use Drupal\Core\Plugin\PluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Defines the "SystemTimeZone" timezone resolver plugin.
+ * Resolves to the system configured timezone.
  *
  * @DateTimeZoneResolver(
  *   id = "system",
@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @package Drupal\datetime_plus\Plugin\TimeZoneResolver
  */
-class SystemTimeZone extends PluginBase implements DateTimeZoneResolverInterface, ContainerFactoryPluginInterface {
+class SystemTimeZone extends DateTimeZoneResolverBase implements ContainerFactoryPluginInterface {
 
   /**
    * The configuration containing system timezone settings.
