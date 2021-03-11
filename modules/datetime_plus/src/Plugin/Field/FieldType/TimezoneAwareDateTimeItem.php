@@ -17,7 +17,7 @@ use Drupal\datetime_plus\Plugin\TimeZoneResolver\DateTimeZoneResolverTrait;
  *   id = "datetime_timezone",
  *   label = @Translation("Date (custom timezone)"),
  *   description = @Translation("Create and store timezone-customizable date values."),
- *   default_widget = "datetime_default",
+ *   default_widget = "datetime_timezone",
  *   default_formatter = "datetime_default",
  *   list_class = "\Drupal\datetime\Plugin\Field\FieldType\DateTimeFieldItemList",
  *   constraints = {"DateTimeFormat" = {}}
