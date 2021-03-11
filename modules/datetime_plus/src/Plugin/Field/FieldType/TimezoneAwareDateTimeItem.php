@@ -23,7 +23,7 @@ use Drupal\datetime_plus\Plugin\TimeZoneResolver\DateTimeZoneResolverTrait;
  *   constraints = {"DateTimeFormat" = {}}
  * )
  */
-class TimezoneAwareDateTimeItem extends DateTimeItem {
+class TimezoneAwareDateTimeItem extends DateTimeItem implements TimezoneAwareDateTimeItemInterface {
 
   use DateTimeZoneResolverTrait;
 
@@ -36,6 +36,24 @@ class TimezoneAwareDateTimeItem extends DateTimeItem {
     parent::__construct($definition, $name, $parent);
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  public function getTimeZone() {
+    return $this->getDateTime()
+      ->getTimezone();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getDateTime() {
+    return $this->date;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
     $properties = parent::propertyDefinitions($field_definition);
 
