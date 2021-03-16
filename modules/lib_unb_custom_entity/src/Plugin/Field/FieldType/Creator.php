@@ -90,7 +90,7 @@ class Creator extends EntityReferenceItem {
    */
   public function applyDefaultValue($notify = TRUE) {
     parent::applyDefaultValue($notify);
-    $this->setValue(['target_id' => $this->currentUser()], $notify);
+    $this->setValue(['target_id' => $this->currentUser()->id()], $notify);
     return $this;
   }
 
