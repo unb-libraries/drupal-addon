@@ -22,4 +22,44 @@ namespace Drupal\lib_unb_custom_entity\Plugin\Field\FieldType;
  */
 class Editor extends Creator {
 
+  /**
+   * {@inheritDoc}
+   */
+  public function preSave() {
+    parent::preSave();
+
+    if (!$this->target_id) {
+      $this->target_id = $this->currentUser()->id();
+    }
+    else {
+      // On an existing entity translation, the editor will only be
+      // set to the current user automatically if at least one other field value
+      // of the entity has changed. This detection does not run on new entities
+      // and will be turned off if the editor is set manually before
+      // save, for example during migrations.
+      /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
+      $entity = $this->getEntity();
+      /** @var \Drupal\Core\Entity\ContentEntityInterface $original */
+      $original = $this->getOriginalEntity();
+      $langcode = $entity->language()->getId();
+      if (!$entity->isNew() && $original && $original->hasTranslation($langcode)) {
+        $original_value = $original->getTranslation($langcode)->get($this->getFieldDefinition()->getName())->target_id;
+        if ($this->target_id == $original_value && $entity->hasTranslationChanges()) {
+          $this->target_id = $this->currentUser()->id();
+        }
+      }
+    }
+  }
+
+  /**
+   * The original entity, before it was edited.
+   *
+   * @return \Drupal\Core\Entity\FieldableEntityInterface
+   *   A fieldable entity.
+   */
+  protected function getOriginalEntity() {
+    return $this->getEntity()
+      ->original;
+  }
+
 }
