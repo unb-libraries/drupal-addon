@@ -1,0 +1,46 @@
+<?php
+
+/**
+ * @file
+ * Contains lib_unb_custom_entity.module.
+ */
+
+use Drupal\Core\Render\Element;
+
+/**
+ * Implements hook_theme().
+ */
+function lib_unb_custom_entity_theme() {
+  return [
+    'entity_table' => [
+      'render element' => 'element',
+    ],
+  ];
+}
+
+/**
+ * Implements template_preprocess_hook.
+ *
+ * @param array $variables
+ *   An array of variables to pass to the template.
+ */
+function template_preprocess_entity_table(&$variables) {
+  $variables['table'] = [
+    '#type' => 'table',
+    '#header' => [
+      'field' => t('Field'),
+      'value' => t('Value'),
+    ],
+    '#empty' => t('Nothing to display.'),
+    '#rows' => [],
+  ];
+
+  foreach (Element::children($variables['element']) as $key) {
+    $field = $variables['element'][$key];
+    $field['#label_display'] = 'hidden';
+    $variables['table']['#rows'][] = [
+      'field' => $key,
+      'value' => ['data' => $field],
+    ];
+  }
+}
