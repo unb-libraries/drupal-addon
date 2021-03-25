@@ -25,7 +25,7 @@ function lib_unb_custom_entity_theme() {
  *   An array of variables to pass to the template.
  */
 function template_preprocess_entity_table(&$variables) {
-  $variables['table'] = [
+  $table = [
     '#type' => 'table',
     '#header' => [
       'label' => t('Label'),
@@ -35,13 +35,16 @@ function template_preprocess_entity_table(&$variables) {
     '#rows' => [],
   ];
 
-  foreach (Element::children($variables['element']) as $key) {
-    $field = $variables['element'][$key];
-    $variables['table']['#rows'][] = [
+  foreach (Element::children($variables['element']) as $field_id) {
+    $field = $variables['element'][$field_id];
+    $table['#rows'][$field['#weight']] = [
       'label' => $field['#title'],
       'value' => ['data' => $field],
     ];
   }
+
+  ksort($table['#rows']);
+  $variables['table'] = $table;
 }
 
 /**
