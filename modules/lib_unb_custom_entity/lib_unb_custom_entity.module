@@ -37,10 +37,12 @@ function template_preprocess_entity_table(&$variables) {
 
   foreach (Element::children($variables['element']) as $field_id) {
     $field = $variables['element'][$field_id];
-    $table['#rows'][$field['#weight']] = [
-      'label' => $field['#title'],
-      'value' => ['data' => $field],
-    ];
+    if (isset($field['#title'])) {
+      $table['#rows'][$field['#weight']] = [
+        'label' => $field['#title'],
+        'value' => ['data' => $field],
+      ];
+    }
   }
 
   ksort($table['#rows']);
