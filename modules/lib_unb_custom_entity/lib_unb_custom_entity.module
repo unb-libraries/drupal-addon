@@ -44,3 +44,13 @@ function template_preprocess_entity_table(&$variables) {
     ];
   }
 }
+
+/**
+ * Implements hook_field_formatter_info_alter().
+ */
+function lib_unb_custom_entity_field_formatter_info_alter(array &$info) {
+  if (isset($info['entity_reference_label'])) {
+    $info['entity_reference_label']['field_types'][] = 'creator';
+    $info['entity_reference_label']['field_types'][] = 'editor';
+  }
+}
