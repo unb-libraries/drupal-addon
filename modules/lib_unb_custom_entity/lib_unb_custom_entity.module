@@ -39,6 +39,9 @@ function template_preprocess_entity_table(&$variables) {
     $field = $variables['element'][$field_id];
     if (isset($field['#title'])) {
       $index = $field['#row']['#weight'];
+      while (isset($table['#rows'][$index])) {
+        $index += 0.001;
+      }
       $table['#rows'][$index] = $field['#row'];
     }
   }
