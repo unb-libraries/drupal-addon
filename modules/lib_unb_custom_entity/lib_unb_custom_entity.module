@@ -28,7 +28,7 @@ function template_preprocess_entity_table(&$variables) {
   $variables['table'] = [
     '#type' => 'table',
     '#header' => [
-      'field' => t('Field'),
+      'label' => t('Label'),
       'value' => t('Value'),
     ],
     '#empty' => t('Nothing to display.'),
@@ -37,9 +37,8 @@ function template_preprocess_entity_table(&$variables) {
 
   foreach (Element::children($variables['element']) as $key) {
     $field = $variables['element'][$key];
-    $field['#label_display'] = 'hidden';
     $variables['table']['#rows'][] = [
-      'field' => $key,
+      'label' => $field['#title'],
       'value' => ['data' => $field],
     ];
   }

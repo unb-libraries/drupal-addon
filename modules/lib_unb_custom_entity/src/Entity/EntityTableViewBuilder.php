@@ -21,4 +21,16 @@ class EntityTableViewBuilder extends EntityViewBuilder {
     return $build;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  protected function alterBuild(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
+    parent::alterBuild($build, $entity, $display, $view_mode);
+    foreach ($display->getComponents() as $name => $options) {
+      if (isset($build[$name])) {
+        $build[$name]['#label_display'] = 'hidden';
+      }
+    }
+  }
+
 }
