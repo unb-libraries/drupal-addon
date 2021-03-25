@@ -2,6 +2,7 @@
 
 namespace Drupal\lib_unb_custom_entity\Entity;
 
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityViewBuilder;
 
@@ -29,6 +30,14 @@ class EntityTableViewBuilder extends EntityViewBuilder {
     foreach ($display->getComponents() as $name => $options) {
       if (isset($build[$name])) {
         $build[$name]['#label_display'] = 'hidden';
+        if (isset($build[$name]['#title'])) {
+          $build[$name]['#row'] = [
+            'label' => $build[$name]['#title'],
+            'value' => [
+              'data' => $build[$name],
+            ],
+          ];
+        }
       }
     }
   }
