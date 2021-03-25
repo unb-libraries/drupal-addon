@@ -17,6 +17,7 @@ namespace Drupal\lib_unb_custom_entity\Plugin\Field\FieldType;
  *   category = @Translation("Reference"),
  *   no_ui = TRUE,
  *   cardinality = 1,
+ *   list_class = "\Drupal\Core\Field\EntityReferenceFieldItemList",
  *   default_formatter = "entity_reference_label"
  * )
  */
