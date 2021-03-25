@@ -1,0 +1,21 @@
+<?php
+
+/**
+ * @file
+ * Contains datetime_plus.module.
+ */
+
+/**
+ * Implements hook_field_formatter_info_alter().
+ */
+function datetime_plus_field_formatter_info_alter(array &$info) {
+  if (isset($info['datetime_default'])) {
+    $info['datetime_default']['field_types'][] = 'datetime_timezone';
+  }
+  if (isset($info['datetime_plain'])) {
+    $info['datetime_plain']['field_types'][] = 'datetime_timezone';
+  }
+  if (isset($info['datetime_time_ago'])) {
+    $info['datetime_time_ago']['field_types'][] = 'datetime_timezone';
+  }
+}
