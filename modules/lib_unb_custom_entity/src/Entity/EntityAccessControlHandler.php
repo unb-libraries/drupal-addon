@@ -24,22 +24,7 @@ use Drupal\Core\Session\AccountInterface;
 class EntityAccessControlHandler extends DefaultEntityAccessControlHandler {
 
   /**
-   * Performs access checks.
-   *
-   * Overrides DefaultEntityAccessControlHandler::checkAccess. This
-   * checks for any permission of the form "OPERATION ENTITY_TYPE entities"
-   * for the given user account.
-   *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   The entity for which to check access.
-   * @param string $operation
-   *   The entity operation. Usually one of 'view', 'view', 'edit',
-   *   'delete', or 'list'.
-   * @param \Drupal\Core\Session\AccountInterface $account
-   *   The user for which to check access.
-   *
-   * @return \Drupal\Core\Access\AccessResultInterface
-   *   The access result.
+   * {@inheritDoc}
    */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
     $access = parent::checkAccess($entity, $operation, $account);
@@ -50,6 +35,9 @@ class EntityAccessControlHandler extends DefaultEntityAccessControlHandler {
     if ($access->isNeutral()) {
       $account = $this->prepareUser($account);
       $has_access = $this->hasEntityTypePermission($entity->getEntityType(), $operation, $account);
+      if ($has_access && $entity_access_callback = $this->getEntityPermissionCallback($operation)) {
+        $has_access &= call_user_func($entity_access_callback, $entity, $account);
+      }
 
       // @todo Cache access checking.
       $access = $has_access
@@ -80,6 +68,24 @@ class EntityAccessControlHandler extends DefaultEntityAccessControlHandler {
 
     $required_permission = "$operation {$entity_type->id()} entities";
     return $account->hasPermission($required_permission);
+  }
+
+  /**
+   * Get a callback to check entity based access for the given operation.
+   *
+   * @param string $operation
+   *   A string.
+   *
+   * @return Callable|false
+   *   A callback. FALSE if no callable entity based permission check is
+   *   defined for the given entity.
+   */
+  protected function getEntityPermissionCallback(string $operation) {
+    $callback_name = 'hasEntity' . ucfirst(strtolower($operation)) . 'Access';
+    if (is_callable($callback = [$this, $callback_name])) {
+      return $callback;
+    }
+    return FALSE;
   }
 
   /**
