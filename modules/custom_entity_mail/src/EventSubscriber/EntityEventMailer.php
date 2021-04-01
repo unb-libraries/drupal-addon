@@ -44,7 +44,7 @@ abstract class EntityEventMailer extends EntityEventSubscriber {
   /**
    * {@inheritDoc}
    */
-  public function doOnCreate(EntityEvent $event) {
+  public function doOnEntityCreate(EntityEvent $event) {
     $entity = $event->getEntity();
     $key = "{$entity->getEntityTypeId()}.created";
     $recipients = $this->getRecipients($event);
@@ -56,7 +56,7 @@ abstract class EntityEventMailer extends EntityEventSubscriber {
   /**
    * {@inheritDoc}
    */
-  public function doOnUpdate(EntityEvent $event) {
+  public function doOnEntityUpdate(EntityEvent $event) {
     $entity = $event->getEntity();
     $key = "{$entity->getEntityTypeId()}.updated";
     $recipients = $this->getRecipients($event);
@@ -68,7 +68,7 @@ abstract class EntityEventMailer extends EntityEventSubscriber {
   /**
    * {@inheritDoc}
    */
-  public function doOnDelete(EntityEvent $event) {
+  public function doOnEntityDelete(EntityEvent $event) {
     $entity = $event->getEntity();
     $key = "{$entity->getEntityTypeId()}.deleted";
     $recipients = $this->getRecipients($event);

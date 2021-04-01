@@ -44,12 +44,30 @@ abstract class EntityEventSubscriber implements EntityEventSubscriberInterface {
   /**
    * {@inheritDoc}
    */
-  public static function getSubscribedEvents() {
+  final public static function getSubscribedEvents() {
+    return array_map(function (string $event_type) {
+      $parts = array_map(function ($part) {
+        return ucfirst(strtolower($part));
+      }, explode('.', $event_type));
+      return 'on' . implode('', $parts);
+    }, static::getSubscribedEventNames());
+  }
+
+  /**
+   * Returns an array of event names this subscriber wants to listen to.
+   *
+   * This returns only the event names, while getSubscribedEvents maps to
+   * callable handler methods.
+   *
+   * @return array
+   *   An array of event names.
+   */
+  protected static function getSubscribedEventNames() {
     return [
-      EntityEvents::SAVE => 'onSave',
-      EntityEvents::CREATE => 'onCreate',
-      EntityEvents::UPDATE => 'onUpdate',
-      EntityEvents::DELETE => 'onDelete',
+      EntityEvents::SAVE,
+      EntityEvents::CREATE,
+      EntityEvents::UPDATE,
+      EntityEvents::DELETE,
     ];
   }
 
@@ -69,83 +87,83 @@ abstract class EntityEventSubscriber implements EntityEventSubscriberInterface {
   }
 
   /**
-   * Process a SAVE event.
+   * Process an entity.SAVE event.
    *
    * @param \Drupal\lib_unb_custom_entity\Event\EntityEvent $event
    *   An entity event object.
    */
-  final public function onSave(EntityEvent $event) {
+  final public function onEntitySave(EntityEvent $event) {
     if ($this->doesHandle($event)) {
-      $this->doOnSave($event);
+      $this->doOnEntitySave($event);
     }
   }
 
   /**
-   * The actual processing of a SAVE event.
+   * The actual processing of an entity.SAVE event.
    *
    * @param \Drupal\lib_unb_custom_entity\Event\EntityEvent $event
    *   An entity event object.
    */
-  public function doOnSave(EntityEvent $event) {}
+  public function doOnEntitySave(EntityEvent $event) {}
 
   /**
-   * Process a CREATE event.
+   * Process an entity.CREATE event.
    *
    * @param \Drupal\lib_unb_custom_entity\Event\EntityEvent $event
    *   An entity event object.
    */
-  final public function onCreate(EntityEvent $event) {
+  final public function onEntityCreate(EntityEvent $event) {
     if ($this->doesHandle($event)) {
-      $this->doOnCreate($event);
+      $this->doOnEntityCreate($event);
     }
   }
 
   /**
-   * The actual processing of a CREATE event.
+   * The actual processing of an entity.CREATE event.
    *
    * @param \Drupal\lib_unb_custom_entity\Event\EntityEvent $event
    *   An entity event object.
    */
-  public function doOnCreate(EntityEvent $event) {}
+  public function doOnEntityCreate(EntityEvent $event) {}
 
   /**
-   * Process an UPDATE event.
+   * Process an entity.UPDATE event.
    *
    * @param \Drupal\lib_unb_custom_entity\Event\EntityEvent $event
    *   An entity event object.
    */
-  final public function onUpdate(EntityEvent $event) {
+  final public function onEntityUpdate(EntityEvent $event) {
     if ($this->doesHandle($event)) {
-      $this->doOnUpdate($event);
+      $this->doOnEntityUpdate($event);
     }
   }
 
   /**
-   * Process a DELETE event.
+   * The actual processing of an entity.UPDATE event.
+   *
+   * @param \Drupal\lib_unb_custom_entity\Event\EntityEvent $event
+   *   An entity event object.
+   */
+  public function doOnEntityUpdate(EntityEvent $event) {}
+
+  /**
+   * Process an entity.DELETE event.
    *
    * @param \Drupal\lib_unb_custom_entity\Event\EntityEvent $event
    *   The entity event object.
    */
-  final public function onDelete(EntityEvent $event) {
+  final public function onEntityDelete(EntityEvent $event) {
     if ($this->doesHandle($event)) {
-      $this->doOnDelete($event);
+      $this->doOnEntityDelete($event);
     }
   }
 
   /**
-   * The actual processing of an UPDATE event.
+   * The actual processing of an entity.DELETE event.
    *
    * @param \Drupal\lib_unb_custom_entity\Event\EntityEvent $event
    *   An entity event object.
    */
-  public function doOnUpdate(EntityEvent $event) {}
-
-  /**
-   * The actual processing of a DELETE event.
-   *
-   * @param \Drupal\lib_unb_custom_entity\Event\EntityEvent $event
-   *   An entity event object.
-   */
-  public function doOnDelete(EntityEvent $event) {}
+  public function doOnEntityDelete(EntityEvent $event) {}
 
 }
