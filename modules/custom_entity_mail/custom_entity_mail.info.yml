@@ -1,0 +1,7 @@
+name: 'Custom Entity Mail'
+type: module
+description: 'Send emails upon creating, editing, deleting custom entities.'
+core: 8.x
+package: 'Custom Entity'
+dependencies:
+  - lib_unb_custom_entity
