@@ -1,0 +1,14 @@
+<?php
+
+/**
+ * @file
+ * Contains custom_entity_mail.module.
+ */
+
+/**
+ * Implements hook_mail().
+ */
+function custom_entity_mail_mail($key, &$message, $params) {
+  $message['subject'] = $params['subject'];
+  $message['body'][] = $params['message'];
+}
