@@ -45,12 +45,13 @@ abstract class EntityEventSubscriber implements EntityEventSubscriberInterface {
    * {@inheritDoc}
    */
   final public static function getSubscribedEvents() {
+    $event_names = static::getSubscribedEventNames();
     return array_map(function (string $event_type) {
       $parts = array_map(function ($part) {
         return ucfirst(strtolower($part));
       }, explode('.', $event_type));
       return 'on' . implode('', $parts);
-    }, static::getSubscribedEventNames());
+    }, array_combine($event_names, $event_names));
   }
 
   /**
