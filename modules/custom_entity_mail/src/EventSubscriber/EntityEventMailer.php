@@ -160,12 +160,10 @@ abstract class EntityEventMailer extends EntityEventSubscriber {
     $lang_code = $event->getEntity()
       ->get('langcode')->value;
 
-    foreach ($recipients as $recipient_email) {
-      $this->mailManager()->mail($module, $key, $recipient_email, $lang_code, [
-        'subject' => $subject,
-        'body' => $body,
-      ]);
-    }
+    $this->mailManager()->mail($module, $key, implode(',', $recipients), $lang_code, [
+      'subject' => $subject,
+      'body' => $body,
+    ]);
   }
 
 }
