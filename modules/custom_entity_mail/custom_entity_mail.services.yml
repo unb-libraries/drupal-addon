@@ -3,3 +3,7 @@ services:
     class: Drupal\custom_entity_mail\EventSubscriber\EntityEventMailer
     arguments: [ '@plugin.manager.mail' ]
     abstract: true
+  template_mailer.entity_event_subscriber:
+    class: Drupal\custom_entity_mail\EventSubscriber\EntityEventTemplateMailer
+    parent: 'mailer.entity_event_subscriber'
+    abstract: true

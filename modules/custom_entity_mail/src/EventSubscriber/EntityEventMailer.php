@@ -92,7 +92,7 @@ abstract class EntityEventMailer extends EntityEventSubscriber {
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The entity.
-   * @param string $template_key
+   * @param string $key
    *   The key to determine a template name.
    *
    * @return false|array|string
@@ -106,19 +106,7 @@ abstract class EntityEventMailer extends EntityEventSubscriber {
    *   defining the "node" entity type. The template name must match the form
    *   "node.created.subject*".
    */
-  protected function getSubject(EntityInterface $entity, string $template_key) {
-    $provider = $entity->getEntityType()->getProvider();
-    $path = drupal_get_path('module', $provider) . "/templates/{$template_key}.subject";
-    if (!empty(glob("$path*"))) {
-      return [
-        'template' => $path,
-        'context' => [
-          $entity->getEntityTypeId() => $entity,
-        ],
-      ];
-    }
-    return FALSE;
-  }
+  abstract protected function getSubject(EntityInterface $entity, string $key);
 
   /**
    * Build the body content or definition.
@@ -139,19 +127,7 @@ abstract class EntityEventMailer extends EntityEventSubscriber {
    *   defining the "node" entity type. The template name must match the form
    *   "node.created.body*".
    */
-  protected function getBody(EntityInterface $entity, string $key) {
-    $provider = $entity->getEntityType()->getProvider();
-    $path = drupal_get_path('module', $provider) . "/templates/{$key}.body";
-    if (!empty(glob("$path*"))) {
-      return [
-        'template' => $path,
-        'context' => [
-          $entity->getEntityTypeId() => $entity,
-        ],
-      ];
-    }
-    return FALSE;
-  }
+  abstract protected function getBody(EntityInterface $entity, string $key);
 
   /**
    * Get the recipients which should be notified.
