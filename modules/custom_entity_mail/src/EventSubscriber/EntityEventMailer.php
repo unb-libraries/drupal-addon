@@ -149,34 +149,23 @@ abstract class EntityEventMailer extends EntityEventSubscriber {
    *   A key.
    * @param array $recipients
    *   An array of email addresses.
-   * @param string $subject
+   * @param string|array $subject
    *   The email subject.
-   * @param string $body
+   * @param string|array $body
    *   The email body.
    */
-    $module = $this->getModule($event);
-  protected function mail(EntityEvent $event, string $key, array $recipients, string $subject = '', string $body = '') {
+  protected function mail(EntityEvent $event, string $key, array $recipients, $subject = '', $body = '') {
+    $entity = $event->getEntity();
+    $module = $entity->getEntityType()->getProvider();
     $lang_code = $event->getEntity()
       ->get('langcode')->value;
+
     foreach ($recipients as $recipient_email) {
       $this->mailManager()->mail($module, $key, $recipient_email, $lang_code, [
         'subject' => $subject,
         'body' => $body,
       ]);
     }
-  }
-
-  /**
-   * Get the module that should handle sending the mail.
-   *
-   * @param \Drupal\lib_unb_custom_entity\Event\EntityEvent|null $event
-   *   (optional) The event upon which mail should be sent.
-   *
-   * @return string
-   *   A module name string.
-   */
-  protected function getModule(EntityEvent $event = NULL) {
-    return 'custom_entity_mail';
   }
 
 }
