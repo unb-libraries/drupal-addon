@@ -2,6 +2,7 @@
 
 namespace Drupal\custom_entity_mail\EventSubscriber;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Mail\MailManagerInterface;
 use Drupal\lib_unb_custom_entity\Event\EntityEvent;
 use Drupal\lib_unb_custom_entity\EventSubscriber\EntityEventSubscriber;
@@ -47,10 +48,13 @@ abstract class EntityEventMailer extends EntityEventSubscriber {
   public function doOnEntityCreate(EntityEvent $event) {
     $entity = $event->getEntity();
     $key = "{$entity->getEntityTypeId()}.created";
-    $recipients = $this->getRecipients($event);
-    $subject = "{$entity->label()} has been created.";
-    $message = "{$entity->label()} has been created.";
-    $this->mail($event, $key, $recipients, $subject, $message);
+    $this->mail(
+      $event,
+      $key,
+      $this->getRecipients($event),
+      $this->getSubject($entity, $key),
+      $this->getBody($entity, $key)
+    );
   }
 
   /**
@@ -59,10 +63,13 @@ abstract class EntityEventMailer extends EntityEventSubscriber {
   public function doOnEntityUpdate(EntityEvent $event) {
     $entity = $event->getEntity();
     $key = "{$entity->getEntityTypeId()}.updated";
-    $recipients = $this->getRecipients($event);
-    $subject = "{$entity->label()} has been updated.";
-    $message = "{$entity->label()} has been updated.";
-    $this->mail($event, $key, $recipients, $subject, $message);
+    $this->mail(
+      $event,
+      $key,
+      $this->getRecipients($event),
+      $this->getSubject($entity, $key),
+      $this->getBody($entity, $key)
+    );
   }
 
   /**
@@ -71,10 +78,79 @@ abstract class EntityEventMailer extends EntityEventSubscriber {
   public function doOnEntityDelete(EntityEvent $event) {
     $entity = $event->getEntity();
     $key = "{$entity->getEntityTypeId()}.deleted";
-    $recipients = $this->getRecipients($event);
-    $subject = "{$entity->label()} has been deleted.";
-    $message = "{$entity->label()} has been deleted.";
-    $this->mail($event, $key, $recipients, $subject, $message);
+    $this->mail(
+      $event,
+      $key,
+      $this->getRecipients($event),
+      $this->getSubject($entity, $key),
+      $this->getBody($entity, $key)
+    );
+  }
+
+  /**
+   * Build the subject content or definition.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity.
+   * @param string $template_key
+   *   The key to determine a template name.
+   *
+   * @return false|array|string
+   *   An array containing a template path and context, if a suitable context
+   *   for the given entity and key is available. FALSE if no template can be
+   *   found.
+   *
+   *   Example:
+   *   For an entity of type "node" and a template key "created", a suitable
+   *   template must be located in the "/templates" folder of the module
+   *   defining the "node" entity type. The template name must match the form
+   *   "node.created.subject*".
+   */
+  protected function getSubject(EntityInterface $entity, string $template_key) {
+    $provider = $entity->getEntityType()->getProvider();
+    $path = drupal_get_path('module', $provider) . "/templates/{$template_key}.subject";
+    if (!empty(glob("$path*"))) {
+      return [
+        'template' => $path,
+        'context' => [
+          $entity->getEntityTypeId() => $entity,
+        ],
+      ];
+    }
+    return FALSE;
+  }
+
+  /**
+   * Build the body content or definition.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity.
+   * @param string $key
+   *   The key to determine a template name.
+   *
+   * @return false|array|string
+   *   An array containing a template path and context, if a suitable context
+   *   for the given entity and key is available. FALSE if no template can be
+   *   found.
+   *
+   *   Example:
+   *   For an entity of type "node" and a template key "created", a suitable
+   *   template must be located in the "/templates" folder of the module
+   *   defining the "node" entity type. The template name must match the form
+   *   "node.created.body*".
+   */
+  protected function getBody(EntityInterface $entity, string $key) {
+    $provider = $entity->getEntityType()->getProvider();
+    $path = drupal_get_path('module', $provider) . "/templates/{$key}.body";
+    if (!empty(glob("$path*"))) {
+      return [
+        'template' => $path,
+        'context' => [
+          $entity->getEntityTypeId() => $entity,
+        ],
+      ];
+    }
+    return FALSE;
   }
 
   /**
@@ -99,17 +175,17 @@ abstract class EntityEventMailer extends EntityEventSubscriber {
    *   An array of email addresses.
    * @param string $subject
    *   The email subject.
-   * @param string $message
+   * @param string $body
    *   The email body.
    */
-  protected function mail(EntityEvent $event, string $key, array $recipients, string $subject, string $message) {
     $module = $this->getModule($event);
+  protected function mail(EntityEvent $event, string $key, array $recipients, string $subject = '', string $body = '') {
     $lang_code = $event->getEntity()
       ->get('langcode')->value;
     foreach ($recipients as $recipient_email) {
       $this->mailManager()->mail($module, $key, $recipient_email, $lang_code, [
         'subject' => $subject,
-        'message' => $message,
+        'body' => $body,
       ]);
     }
   }
