@@ -24,9 +24,11 @@ class TimezoneAwareDateTimeComputed extends DateTimeComputed {
    * Set to the timezone as configured in the data definition.
    */
   protected function setTimezone() {
-    $timezone = $this->getDataDefinition()
-      ->getSetting('timezone');
-    $this->date->setTimezone($timezone);
+    if ($this->date) {
+      $timezone = $this->getDataDefinition()
+        ->getSetting('timezone');
+      $this->date->setTimezone($timezone);
+    }
   }
 
 }
