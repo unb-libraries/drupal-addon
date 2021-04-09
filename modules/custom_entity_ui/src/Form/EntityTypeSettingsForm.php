@@ -63,20 +63,22 @@ class EntityTypeSettingsForm extends ConfigFormBase implements EntityTypeSetting
   /**
    * Get the config object containing the settings for the entity type.
    *
-   * @return \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig
-   *   An immutable config object.
+   * @return \Drupal\Core\Config\Config
+   *   An editable config object.
    */
   protected function getEditableEntityConfig() {
-    return $this->config($this->getEditableConfigNames()['entity_settings']);
+    return $this->config(
+      $this->getEditableConfigNames()['entity_settings']);
   }
 
   /**
    * {@inheritDoc}
    */
   protected function getEditableConfigNames() {
+    $module = $this->getEntityType()->getProvider();
     $entity_type_id = $this->getEntityType()->id();
     return [
-      'entity_settings' => "{$entity_type_id}.settings",
+      'entity_settings' => "{$module}.{$entity_type_id}.settings",
     ];
   }
 
