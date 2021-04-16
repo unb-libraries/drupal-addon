@@ -27,9 +27,7 @@ trait RevisionableEntityStorageTrait {
       ]
     )->fetchCol();
 
-    /** @var \Drupal\unb_locations\Entity\LocationInterface[] $revisions */
-    $revisions = $this->loadMultipleRevisions($revision_ids);
-    return $revisions;
+    return $this->loadMultipleRevisions($revision_ids);
   }
 
 }
