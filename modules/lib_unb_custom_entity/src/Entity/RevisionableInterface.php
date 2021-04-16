@@ -19,4 +19,13 @@ interface RevisionableInterface extends DefaultRevisionableInterface {
    */
   public function getRevisions();
 
+  /**
+   * Retrieve the revision preceding this one.
+   *
+   * @return \Drupal\Core\Entity\EntityInterface|false
+   *   A revision of an entity. FALSE if there is no previous revision, i.e.
+   *   if this entity is the first one.
+   */
+  public function getPreviousRevision();
+
 }

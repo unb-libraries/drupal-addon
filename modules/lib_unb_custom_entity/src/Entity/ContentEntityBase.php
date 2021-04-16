@@ -38,6 +38,18 @@ abstract class ContentEntityBase extends DefaultContentEntityBase implements Con
   }
 
   /**
+   * @return \Drupal\Core\Entity\EntityInterface|false
+   */
+  public function getPreviousRevision() {
+    if ($this->getEntityType()->isRevisionable()) {
+      /** @var \Drupal\lib_unb_custom_entity\Entity\Storage\RevisionableEntityStorageInterface $storage */
+      $storage = $this->getStorage();
+      return $storage->loadPreviousRevision($this);
+    }
+    return FALSE;
+  }
+
+  /**
    * Retrieve the storage handler.
    *
    * @return \Drupal\Core\Entity\EntityStorageInterface
