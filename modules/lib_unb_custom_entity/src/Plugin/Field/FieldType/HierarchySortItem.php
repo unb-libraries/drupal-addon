@@ -55,12 +55,16 @@ class HierarchySortItem extends StringItem {
     parent::applyDefaultValue($notify);
 
     $sort_key = $this->buildSortKey();
-
     $entity = $this->getEntity();
+
     if ($entity instanceof SortableHierarchicalInterface && $parent = $entity->getSuperior()) {
+      if (!$parent->getSortKey()) {
+        $parent->get(SortableHierarchicalInterface::FIELD_SORT_KEY)
+          ->applyDefaultValue();
+        $parent->save();
+      }
       $sort_key = $parent->getSortKey() . $this->getDelimiter() . $sort_key;
     }
-
     $this->setValue(['value' => $sort_key], $notify);
     return $this;
   }
