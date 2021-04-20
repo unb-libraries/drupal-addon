@@ -144,7 +144,7 @@ abstract class ContentEntityBase extends DefaultContentEntityBase implements Con
    * {@inheritDoc}
    */
   public function preSave(EntityStorageInterface $storage) {
-    if ($this->getEntityType()->isRevisionable()) {
+    if (!$this->isNew() && $this->getEntityType()->isRevisionable() && $this->isNewRevision()) {
       $entity_subject = new EntitySubject($this);
       $entity_subject->attach(new RevisionableEntityFieldObserver($this->getEntityType()));
       $entity_subject->notify();
@@ -156,6 +156,7 @@ abstract class ContentEntityBase extends DefaultContentEntityBase implements Con
    * {@inheritDoc}
    */
   public function postSave(EntityStorageInterface $storage, $update = TRUE) {
+    // @todo When saving without creating a new revision, sync older revisions.
     $dispatcher = $this->getEventDispatcher();
     $event = new EntityEvent($this);
     $dispatcher->dispatch(EntityEvents::SAVE, $event);
