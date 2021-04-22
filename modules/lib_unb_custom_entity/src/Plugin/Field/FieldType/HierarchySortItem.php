@@ -90,7 +90,7 @@ class HierarchySortItem extends StringItem {
     $length = $this->getChunkSize();
     $base_field_value = substr($this->getBaseFieldValue(), 0, $length);
 
-    return strtolower(str_pad($base_field_value, $length + 1, $this->getFill(), STR_PAD_LEFT));
+    return strtoupper(str_pad($base_field_value, $length + 1, $this->getFill(), STR_PAD_RIGHT));
   }
 
   /**
