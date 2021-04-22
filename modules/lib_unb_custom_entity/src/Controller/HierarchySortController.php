@@ -86,12 +86,22 @@ class HierarchySortController extends ControllerBase {
    *   route of the entity type assigned to the controller.
    */
   public function sort() {
-    /** @var \Drupal\lib_unb_custom_entity\Entity\SortableHierarchicalInterface $sortable_hierarchical_entity */
-    foreach ($this->entityStorage()->loadMultiple() as $sortable_hierarchical_entity) {
+    /** @var \Drupal\lib_unb_custom_entity\Entity\SortableHierarchicalInterface[] $sortable_hierarchical_entities */
+    $sortable_hierarchical_entities = $this->entityStorage()->loadMultiple();
+
+    // Reset
+    foreach ($sortable_hierarchical_entities as $sortable_hierarchical_entity) {
+      $sortable_hierarchical_entity->set(SortableHierarchicalInterface::FIELD_SORT_KEY, NULL);
+      $sortable_hierarchical_entity->save();
+    }
+
+    // Sort
+    foreach ($sortable_hierarchical_entities as $sortable_hierarchical_entity) {
       $sortable_hierarchical_entity->get(SortableHierarchicalInterface::FIELD_SORT_KEY)
         ->applyDefaultValue();
       $sortable_hierarchical_entity->save();
     }
+
     return $this->redirect("entity.{$this->getEntityType()->id()}.collection");
   }
 
