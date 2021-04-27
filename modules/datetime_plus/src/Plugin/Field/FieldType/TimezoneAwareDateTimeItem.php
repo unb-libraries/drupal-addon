@@ -30,10 +30,12 @@ class TimezoneAwareDateTimeItem extends DateTimeItem implements TimezoneAwareDat
   /**
    * {@inheritDoc}
    */
-  public function __construct(DataDefinitionInterface $definition, $name = NULL, TypedDataInterface $parent = NULL) {
-    // @todo Replace by proper dependency injection once FieldType plugins support it.
-    self::$dateTimeZoneResolverManager = \Drupal::service('plugin.manager.timezone_resolver');
-    parent::__construct($definition, $name, $parent);
+  public static function dateTimeZoneResolverManager() {
+    // @todo Use constructor dependency injection once FieldType plugins support it.
+    if (!isset(self::$dateTimeZoneResolverManager)) {
+      self::$dateTimeZoneResolverManager = \Drupal::service('plugin.manager.timezone_resolver');
+    }
+    return self::$dateTimeZoneResolverManager;
   }
 
   /**
