@@ -8,11 +8,13 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\lib_unb_custom_entity\Entity\HierarchicalInterface;
 
 /**
- * Plugin implementation of the 'string' formatter.
+ * Plugin implementation of the 'hierarchy_prefix' formatter.
+ *
+ * Renders a hierarchy level indicator as string-field prefix.
  *
  * @FieldFormatter(
- *   id = "hierarchy_label",
- *   label = @Translation("Hierarchy label"),
+ *   id = "hierarchy_prefix",
+ *   label = @Translation("Hierarchy prefix"),
  *   field_types = {
  *     "string",
  *   },
@@ -23,7 +25,7 @@ use Drupal\lib_unb_custom_entity\Entity\HierarchicalInterface;
  *
  * @package Drupal\lib_unb_custom_entity\Plugin\Field\FieldFormatter
  */
-class HierarchyLabel extends StringFormatter {
+class HierarchyPrefix extends StringFormatter {
 
   /**
    * {@inheritDoc}
