@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\lib_unb_custom_entity\Entity;
+namespace Drupal\entity_hierarchy\Entity;
 
 use Drupal\Core\Entity\EntityInterface;
 

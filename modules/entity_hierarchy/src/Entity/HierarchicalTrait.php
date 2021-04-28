@@ -1,9 +1,11 @@
 <?php
 
-namespace Drupal\lib_unb_custom_entity\Entity;
+namespace Drupal\entity_hierarchy\Entity;
 
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\entity_hierarchy\Entity\HierarchicalInterface;
+use function t;
 
 /**
  * Trait to make entities members of a hierarchical structure.

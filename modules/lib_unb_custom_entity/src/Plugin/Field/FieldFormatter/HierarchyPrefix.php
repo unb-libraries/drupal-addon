@@ -5,7 +5,7 @@ namespace Drupal\lib_unb_custom_entity\Plugin\Field\FieldFormatter;
 use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\Plugin\Field\FieldFormatter\StringFormatter;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\lib_unb_custom_entity\Entity\HierarchicalInterface;
+use Drupal\entity_hierarchy\Entity\HierarchicalInterface;
 
 /**
  * Plugin implementation of the 'hierarchy_prefix' formatter.
@@ -85,7 +85,7 @@ class HierarchyPrefix extends StringFormatter {
   /**
    * Build the prefix that indicates the nesting level within the hierarchy.
    *
-   * @param \Drupal\lib_unb_custom_entity\Entity\HierarchicalInterface $entity
+   * @param \Drupal\entity_hierarchy\Entity\HierarchicalInterface $entity
    *   A hierarchical entity.
    *
    * @return string

@@ -4,6 +4,7 @@ namespace Drupal\lib_unb_custom_entity\Entity;
 
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\entity_hierarchy\Entity\HierarchicalTrait;
 
 /**
  * Trait to make hierarchical entities sortable.

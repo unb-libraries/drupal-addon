@@ -2,6 +2,8 @@
 
 namespace Drupal\lib_unb_custom_entity\Entity;
 
+use Drupal\entity_hierarchy\Entity\HierarchicalInterface;
+
 /**
  * Trait to render a list of entities as a hierarchically sorted list.
  *
@@ -12,7 +14,7 @@ trait SortableHierarchicalEntityListBuilderTrait {
   /**
    * Build a prefix for row rendering the given location.
    *
-   * @param \Drupal\lib_unb_custom_entity\Entity\HierarchicalInterface $entity
+   * @param \Drupal\entity_hierarchy\Entity\HierarchicalInterface $entity
    *   A hierarchical entity.
    * @param string $prefix
    *   A character sequence to use as row prefix.

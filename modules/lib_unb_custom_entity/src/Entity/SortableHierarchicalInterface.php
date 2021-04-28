@@ -2,6 +2,8 @@
 
 namespace Drupal\lib_unb_custom_entity\Entity;
 
+use Drupal\entity_hierarchy\Entity\HierarchicalInterface;
+
 /**
  * Interface for sortable, hierarchical entities.
  *

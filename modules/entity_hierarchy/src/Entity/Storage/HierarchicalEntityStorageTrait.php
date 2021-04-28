@@ -3,7 +3,7 @@
 namespace Drupal\entity_hierarchy\Entity\Storage;
 
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\lib_unb_custom_entity\Entity\HierarchicalInterface;
+use Drupal\entity_hierarchy\Entity\HierarchicalInterface;
 
 /**
  * Provides methods for loading entities in a hierarchy.
@@ -31,7 +31,7 @@ trait HierarchicalEntityStorageTrait {
    * {@inheritDoc}
    */
   public function loadFellows(EntityInterface $entity) {
-    /** @var \Drupal\lib_unb_custom_entity\Entity\HierarchicalInterface $entity */
+    /** @var \Drupal\entity_hierarchy\Entity\HierarchicalInterface $entity */
 
     $ids = [];
     if ($superior = $entity->getSuperior()) {
