@@ -5,7 +5,7 @@ namespace Drupal\entity_hierarchy\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\lib_unb_custom_entity\Entity\SortableHierarchicalInterface;
+use Drupal\entity_hierarchy\Entity\SortableHierarchicalInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -86,7 +86,7 @@ class HierarchySortController extends ControllerBase {
    *   route of the entity type assigned to the controller.
    */
   public function sort() {
-    /** @var \Drupal\lib_unb_custom_entity\Entity\SortableHierarchicalInterface[] $sortable_hierarchical_entities */
+    /** @var \Drupal\entity_hierarchy\Entity\SortableHierarchicalInterface[] $sortable_hierarchical_entities */
     $sortable_hierarchical_entities = $this->entityStorage()->loadMultiple();
 
     // Reset

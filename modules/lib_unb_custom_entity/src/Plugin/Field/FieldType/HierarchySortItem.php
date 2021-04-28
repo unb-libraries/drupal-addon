@@ -4,7 +4,7 @@ namespace Drupal\lib_unb_custom_entity\Plugin\Field\FieldType;
 
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\Plugin\Field\FieldType\StringItem;
-use Drupal\lib_unb_custom_entity\Entity\SortableHierarchicalInterface;
+use Drupal\entity_hierarchy\Entity\SortableHierarchicalInterface;
 
 /**
  * Defines the 'hierarchy_sort' entity field type.
