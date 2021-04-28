@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\lib_unb_custom_entity\Plugin\Field\FieldType;
+namespace Drupal\entity_hierarchy\Plugin\Field\FieldType;
 
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\Plugin\Field\FieldType\StringItem;
@@ -46,6 +46,27 @@ class HierarchySortItem extends StringItem {
   public function preSave() {
     parent::preSave();
     $this->applyDefaultValue();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public static function generateSampleValue(FieldDefinitionInterface $field_definition) {
+    /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $field_manager */
+    $field_manager = \Drupal::service('entity_field.manager');
+    $entity_type_id = $field_definition->getTargetEntityTypeId();
+    $field_definitions = $field_manager->getBaseFieldDefinitions($entity_type_id);
+
+    $samples = [];
+    foreach ($field_definition->getSetting(self::FIELDS) as $field_name) {
+      $field_item_class = $field_definitions[$field_name]->getClass();
+      $sample = call_user_func([$field_item_class, 'generateSampleValue'], $field_definition[$field_name]);
+      str_pad($sample, $field_definition->getSetting(self::CHUNK_SIZE) + 1, $field_definition->getSetting(self::FILL));
+    }
+
+    $delimiter = $field_definition->getSetting(self::DELIMITER);
+    $values['value'] = implode($delimiter, $samples);
+    return $values;
   }
 
   /**
