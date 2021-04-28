@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\lib_unb_custom_entity\Plugin\Field\FieldFormatter;
+namespace Drupal\entity_hierarchy\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\Plugin\Field\FieldFormatter\StringFormatter;
