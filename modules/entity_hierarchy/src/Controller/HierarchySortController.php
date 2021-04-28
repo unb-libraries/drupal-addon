@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\lib_unb_custom_entity\Controller;
+namespace Drupal\entity_hierarchy\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityStorageInterface;
