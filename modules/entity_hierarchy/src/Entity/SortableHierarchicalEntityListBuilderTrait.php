@@ -1,8 +1,8 @@
 <?php
 
-namespace Drupal\lib_unb_custom_entity\Entity;
+namespace Drupal\entity_hierarchy\Entity;
 
-use Drupal\entity_hierarchy\Entity\HierarchicalInterface;
+use Drupal\lib_unb_custom_entity\Entity\SortableHierarchicalInterface;
 
 /**
  * Trait to render a list of entities as a hierarchically sorted list.
