@@ -1,0 +1,6 @@
+name: 'Entity hierarchy'
+type: module
+description: 'Supports building hierarchical entity data structures.'
+core: 8.x
+package: 'Custom entity'
+dependencies: { }

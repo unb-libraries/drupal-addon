@@ -1,0 +1,17 @@
+{
+  "name": "unb-libraries/entity_hierarchy",
+  "description": "Supports building hierarchical entity data structures.",
+  "type": "drupal-module",
+  "require": {},
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Patrick Schilf",
+      "email": "patrick.schilf@unb.ca"
+    },
+    {
+      "name": "UNB Libraries",
+      "email": "libsupport@unb.ca"
+    }
+  ]
+}
