@@ -23,7 +23,7 @@ use Drupal\entity_hierarchy\Entity\SortableHierarchicalInterface;
  */
 class HierarchySortItem extends StringItem {
 
-  protected const FIELDS = 'fields';
+  protected const FIELD = 'field';
   protected const DELIMITER = 'delimiter';
   protected const FILL = 'fill';
   protected const CHUNK_SIZE = 'chunk_size';
@@ -34,11 +34,9 @@ class HierarchySortItem extends StringItem {
   public static function defaultStorageSettings() {
     return [
       self::CHUNK_SIZE => 5,
-      self::FIELDS => [
-        'id',
-      ],
-      self::DELIMITER => '',
-      self::FILL => '#',
+      self::FIELD => 'id',
+      self::DELIMITER => '#',
+      self::FILL => '0',
     ] + parent::defaultStorageSettings();
   }
 
@@ -106,20 +104,28 @@ class HierarchySortItem extends StringItem {
    * {@inheritDoc}
    */
   public function applyDefaultValue($notify = TRUE) {
-    parent::applyDefaultValue($notify);
+    $value = $this->value ?: $this->getBaseFieldValue();
+    $global_key = $value;
 
-    $sort_key = $this->buildSortKey();
     $entity = $this->getEntity();
-
-    if ($entity instanceof SortableHierarchicalInterface && $parent = $entity->getSuperior()) {
-      if (!$parent->getSortKey()) {
-        $parent->get(SortableHierarchicalInterface::FIELD_SORT_KEY)
-          ->applyDefaultValue();
-        $parent->save();
+    if ($entity instanceof SortableHierarchicalInterface) {
+      $field_name = SortableHierarchicalInterface::FIELD_SORT_KEY;
+      if ($superior = $entity->getSuperior()) {
+        if (!$superior_key = $superior->get($field_name)->value_global) {
+          $superior->get($field_name)
+            ->applyDefaultValue();
+          $superior_key = $superior->get($field_name)
+            ->value_global;
+        }
+        $global_key = $superior_key . $this->getDelimiter() . $global_key;
       }
-      $sort_key = $parent->getSortKey() . $this->getDelimiter() . $sort_key;
     }
-    $this->setValue(['value' => $sort_key], $notify);
+
+    $this->setValue([
+      'value' => $value,
+      'value_global' => $global_key,
+    ], $notify);
+
     return $this;
   }
 
@@ -132,19 +138,6 @@ class HierarchySortItem extends StringItem {
   protected function getDelimiter() {
     return $this->getFieldDefinition()
       ->getSetting(self::DELIMITER);
-  }
-
-  /**
-   * Build a sort key for the entity to which the computed field is attached.
-   *
-   * @return string
-   *   A string.
-   */
-  protected function buildSortKey() {
-    $length = $this->getChunkSize();
-    $base_field_value = substr($this->getBaseFieldValue(), 0, $length);
-
-    return strtoupper(str_pad($base_field_value, $length + 1, $this->getFill(), STR_PAD_RIGHT));
   }
 
   /**
@@ -172,25 +165,16 @@ class HierarchySortItem extends StringItem {
   /**
    * Retrieve the value of the base field.
    *
-   * @param string $delimiter
-   *   A string.
-   *
    * @return string
    *   A string. If the base field is a multi-value field, all field values
    *   will be concatenated.
    */
-  protected function getBaseFieldValue($delimiter = '') {
-    $values = [];
-
-    $item_list = $this->getEntity()->get($this->getBaseFieldName());
-    foreach ($item_list as $item) {
-      $value = $item->getValue();
-      $key = array_keys($value)[0];
-      $values[] = $value[$key];
-    }
-
-    return implode($delimiter, $values);
-
+  protected function getBaseFieldValue() {
+    $value = $this->getEntity()->get($this->getBaseFieldName())
+      ->getValue()[0];
+    $chunk_size = $this->getChunkSize();
+    $padded_value = str_pad($value[array_keys($value)[0]], $chunk_size, $this->getFill(), STR_PAD_LEFT);
+    return strtoupper(substr($padded_value, 0, $chunk_size));
   }
 
   /**
@@ -200,8 +184,10 @@ class HierarchySortItem extends StringItem {
    *   A string.
    */
   protected function getBaseFieldName() {
-    return $this->getFieldDefinition()
-      ->getSetting(self::FIELDS)[0];
+    $field_name = $this->getFieldDefinition()
+      ->getSetting(self::FIELD);
+
+    return $field_name;
   }
 
 }
