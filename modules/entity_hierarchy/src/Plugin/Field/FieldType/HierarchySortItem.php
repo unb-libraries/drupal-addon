@@ -5,6 +5,7 @@ namespace Drupal\entity_hierarchy\Plugin\Field\FieldType;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Field\Plugin\Field\FieldType\StringItem;
+use Drupal\Core\TypedData\DataDefinition;
 use Drupal\entity_hierarchy\Entity\SortableHierarchicalInterface;
 
 /**
@@ -52,6 +53,24 @@ class HierarchySortItem extends StringItem {
       'binary' => $field_definition->getSetting('case_sensitive'),
     ];
     return $schema;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
+    $properties = parent::propertyDefinitions($field_definition);
+    $properties['value']
+      ->setLabel(t('Value'))
+      ->setDescription(t("Determines this item's sort position within its level of the hierarchy ."));
+
+    $properties['value_global'] = DataDefinition::create('string')
+      ->setLabel(t('Global value'))
+      ->setDescription(t("Determines this item's sort position within the entire hierarchy."))
+      ->setSetting('case_sensitive', $field_definition->getSetting('case_sensitive'))
+      ->setRequired(TRUE);
+
+    return $properties;
   }
 
   /**
