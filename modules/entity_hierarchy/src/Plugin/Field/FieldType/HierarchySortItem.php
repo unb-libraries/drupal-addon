@@ -187,10 +187,36 @@ class HierarchySortItem extends StringItem {
     $field_name = $this->getFieldDefinition()
       ->getSetting(self::FIELD);
 
-    if (!$field_name) {
-      $field_name = $this->getEntity()
+    $label_field_name = $this->getEntity()
+      ->getEntityType()
+      ->getKey('label');
+
+    if ($this->getEntity()->getEntityType()->getBundleEntityType()) {
+      $bundle_field_name = $this->getEntity()
         ->getEntityType()
-        ->getKey('label');
+        ->getKey('bundle');
+    }
+    else {
+      $bundle_field_name = '';
+    }
+
+    if (!$field_name) {
+      $field_name = $label_field_name;
+    }
+
+    if ($bundle_field_name && is_array($field_name)) {
+      $bundle = $this->getEntity()
+        ->get($bundle_field_name)
+        ->target_id;
+      if (array_key_exists($bundle, $field_name)) {
+        $field_name = $field_name[$bundle];
+      }
+      elseif (array_key_exists('default', $field_name)) {
+        $field_name = $field_name['default'];
+      }
+      else {
+        $field_name = $label_field_name;
+      }
     }
 
     return $field_name;
