@@ -34,7 +34,7 @@ class HierarchySortItem extends StringItem {
   public static function defaultStorageSettings() {
     return [
       self::CHUNK_SIZE => 5,
-      self::FIELD => 'id',
+      self::FIELD => NULL,
       self::DELIMITER => '#',
       self::FILL => '0',
     ] + parent::defaultStorageSettings();
@@ -186,6 +186,12 @@ class HierarchySortItem extends StringItem {
   protected function getBaseFieldName() {
     $field_name = $this->getFieldDefinition()
       ->getSetting(self::FIELD);
+
+    if (!$field_name) {
+      $field_name = $this->getEntity()
+        ->getEntityType()
+        ->getKey('label');
+    }
 
     return $field_name;
   }
