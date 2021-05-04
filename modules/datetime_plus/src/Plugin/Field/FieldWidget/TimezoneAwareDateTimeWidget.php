@@ -7,6 +7,7 @@ use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\datetime\Plugin\Field\FieldWidget\DateTimeDefaultWidget;
+use Drupal\datetime_plus\Datetime\DrupalDateTimePlus;
 use Drupal\datetime_plus\Plugin\TimeZoneResolver\DateTimeZoneResolverManagerInterface;
 use Drupal\datetime_plus\Plugin\TimeZoneResolver\DateTimeZoneResolverTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -68,7 +69,14 @@ class TimezoneAwareDateTimeWidget extends DateTimeDefaultWidget {
     );
     $element['value']['#date_timezone'] = $timezone->getName();
 
-    if ($items[$delta]->date) {
+    if (!$items[$delta]->date) {
+      $default_value = $items[$delta]->getFieldDefinition()->getDefaultValueLiteral();
+      if (!empty($default_value) && isset($default_value[$delta])) {
+        $date = new DrupalDateTimePlus($default_value[$delta]['value'], $timezone->getName());
+        $element['value']['#default_value'] = $this->createDefaultValue($date, $element['value']['#date_timezone']);
+      }
+    }
+    else {
       $date = $items[$delta]->date;
       // The date was created and verified during field_load(), so it is safe to
       // use without further inspection.
