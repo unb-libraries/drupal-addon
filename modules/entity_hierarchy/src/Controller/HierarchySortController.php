@@ -89,13 +89,6 @@ class HierarchySortController extends ControllerBase {
     /** @var \Drupal\entity_hierarchy\Entity\SortableHierarchicalInterface[] $sortable_hierarchical_entities */
     $sortable_hierarchical_entities = $this->entityStorage()->loadMultiple();
 
-    // Reset
-    foreach ($sortable_hierarchical_entities as $sortable_hierarchical_entity) {
-      $sortable_hierarchical_entity->set(SortableHierarchicalInterface::FIELD_SORT_KEY, NULL);
-      $sortable_hierarchical_entity->save();
-    }
-
-    // Sort
     foreach ($sortable_hierarchical_entities as $sortable_hierarchical_entity) {
       $sortable_hierarchical_entity->get(SortableHierarchicalInterface::FIELD_SORT_KEY)
         ->applyDefaultValue();
