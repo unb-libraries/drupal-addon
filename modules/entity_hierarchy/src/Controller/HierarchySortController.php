@@ -92,6 +92,9 @@ class HierarchySortController extends ControllerBase {
     foreach ($sortable_hierarchical_entities as $sortable_hierarchical_entity) {
       $sortable_hierarchical_entity->get(SortableHierarchicalInterface::FIELD_SORT_KEY)
         ->applyDefaultValue();
+      if ($sortable_hierarchical_entity->getEntityType()->isRevisionable()) {
+        $sortable_hierarchical_entity->setNewRevision(FALSE);
+      }
       $sortable_hierarchical_entity->save();
     }
 
