@@ -104,7 +104,7 @@ class HierarchySortItem extends StringItem {
    * {@inheritDoc}
    */
   public function applyDefaultValue($notify = TRUE) {
-    $value = $this->value ?: $this->getBaseFieldValue();
+    $value = $this->getBaseFieldValue();
     $global_key = $value;
 
     $entity = $this->getEntity();
@@ -173,8 +173,9 @@ class HierarchySortItem extends StringItem {
     $value = $this->getEntity()->get($this->getBaseFieldName())
       ->getValue()[0];
     $chunk_size = $this->getChunkSize();
-    $padded_value = str_pad($value[array_keys($value)[0]], $chunk_size, $this->getFill(), STR_PAD_LEFT);
-    return strtoupper(substr($padded_value, 0, $chunk_size));
+    $chunk = substr($value[array_keys($value)[0]], 0, $chunk_size);
+    $padded_value = str_pad($chunk, $chunk_size, $this->getFill(), STR_PAD_RIGHT);
+    return strtoupper($padded_value);
   }
 
   /**
