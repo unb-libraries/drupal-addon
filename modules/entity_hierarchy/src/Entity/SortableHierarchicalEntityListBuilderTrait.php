@@ -33,9 +33,9 @@ trait SortableHierarchicalEntityListBuilderTrait {
   /**
    * {@inheritDoc}
    */
-  public function sortKeys() {
+  protected function sortKeys() {
     return [
-      SortableHierarchicalInterface::FIELD_SORT_KEY,
+      SortableHierarchicalInterface::FIELD_SORT_KEY . '__value_global',
     ];
   }
 
