@@ -2,4 +2,5 @@ name: 'Grid Select'
 type: module
 description: 'Provides a form element to render a grid of checkboxes.'
 core: 8.x
+core_version_requirement: ^8 || ^9
 package: 'Development'
