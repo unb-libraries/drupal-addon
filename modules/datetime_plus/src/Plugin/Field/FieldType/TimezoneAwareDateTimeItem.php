@@ -62,8 +62,8 @@ class TimezoneAwareDateTimeItem extends DateTimeItem implements TimezoneAwareDat
     $properties['date']
       ->setClass(TimezoneAwareDateTimeComputed::class)
       ->setSetting('timezone', static::resolve(
-        $field_definition->getSetting('timezone'),
-        $field_definition->getSetting('resolver_settings')
+        $field_definition->getSetting('timezone') ?: static::defaultFieldSettings()['timezone'],
+        $field_definition->getSetting('resolver_settings') ?: static::defaultFieldSettings()['resolver_settings']
       ));
 
     return $properties;
