@@ -5,3 +5,8 @@ services:
       - '@entity_type.manager'
     tags:
       - { name: event_subscriber }
+
+  local_action_builder.entity.collector:
+    class: Drupal\custom_entity_ui\Menu\LocalEntityActionBuilderCollector
+    tags:
+      - { name: 'service_collector', tag: 'local_entity_action_builder', call: 'addLocalEntityActionBuilder' }

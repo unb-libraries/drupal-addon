@@ -17,3 +17,18 @@ function custom_entity_ui_help($route_name, RouteMatchInterface $route_match) {
     default:
   }
 }
+
+/**
+ * Implements hook_menu_local_actions_alter().
+ */
+function custom_entity_ui_menu_local_actions_alter(&$local_actions) {
+  $local_action_builders = Drupal::service('local_action_builder.entity.collector')->getLocalEntityActionBuilders();
+  foreach (Drupal::entityTypeManager()->getDefinitions() as $entity_type) {
+    /** @var \Drupal\custom_entity_ui\Menu\LocalEntityActionBuilderInterface $action_builder */
+    foreach ($local_action_builders as $action_builder) {
+      $local_action = $action_builder->buildLocalAction($entity_type);
+      $local_actions[$local_action['id']] = $local_action;
+    }
+  }
+
+}
