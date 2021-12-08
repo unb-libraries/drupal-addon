@@ -19,15 +19,18 @@ services:
 
   local_action_builder.entity_fields:
     class: Drupal\custom_entity_ui\Menu\LocalEntityFieldsActionBuilder
+    parent: 'local_action_builder.content_entity'
     tags:
       - { name: 'local_entity_action_builder' }
 
   local_action_builder.entity_display:
     class: Drupal\custom_entity_ui\Menu\LocalEntityViewDisplayActionBuilder
+    parent: 'local_action_builder.content_entity'
     tags:
       - { name: 'local_entity_action_builder' }
 
   local_action_builder.entity_form:
     class: Drupal\custom_entity_ui\Menu\LocalEntityFormDisplayActionBuilder
+    parent: 'local_action_builder.content_entity'
     tags:
       - { name: 'local_entity_action_builder' }

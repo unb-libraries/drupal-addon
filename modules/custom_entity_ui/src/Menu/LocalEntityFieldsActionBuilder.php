@@ -8,33 +8,42 @@ use Drupal\Core\Menu\LocalActionDefault;
 /**
  * Local action builder for content entities' fields settings.
  */
-class LocalEntityFieldsActionBuilder implements LocalEntityActionBuilderInterface {
+class LocalEntityFieldsActionBuilder extends LocalContentEntityActionBuilder {
 
   /**
    * {@inheritDoc}
    */
   public function buildLocalAction(EntityTypeInterface $entity_type) {
-    $entity_type_id = $entity_type->id();
-    return [
-      'id' => "entity.{$entity_type_id}.manage_fields",
-      'title' => t('Manage fields'),
-      'route_name' => "entity.{$entity_type_id}.field_ui_fields",
-      'class' => LocalActionDefault::class,
-      'options' => [],
-      'appears_on' => [
-        "entity.{$entity_type_id}.canonical",
-        "entity.{$entity_type_id}.add_form",
-        "entity.{$entity_type_id}.edit_form",
-      ],
-      'weight' => 0,
-    ];
+    $local_action = parent::buildLocalAction($entity_type);
+    $local_action['class'] = LocalActionDefault::class;
+    return $local_action;
   }
-
 
   /**
    * {@inheritDoc}
    */
-  public function applies(EntityTypeInterface $entity_type) {
-    return $entity_type->getGroup() === 'content';
+  protected function getId(EntityTypeInterface $entity_type) {
+    return "entity.{$entity_type->id()}.manage_fields";
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  protected function getTargetRouteId(EntityTypeInterface $entity_type) {
+    return "entity.{$entity_type->id()}.field_ui_fields";
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  protected function getAppearsOn(EntityTypeInterface $entity_type) {
+    $entity_type_id = $entity_type->id();
+    return [
+      "entity.{$entity_type_id}.canonical",
+      "entity.{$entity_type_id}.add_form",
+      "entity.{$entity_type_id}.edit_form",
+    ];
+  }
+
+
 }
