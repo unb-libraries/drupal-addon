@@ -23,9 +23,6 @@ class LocalEntityViewDisplayActionBuilder implements LocalEntityActionBuilderInt
       'appears_on' => [
         "entity.{$entity_type_id}.canonical",
       ],
-      'cache_contexts' => [
-        'url.path',
-      ],
       'weight' => 0,
     ];
   }

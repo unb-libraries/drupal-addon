@@ -24,9 +24,6 @@ class LocalEntityFormDisplayActionBuilder implements LocalEntityActionBuilderInt
         "entity.{$entity_type_id}.add_form",
         "entity.{$entity_type_id}.edit_form",
       ],
-      'cache_contexts' => [
-        'url.path',
-      ],
       'weight' => 0,
     ];
   }
