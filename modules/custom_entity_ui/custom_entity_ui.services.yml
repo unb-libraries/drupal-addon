@@ -15,3 +15,8 @@ services:
     class: Drupal\custom_entity_ui\Menu\LocalEntityFieldsActionBuilder
     tags:
       - { name: 'local_entity_action_builder' }
+
+  local_action_builder.entity_form:
+    class: Drupal\custom_entity_ui\Menu\LocalEntityFormDisplayActionBuilder
+    tags:
+      - { name: 'local_entity_action_builder' }
