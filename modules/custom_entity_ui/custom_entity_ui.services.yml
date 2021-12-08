@@ -10,3 +10,8 @@ services:
     class: Drupal\custom_entity_ui\Menu\LocalEntityActionBuilderCollector
     tags:
       - { name: 'service_collector', tag: 'local_entity_action_builder', call: 'addLocalEntityActionBuilder' }
+
+  local_action_builder.entity_fields:
+    class: Drupal\custom_entity_ui\Menu\LocalEntityFieldsActionBuilder
+    tags:
+      - { name: 'local_entity_action_builder' }
