@@ -11,6 +11,12 @@ services:
     tags:
       - { name: 'service_collector', tag: 'local_entity_action_builder', call: 'addLocalEntityActionBuilder' }
 
+  local_action_builder.content_entity:
+    class: Drupal\custom_entity_ui\Menu\LocalContentEntityActionBuilder
+    arguments:
+      - '@router.route_provider'
+    abstract: true
+
   local_action_builder.entity_fields:
     class: Drupal\custom_entity_ui\Menu\LocalEntityFieldsActionBuilder
     tags:

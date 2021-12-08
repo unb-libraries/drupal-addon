@@ -3,7 +3,8 @@
 namespace Drupal\custom_entity_ui\Menu;
 
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\Menu\LocalActionDefault;
+use Drupal\Core\Routing\RouteProviderInterface;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
 /**
  * Base class for local content entity action builders.
@@ -11,6 +12,33 @@ use Drupal\Core\Menu\LocalActionDefault;
  * @package Drupal\custom_entity_ui\Menu
  */
 abstract class LocalContentEntityActionBuilder implements LocalEntityActionBuilderInterface {
+
+  /**
+   * The route provider.
+   *
+   * @var \Drupal\Core\Routing\RouteProviderInterface
+   */
+  protected $routeProvider;
+
+  /**
+   * Get the route provider.
+   *
+   * @return \Drupal\Core\Routing\RouteProviderInterface
+   *   A route provider object.
+   */
+  protected function routeProvider() {
+    return $this->routeProvider;
+  }
+
+  /**
+   * Create a LocalContentEntityActionBuilder instance.
+   *
+   * @param \Drupal\Core\Routing\RouteProviderInterface $route_provider
+   *   A route provider object.
+   */
+  public function __construct(RouteProviderInterface $route_provider) {
+    $this->routeProvider = $route_provider;
+  }
 
   /**
    * {@inheritDoc}
@@ -25,6 +53,26 @@ abstract class LocalContentEntityActionBuilder implements LocalEntityActionBuild
       'appears_on' => $this->getAppearsOn($entity_type),
       'weight' => 0,
     ];
+  }
+
+  /**
+   * Whether the route with the given name exists.
+   *
+   * @param string $route_name
+   *   A route name.
+   *
+   * @return bool
+   *   TRUE if the route provider provides a route with the given name.
+   *   FALSE otherwise.
+   */
+  protected function doesRouteExist($route_name) {
+    try {
+      return !is_null($this->routeProvider()
+        ->getRouteByName($route_name));
+    }
+    catch (RouteNotFoundException $e) {
+      return FALSE;
+    }
   }
 
   /**
@@ -61,7 +109,8 @@ abstract class LocalContentEntityActionBuilder implements LocalEntityActionBuild
    * {@inheritDoc}
    */
   public function applies(EntityTypeInterface $entity_type) {
-    return $entity_type->getGroup() === 'content';
+    return $entity_type->getGroup() === 'content'
+      && $this->doesRouteExist($this->getTargetRouteId($entity_type));
   }
 
 }
