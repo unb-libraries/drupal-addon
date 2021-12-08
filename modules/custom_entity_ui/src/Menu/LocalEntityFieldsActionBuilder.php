@@ -23,6 +23,8 @@ class LocalEntityFieldsActionBuilder implements LocalEntityActionBuilderInterfac
       'options' => [],
       'appears_on' => [
         "entity.{$entity_type_id}.canonical",
+        "entity.{$entity_type_id}.add_form",
+        "entity.{$entity_type_id}.edit_form",
       ],
       'weight' => 0,
     ];
