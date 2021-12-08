@@ -4,6 +4,7 @@ namespace Drupal\custom_entity_ui\Menu;
 
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Routing\RouteProviderInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
 /**
@@ -12,6 +13,8 @@ use Symfony\Component\Routing\Exception\RouteNotFoundException;
  * @package Drupal\custom_entity_ui\Menu
  */
 abstract class LocalContentEntityActionBuilder implements LocalEntityActionBuilderInterface {
+
+  use StringTranslationTrait;
 
   /**
    * The route provider.
@@ -46,7 +49,7 @@ abstract class LocalContentEntityActionBuilder implements LocalEntityActionBuild
   public function buildLocalAction(EntityTypeInterface $entity_type) {
     return [
       'id' => $this->getId($entity_type),
-      'title' => t('Manage fields'),
+      'title' => $this->getTitle($entity_type),
       'route_name' => $this->getTargetRouteId($entity_type),
       'class' => DestinationAwareLocalAction::class,
       'options' => [],
@@ -85,6 +88,17 @@ abstract class LocalContentEntityActionBuilder implements LocalEntityActionBuild
    *   A string.
    */
   abstract protected function getId(EntityTypeInterface $entity_type);
+
+  /**
+   * Get the label of the local action.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   An entity type.
+   *
+   * @return string|\Drupal\Core\StringTranslation\TranslatableMarkup
+   *   A (translatable) string.
+   */
+  abstract protected function getTitle(EntityTypeInterface $entity_type);
 
   /**
    * Get the ID of the route the action should point at.

@@ -19,6 +19,13 @@ class LocalEntityFormDisplayActionBuilder extends LocalContentEntityActionBuilde
   /**
    * {@inheritDoc}
    */
+  protected function getTitle(EntityTypeInterface $entity_type) {
+    return $this->t('Manage form display');
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   protected function getTargetRouteId(EntityTypeInterface $entity_type) {
     return "entity.entity_form_display.{$entity_type->id()}.default";
   }

@@ -29,6 +29,13 @@ class LocalEntityFieldsActionBuilder extends LocalContentEntityActionBuilder {
   /**
    * {@inheritDoc}
    */
+  protected function getTitle(EntityTypeInterface $entity_type) {
+    return $this->t('Manage fields');
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   protected function getTargetRouteId(EntityTypeInterface $entity_type) {
     return "entity.{$entity_type->id()}.field_ui_fields";
   }

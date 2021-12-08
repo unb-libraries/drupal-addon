@@ -13,8 +13,15 @@ class LocalEntityViewDisplayActionBuilder extends LocalContentEntityActionBuilde
    * {@inheritDoc}
    */
   protected function getId(EntityTypeInterface $entity_type) {
-  return "entity.{$entity_type->id()}.manage_display";
-}
+    return "entity.{$entity_type->id()}.manage_display";
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  protected function getTitle(EntityTypeInterface $entity_type) {
+    return $this->t('Manage view display');
+  }
 
   /**
    * {@inheritDoc}
