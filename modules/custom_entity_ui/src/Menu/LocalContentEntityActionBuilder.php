@@ -123,7 +123,9 @@ abstract class LocalContentEntityActionBuilder implements LocalEntityActionBuild
    * {@inheritDoc}
    */
   public function applies(EntityTypeInterface $entity_type) {
+    // @todo: Support bundled entities.
     return $entity_type->getGroup() === 'content'
+      && !$entity_type->hasKey('bundle')
       && $this->doesRouteExist($this->getTargetRouteId($entity_type));
   }
 
