@@ -4,6 +4,8 @@ namespace Drupal\custom_entity_ui\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Routing\RouteProviderInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Controller rendering a list of custom entity types.
@@ -11,6 +13,40 @@ use Drupal\Core\Entity\EntityTypeInterface;
  * @package Drupal\custom_entity_ui\Controller
  */
 abstract class EntityTypeListController extends ControllerBase {
+
+  /**
+   * The route provider.
+   *
+   * @var \Drupal\Core\Routing\RouteProviderInterface
+   */
+  protected $routeProvider;
+
+  /**
+   * Get the route provider.
+   *
+   * @return \Drupal\Core\Routing\RouteProviderInterface
+   *   A route provider object.
+   */
+  protected function routeProvider() {
+    return $this->routeProvider;
+  }
+
+  /**
+   * Create a new EntityTypeListController instance.
+   *
+   * @param \Drupal\Core\Routing\RouteProviderInterface $route_provider
+   *   A route provider.
+   */
+  public function __construct(RouteProviderInterface $route_provider) {
+    $this->routeProvider = $route_provider;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static($container->get('router.route_provider'));
+  }
 
   /**
    * Creates a list of entity types.
@@ -38,10 +74,21 @@ abstract class EntityTypeListController extends ControllerBase {
    *   An entity type.
    *
    * @return bool
-   *   Always TRUE, i.e. all entity types are contained.
+   *   TRUE if the entity type passes the filter, i.e. is contained.
+   *   FALSE if it is excluded.
    */
   protected function filter(EntityTypeInterface $entity_type) {
-    return $entity_type->getGroup() === 'content';
+    if ($entity_type->getGroup() !== 'content') {
+      return FALSE;
+    }
+
+    if ($field_ui_base_route = $entity_type->get('field_ui_base_route')) {
+      if ($this->routeProvider()->getRouteByName($field_ui_base_route)) {
+        return TRUE;
+      }
+    }
+
+    return FALSE;
   }
 
   /**
