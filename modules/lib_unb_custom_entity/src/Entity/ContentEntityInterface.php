@@ -9,7 +9,7 @@ use Drupal\Core\Entity\ContentEntityInterface as DefaultContentEntityInterface;
  *
  * @package Drupal\lib_unb_custom_entity\Entity
  */
-interface ContentEntityInterface extends DefaultContentEntityInterface, RevisionableInterface {
+interface ContentEntityInterface extends DefaultContentEntityInterface {
 
   const CREATED = 'created';
   const CHANGED = 'changed';
