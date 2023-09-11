@@ -170,11 +170,16 @@ class HierarchySortItem extends StringItem {
    *   will be concatenated.
    */
   protected function getBaseFieldValue() {
-    $value = $this->getEntity()->get($this->getBaseFieldName())
-      ->getValue()[0];
+    $value = $this->getEntity()->get($this->getBaseFieldName())->getValue();
+    if (!$value || $value) {
+      return NULL;
+    }
+
+    $value = $value[0];
     $chunk_size = $this->getChunkSize();
     $chunk = substr($value[array_keys($value)[0]], 0, $chunk_size);
     $padded_value = str_pad($chunk, $chunk_size, $this->getFill(), STR_PAD_RIGHT);
+
     return strtoupper($padded_value);
   }
 
