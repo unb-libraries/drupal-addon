@@ -84,7 +84,7 @@ class EntityListBuilder extends DefaultEntityListBuilder {
    * @param \Drupal\Core\Entity\Query\QueryInterface $query
    *   The entity query.
    */
-  private function sort(QueryInterface &$query) {
+  protected function sort(QueryInterface &$query) {
     foreach ($this->sortKeys() as $key => $value) {
       if (is_int($key)) {
         $field_id = $value;
