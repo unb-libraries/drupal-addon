@@ -6,6 +6,6 @@
   "license": "GPL-2.0+",
   "minimum-stability": "dev",
   "require": {
-    "aws/aws-sdk-php": "3.47.0"
+    "aws/aws-sdk-php": "3.288.1"
   }
 }
