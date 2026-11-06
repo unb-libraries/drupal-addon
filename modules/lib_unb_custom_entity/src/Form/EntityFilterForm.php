@@ -2,7 +2,6 @@
 
 namespace Drupal\lib_unb_custom_entity\Form;
 
-use Consolidation\OutputFormatters\Exception\InvalidFormatException;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -175,7 +174,7 @@ class EntityFilterForm extends FormBase {
 
       if (array_key_exists('#multiple', $field) && $field['#multiple']) {
         if (!is_array($form_state->getValue($field_id))) {
-          throw new InvalidFormatException("Expected array value for {$field_id}.");
+          throw new \InvalidArgumentException("Expected array value for {$field_id}.");
         }
         $form_state->setValue($field_id, implode(';', $form_state->getValue($field_id)));
       }

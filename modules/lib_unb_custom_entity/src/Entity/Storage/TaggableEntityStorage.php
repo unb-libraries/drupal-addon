@@ -74,7 +74,7 @@ class TaggableEntityStorage extends SqlContentEntityStorage implements TaggableC
    */
   protected function loadTagsByName(array $names) {
     $query = $this->getTagStorage()
-      ->getQuery()
+      ->getQuery()->accessCheck(TRUE)
       ->condition('name', $names, 'IN');
     /** @var \Drupal\taxonomy\TermInterface[] $tags */
     $tags = $this->getTagStorage()
@@ -90,7 +90,7 @@ class TaggableEntityStorage extends SqlContentEntityStorage implements TaggableC
       'include_legacy' => FALSE,
     ];
 
-    $query = $this->getQuery('OR');
+    $query = $this->getQuery('OR')->accessCheck(TRUE);
     foreach ($tags as $tag_id => $tag) {
       if ($field = $this->getTagField($tag->bundle())) {
         $query->condition($field->getName(), $tag_id, 'CONTAINS');

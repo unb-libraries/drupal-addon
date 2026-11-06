@@ -141,7 +141,7 @@ class EntityListBuilder extends DefaultEntityListBuilder {
    *   The query.
    */
   protected function getEntityQuery() {
-    return $this->getStorage()->getQuery();
+    return $this->getStorage()->getQuery()->accessCheck(TRUE);
   }
 
   /**

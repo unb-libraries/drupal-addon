@@ -200,7 +200,7 @@ trait EntityFormOptionsTrait {
    */
   protected static function entityQuery(array $element) {
     $entity_type = static::getEntityType($element);
-    $query = \Drupal::entityQuery($entity_type->id());
+    $query = \Drupal::entityQuery($entity_type->id())->accessCheck(TRUE);
 
     foreach ($element['#filter'] as $property => $value) {
       $query->condition($property, $value);
@@ -252,7 +252,7 @@ trait EntityFormOptionsTrait {
    */
   protected static function loadTags(array $element) {
     $tag_storage = static::tagStorage();
-    $tag_query = $tag_storage->getQuery();
+    $tag_query = $tag_storage->getQuery()->accessCheck(TRUE);
 
     foreach ($element['#tags'] as $vid => $tag_names) {
       /* @noinspection PhpUnhandledExceptionInspection */

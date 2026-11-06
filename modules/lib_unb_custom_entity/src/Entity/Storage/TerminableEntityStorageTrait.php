@@ -16,7 +16,7 @@ trait TerminableEntityStorageTrait {
    */
   public function loadTerminated() {
     $query = $this
-      ->getQuery()
+      ->getQuery()->accessCheck(TRUE)
       ->exists(TerminableInterface::FIELD_DELETED);
     return $this->loadMultiple($query->execute());
   }
@@ -26,7 +26,7 @@ trait TerminableEntityStorageTrait {
    */
   public function loadCurrent() {
     $query = $this
-      ->getQuery()
+      ->getQuery()->accessCheck(TRUE)
       ->notExists(TerminableInterface::FIELD_DELETED);
     return $this->loadMultiple($query->execute());
   }

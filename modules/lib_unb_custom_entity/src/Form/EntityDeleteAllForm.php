@@ -102,7 +102,7 @@ class EntityDeleteAllForm extends ConfirmFormBase {
    */
   protected function getEntityCount() {
     $query = $this->getStorage()
-      ->getQuery()
+      ->getQuery()->accessCheck(TRUE)
       ->count();
     return $query->execute();
   }

@@ -16,7 +16,7 @@ trait HierarchicalEntityStorageTrait {
    * {@inheritDoc}
    */
   public function loadInferiors(EntityInterface $entity, $max_desc = HierarchicalInterface::UNLIMITED) {
-    $query = $this->getQuery()
+    $query = $this->getQuery()->accessCheck(TRUE)
       ->condition(HierarchicalInterface::FIELD_PARENT, $entity->id());
     $inferiors = $this->loadMultiple($query->execute());
     if ($max_desc > HierarchicalInterface::IMMEDIATE || $max_desc <= HierarchicalInterface::UNLIMITED) {
@@ -36,7 +36,7 @@ trait HierarchicalEntityStorageTrait {
     $ids = [];
     if ($superior = $entity->getSuperior()) {
       $ids = $this
-        ->getQuery()
+        ->getQuery()->accessCheck(TRUE)
         ->condition(HierarchicalInterface::FIELD_PARENT, $superior->id())
         ->execute();
     }

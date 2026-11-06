@@ -112,7 +112,7 @@ class RevisionableEntityFieldObserver implements ObserverInterface {
   /**
    * {@inheritDoc}
    */
-  public function update(\SplSubject $subject) {
+  public function update(\SplSubject $subject): void {
     if ($subject instanceof EntitySubject) {
       if (!empty($subject->getChangedFields())) {
         $entity = $subject->getEntity();

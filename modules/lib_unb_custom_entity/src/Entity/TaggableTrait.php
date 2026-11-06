@@ -75,7 +75,7 @@ trait TaggableTrait {
    */
   public function addTag($tag, $vid = '') {
     if (is_string($tag)) {
-      $query = $this->tagStorage()->getQuery()
+      $query = $this->tagStorage()->getQuery()->accessCheck(TRUE)
         ->condition('name', $tag);
       if ($vid) {
         $query->condition('vid', $vid);
@@ -104,7 +104,7 @@ trait TaggableTrait {
    */
   public function removeTag($tag, $vid = '') {
     if (is_string($tag)) {
-      $query = $this->tagStorage()->getQuery()
+      $query = $this->tagStorage()->getQuery()->accessCheck(TRUE)
         ->condition('name', $tag);
       if ($vid) {
         $query->condition('vid', $vid);
