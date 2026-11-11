@@ -9,7 +9,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Element\CompositeFormElementTrait;
 use Drupal\Core\Render\Element\Container;
-use Drupal\Core\Render\Element\FormElement;
+use Drupal\Core\Render\Element\FormElementBase;
 
 /**
  * Renders a form "select" element containing entities of a given type as its options.
@@ -30,7 +30,7 @@ use Drupal\Core\Render\Element\FormElement;
  *
  * @FormElement("entity_subform")
  */
-class EntitySubForm extends FormElement {
+class EntitySubForm extends FormElementBase {
 
   use CompositeFormElementTrait;
 

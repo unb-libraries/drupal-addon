@@ -74,7 +74,7 @@ abstract class ContentEntityBase extends DefaultContentEntityBase implements Con
    * @return static[]
    *   An array of entity labels indexed by their IDs.
    */
-  public static function loadMultipleLabels(array $ids = NULL) {
+  public static function loadMultipleLabels(?array $ids = NULL) {
     return array_map(function (ContentEntityBase $entity) {
       return $entity->label();
     }, self::loadMultiple($ids));

@@ -1,7 +1,7 @@
 name: 'Amazon SNS'
 type: module
 description: 'Amazon SNS integration for Drupal'
-core_version_requirement: ^9 || ^10
+core_version_requirement: ^10 || ^11
 package: 'Services'
 dependencies:
   - key

@@ -1,6 +1,6 @@
 name: 'Bootstrap Elements'
 type: module
 description: 'Bootstrap form and render elements.'
-core_version_requirement: ^9 || ^10
+core_version_requirement: ^10 || ^11
 package: 'Bootstrap'
 dependencies: { }

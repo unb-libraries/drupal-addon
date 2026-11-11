@@ -1,6 +1,6 @@
 name: 'Subforms'
 type: module
 description: 'Embed forms into other forms.'
-core_version_requirement: ^9 || ^10
+core_version_requirement: ^10.3 || ^11
 package: 'Development'
 dependencies: { }

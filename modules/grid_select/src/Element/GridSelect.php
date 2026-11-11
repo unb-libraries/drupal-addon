@@ -4,7 +4,7 @@ namespace Drupal\grid_select\Element;
 
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Element\FormElement;
+use Drupal\Core\Render\Element\FormElementBase;
 
 /**
  * Provides a form element for a set of checkboxes.
@@ -28,7 +28,7 @@ use Drupal\Core\Render\Element\FormElement;
  *
  * @FormElement("grid_select")
  */
-class GridSelect extends FormElement {
+class GridSelect extends FormElementBase {
 
   /**
    * {@inheritDoc}

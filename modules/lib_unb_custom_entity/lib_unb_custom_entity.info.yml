@@ -1,7 +1,7 @@
 name: 'Custom Entity Add-Ons (UNB Libraries)'
 type: module
 description: 'Enhancements for working with custom entities.'
-core_version_requirement: ^9 || ^10
+core_version_requirement: ^10 || ^11
 package: 'UNB Libraries'
 dependencies:
   - datetime_plus

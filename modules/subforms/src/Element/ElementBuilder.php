@@ -125,7 +125,7 @@ class ElementBuilder implements ElementBuilderInterface {
     if (isset($element['#value_callback']) && is_callable($value_callback = $element['#value_callback'])) {
       return $value_callback;
     }
-    return $value_callback = [Element\FormElement::class, 'valueCallback'];
+    return $value_callback = [Element\FormElementBase::class, 'valueCallback'];
   }
 
   /**
