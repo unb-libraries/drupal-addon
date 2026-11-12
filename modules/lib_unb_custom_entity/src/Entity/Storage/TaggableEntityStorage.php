@@ -165,6 +165,11 @@ class TaggableEntityStorage extends SqlContentEntityStorage implements TaggableC
    *   An array of entity revisions.
    */
   private function loadTaggedRevisions(array $tags) {
+    // Without tags there is nothing to match, and the UNION query built
+    // below would be empty.
+    if (empty($tags)) {
+      return [];
+    }
     $revision_ids = $this->buildTaggedRevisionsQuery($tags)
       ->fetchCol();
     return $this->loadMultipleRevisions($revision_ids);
